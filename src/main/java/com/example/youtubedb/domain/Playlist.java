@@ -16,6 +16,7 @@ public class Playlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String title;
     private boolean isPublic;
     private long likeCnt = 0;
     @Enumerated(value = EnumType.STRING)
@@ -27,7 +28,8 @@ public class Playlist {
     private List<Play> plays = new ArrayList<>();
 
     @Builder
-    public Playlist(boolean isPublic, Category category, Member member) {
+    public Playlist(String title, boolean isPublic, Category category, Member member) {
+        this.title = title;
         this.isPublic = isPublic;
         this.category = category;
         this.member = member;
