@@ -16,6 +16,7 @@ public class Playlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String title;
     private boolean isPublic;
     private long likeCnt = 0;
     @Enumerated(value = EnumType.STRING)
