@@ -3,11 +3,8 @@ package com.example.youtubedb.util;
 import com.example.youtubedb.exception.NotExistRequestValueException;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RequestUtilTest {
 
@@ -16,14 +13,10 @@ class RequestUtilTest {
         // given
         String param1 = "params";
         Integer param2 = 3;
-        String params3 = null;
-        List<Object> requestList = new ArrayList<>();
-        requestList.add(param1);
-        requestList.add(param2);
-        requestList.add(params3);
+        String param3 = null;
 
         // when
-        Exception e = assertThrows(NotExistRequestValueException.class, () -> RequestUtil.checkNeedValue(requestList));
+        Exception e = assertThrows(NotExistRequestValueException.class, () -> RequestUtil.checkNeedValue(param1, param2, param3));
 
         // then
         assertThat(e.getMessage()).isEqualTo("필요값이 없습니다.");

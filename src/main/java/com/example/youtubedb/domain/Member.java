@@ -12,15 +12,16 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Member {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Member extends BaseEntity {
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
     private String loginId;
     @JsonIgnore
     private String password;
     private boolean isMember;
-    @OneToMany(mappedBy = "member")
+    @JsonIgnore
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Playlist> playlists = new ArrayList<>();
 
     @Builder

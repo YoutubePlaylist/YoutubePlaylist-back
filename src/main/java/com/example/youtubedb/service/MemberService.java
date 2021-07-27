@@ -2,6 +2,7 @@ package com.example.youtubedb.service;
 
 import com.example.youtubedb.domain.Member;
 import com.example.youtubedb.exception.DuplicateMemberException;
+import com.example.youtubedb.exception.NotExistMemberException;
 import com.example.youtubedb.repository.MemberRepository;
 import com.example.youtubedb.util.RequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -23,12 +25,8 @@ public class MemberService {
 
 
     public Member registerNon(String deviceId) {
-        List<Object> requestList = new ArrayList<>();
-        requestList.add(deviceId);
-        RequestUtil.checkNeedValue(requestList);
-
+        RequestUtil.checkNeedValue(deviceId);
         checkDuplicateMember(deviceId);
-
         Member nonMember = Member.builder()
                 .isMember(false)
                 .loginId(deviceId)
@@ -40,5 +38,11 @@ public class MemberService {
 
     private void checkDuplicateMember(String deviceId) {
         memberRepository.findByLoginId(deviceId).ifPresent(m -> { throw new DuplicateMemberException(); });
+    }
+
+    public Member findMemberByLoginId(String loginId) {
+        Optional<Member> member = memberRepository.findByLoginId(loginId);
+        member.orElseThrow(NotExistMemberException::new);
+        return member.get();
     }
 }

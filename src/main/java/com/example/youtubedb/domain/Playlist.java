@@ -1,9 +1,11 @@
 package com.example.youtubedb.domain;
 
 import com.example.youtubedb.dto.Category;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,10 +14,11 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Playlist {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Playlist extends BaseEntity {
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+    @Setter
     private String title;
     private boolean isPublic;
     private long likeCnt = 0;
@@ -23,16 +26,17 @@ public class Playlist {
     private Category category;
     @ManyToOne
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Member member;
-    @OneToMany(mappedBy = "playlist")
+    @JsonIgnore
+    @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL)
     private List<Play> plays = new ArrayList<>();
 
     @Builder
-    public Playlist(String title, boolean isPublic, Category category, Member member) {
+    public Playlist(String title, boolean isPublic, Category category) {
         this.title = title;
         this.isPublic = isPublic;
         this.category = category;
-        this.member = member;
     }
 
     public void setMember(Member member) {

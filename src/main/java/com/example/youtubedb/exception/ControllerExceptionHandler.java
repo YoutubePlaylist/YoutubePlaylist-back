@@ -2,6 +2,7 @@ package com.example.youtubedb.exception;
 
 import com.example.youtubedb.dto.ErrorDto;
 import com.example.youtubedb.dto.ResponseDto;
+import com.example.youtubedb.util.ResponseUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,38 +12,29 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ControllerExceptionHandler {
     @ExceptionHandler({
             NotExistRequestValueException.class,
-            DuplicateMemberException.class
+            DuplicateMemberException.class,
+            NotExistMemberException.class,
+            NotExistPlaylistException.class,
+            InvalidAccessException.class
     })
     public ResponseEntity<?> badRequest(Exception e) {
-        ErrorDto errorDto = ErrorDto.builder()
-                .message(e.getMessage())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .build();
+        ResponseDto responseBody = ResponseUtil.getFailResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
 
-        ResponseDto responseDto = ResponseDto.builder()
-                .success(false)
-                .response(null)
-                .error(errorDto)
-                .build();
+        return ResponseEntity.badRequest().body(responseBody);
+    }
 
-        return ResponseEntity.badRequest().body(responseDto);
+    public ResponseEntity<?> notAcceptable(Exception e) {
+        ResponseDto responseBody = ResponseUtil.getFailResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(responseBody);
     }
 
     @ExceptionHandler({
             RuntimeException.class
     })
     public ResponseEntity<?> serverError(Exception e) {
-        ErrorDto errorDto = ErrorDto.builder()
-                .message(e.getMessage())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .build();
+        ResponseDto responseBody = ResponseUtil.getFailResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
 
-        ResponseDto responseDto = ResponseDto.builder()
-                .success(false)
-                .response(null)
-                .error(errorDto)
-                .build();
-
-        return ResponseEntity.internalServerError().body(responseDto);
+        return ResponseEntity.internalServerError().body(responseBody);
     }
 }

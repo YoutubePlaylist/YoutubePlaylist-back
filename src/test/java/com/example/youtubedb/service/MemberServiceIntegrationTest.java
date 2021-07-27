@@ -2,20 +2,19 @@ package com.example.youtubedb.service;
 
 import com.example.youtubedb.domain.Member;
 import com.example.youtubedb.exception.DuplicateMemberException;
-import com.example.youtubedb.repository.MemberRepository;
+import com.example.youtubedb.exception.NotExistMemberException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
 class MemberServiceIntegrationTest {
-    @Autowired
-    MemberRepository memberRepository;
     @Autowired
     MemberService memberService;
 
@@ -46,5 +45,34 @@ class MemberServiceIntegrationTest {
 
         // then
         assertThat(e.getMessage()).isEqualTo("ID가 중복된 회원입니다.");
+    }
+
+    @Test
+    void loginId_조회() {
+        // given
+        String deviceId = "device001";
+        Member member = memberService.registerNon(deviceId);
+
+        // when
+        Member result = memberService.findMemberByLoginId(member.getLoginId());
+
+        // then
+        assertAll(
+                () -> assertThat(result.isMember()).isEqualTo(false),
+                () -> assertThat(result.getLoginId()).isEqualTo(deviceId),
+                () -> assertThat(result.getPassword()).isEqualTo(null)
+        );
+    }
+
+    @Test
+    void loginId_조회_존재X() {
+        // given
+        String deviceId = "device001";
+
+        // when
+        Exception e = assertThrows(NotExistMemberException.class, () -> memberService.findMemberByLoginId(deviceId));
+
+        // then
+        assertThat(e.getMessage()).isEqualTo("존재하지 않는 회원입니다.");
     }
 }
