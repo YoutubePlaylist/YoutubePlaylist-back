@@ -15,7 +15,7 @@ public class ControllerExceptionHandler {
             DuplicateMemberException.class,
             NotExistMemberException.class,
             NotExistPlaylistException.class,
-            InvalidAccessException.class
+            StartAndEndTimeException.class
     })
     public ResponseEntity<?> badRequest(Exception e) {
         ResponseDto responseBody = ResponseUtil.getFailResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
@@ -23,6 +23,9 @@ public class ControllerExceptionHandler {
         return ResponseEntity.badRequest().body(responseBody);
     }
 
+    @ExceptionHandler({
+            InvalidAccessException.class
+    })
     public ResponseEntity<?> notAcceptable(Exception e) {
         ResponseDto responseBody = ResponseUtil.getFailResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
 

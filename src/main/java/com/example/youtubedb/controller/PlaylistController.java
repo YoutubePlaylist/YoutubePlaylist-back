@@ -5,6 +5,7 @@ import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.ResponseDto;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlaylistService;
+import com.example.youtubedb.util.RequestUtil;
 import com.example.youtubedb.util.ResponseUtil;
 import com.fasterxml.jackson.databind.util.JSONWrappedObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,12 @@ public class PlaylistController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createPlaylist(@RequestBody Map<String, String> request) {
+        RequestUtil.checkNeedValue(
+                request.get("loginId"),
+                request.get("title"),
+                request.get("public"),
+                request.get("category"));
+
         Member member = memberService.findMemberByLoginId(request.get("loginId"));
         Playlist playlist = playlistService.createPlaylist(
                 request.get("title"),
@@ -54,6 +61,11 @@ public class PlaylistController {
 
     @PutMapping("/edit")
     public ResponseEntity<?> editPlaylist(@RequestBody Map<String, String> request) {
+        RequestUtil.checkNeedValue(
+                request.get("loginId"),
+                request.get("id"),
+                request.get("title"));
+
         Member member = memberService.findMemberByLoginId(request.get("loginId"));
         playlistService.editPlaylistTitle(request.get("id"), request.get("title"), member);
 
@@ -64,6 +76,10 @@ public class PlaylistController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deletePlaylist(@RequestBody Map<String, String> request) {
+        RequestUtil.checkNeedValue(
+                request.get("loginId"),
+                request.get("id"));
+
         Member member = memberService.findMemberByLoginId(request.get("loginId"));
         playlistService.deletePlaylistById(request.get("id"), member);
 

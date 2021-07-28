@@ -19,6 +19,6 @@ class RequestUtilTest {
         Exception e = assertThrows(NotExistRequestValueException.class, () -> RequestUtil.checkNeedValue(param1, param2, param3));
 
         // then
-        assertThat(e.getMessage()).isEqualTo("필요값이 없습니다.");
+        assertThat(e.getMessage()).isEqualTo(NotExistRequestValueException.getErrorMessage());
     }
 }

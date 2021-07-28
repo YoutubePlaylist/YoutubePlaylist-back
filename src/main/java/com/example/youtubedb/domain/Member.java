@@ -13,9 +13,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class Member extends BaseEntity {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
     private String loginId;
     @JsonIgnore
     private String password;

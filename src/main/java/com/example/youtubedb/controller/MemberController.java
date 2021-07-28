@@ -4,6 +4,7 @@ import com.example.youtubedb.domain.Member;
 import com.example.youtubedb.dto.ResponseDto;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlaylistService;
+import com.example.youtubedb.util.RequestUtil;
 import com.example.youtubedb.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,8 @@ public class MemberController {
 
     @PostMapping("/register/non")
     public ResponseEntity<?> registerNonMember(@RequestBody Map<String, String> request) {
+        RequestUtil.checkNeedValue(request.get("deviceId"));
+
         String deviceId = request.get("deviceId");
         Member nonMember = memberService.registerNon(deviceId);
         playlistService.createPlaylist("default", "false", "OTHER", nonMember);

@@ -25,7 +25,6 @@ public class MemberService {
 
 
     public Member registerNon(String deviceId) {
-        RequestUtil.checkNeedValue(deviceId);
         checkDuplicateMember(deviceId);
         Member nonMember = Member.builder()
                 .isMember(false)

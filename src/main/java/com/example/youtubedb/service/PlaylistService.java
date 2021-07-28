@@ -28,7 +28,6 @@ public class PlaylistService {
     }
 
     public Playlist createPlaylist(String title, String isPublic, String category, Member member) {
-        RequestUtil.checkNeedValue(title, isPublic, category, member);
         checkCategory(category);
         Playlist playlist = Playlist.builder()
                 .title(title)
@@ -49,7 +48,6 @@ public class PlaylistService {
     }
 
     public Playlist editPlaylistTitle(String id, String title, Member member) {
-        RequestUtil.checkNeedValue(id, title);
         Long lId = Long.parseLong(id);
         Playlist playlist = checkExistPlaylist(lId);
         checkOwn(playlist, member);
@@ -59,18 +57,17 @@ public class PlaylistService {
     }
 
     public void deletePlaylistById(String id, Member member) {
-        RequestUtil.checkNeedValue(id, member);
         Long lId = Long.parseLong(id);
         Playlist playlist = checkExistPlaylist(lId);
         checkOwn(playlist, member);
         playlistRepository.deleteById(lId);
     }
 
-    private Playlist checkExistPlaylist(Long lId) {
+    public Playlist checkExistPlaylist(Long lId) {
         return playlistRepository.findById(lId).orElseThrow(NotExistPlaylistException::new);
     }
 
-    private void checkOwn(Playlist playlist, Member member) {
+    public void checkOwn(Playlist playlist, Member member) {
         if (playlist.getMember() != member) {
             throw new InvalidAccessException();
         }

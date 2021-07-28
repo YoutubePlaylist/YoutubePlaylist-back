@@ -15,9 +15,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class Playlist extends BaseEntity {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
     @Setter
     private String title;
     private boolean isPublic;

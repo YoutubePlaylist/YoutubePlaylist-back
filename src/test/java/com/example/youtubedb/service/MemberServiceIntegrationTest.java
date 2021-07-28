@@ -44,7 +44,7 @@ class MemberServiceIntegrationTest {
         Exception e = assertThrows(DuplicateMemberException.class, () -> memberService.registerNon(deviceId));
 
         // then
-        assertThat(e.getMessage()).isEqualTo("ID가 중복된 회원입니다.");
+        assertThat(e.getMessage()).isEqualTo(DuplicateMemberException.getErrorMessage());
     }
 
     @Test
@@ -73,6 +73,6 @@ class MemberServiceIntegrationTest {
         Exception e = assertThrows(NotExistMemberException.class, () -> memberService.findMemberByLoginId(deviceId));
 
         // then
-        assertThat(e.getMessage()).isEqualTo("존재하지 않는 회원입니다.");
+        assertThat(e.getMessage()).isEqualTo(NotExistMemberException.getErrorMessage());
     }
 }
