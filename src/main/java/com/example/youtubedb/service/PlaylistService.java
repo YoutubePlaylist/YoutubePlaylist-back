@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -47,29 +44,25 @@ public class PlaylistService {
         }
     }
 
-    public Playlist editPlaylistTitle(String id, String title, Member member) {
+    public Playlist editPlaylistTitle(String id, String title, String loginId) {
         Long lId = Long.parseLong(id);
-        Playlist playlist = checkExistPlaylist(lId);
-        checkOwn(playlist, member);
+        Playlist playlist = getPlaylistById(lId);
+        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
+
         playlist.setTitle(title);
 
         return playlist;
     }
 
-    public void deletePlaylistById(String id, Member member) {
+    public void deletePlaylistById(String id, String loginId) {
         Long lId = Long.parseLong(id);
-        Playlist playlist = checkExistPlaylist(lId);
-        checkOwn(playlist, member);
+        Playlist playlist = getPlaylistById(lId);
+        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
+
         playlistRepository.deleteById(lId);
     }
 
-    public Playlist checkExistPlaylist(Long lId) {
+    public Playlist getPlaylistById(Long lId) {
         return playlistRepository.findById(lId).orElseThrow(NotExistPlaylistException::new);
-    }
-
-    public void checkOwn(Playlist playlist, Member member) {
-        if (playlist.getMember() != member) {
-            throw new InvalidAccessException();
-        }
     }
 }

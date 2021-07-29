@@ -15,7 +15,10 @@ public class ControllerExceptionHandler {
             DuplicateMemberException.class,
             NotExistMemberException.class,
             NotExistPlaylistException.class,
-            StartAndEndTimeException.class
+            StartAndEndTimeException.class,
+            NotExistPlayException.class,
+            DuplicateSeqException.class,
+            InvalidSeqException.class
     })
     public ResponseEntity<?> badRequest(Exception e) {
         ResponseDto responseBody = ResponseUtil.getFailResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());

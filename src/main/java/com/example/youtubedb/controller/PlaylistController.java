@@ -65,9 +65,7 @@ public class PlaylistController {
                 request.get("loginId"),
                 request.get("id"),
                 request.get("title"));
-
         Member member = memberService.findMemberByLoginId(request.get("loginId"));
-        playlistService.editPlaylistTitle(request.get("id"), request.get("title"), member);
 
         ResponseDto responseBody = ResponseUtil.getSuccessResponse(ResponseUtil.getEditResponse(request.get("id")));
 
@@ -80,8 +78,7 @@ public class PlaylistController {
                 request.get("loginId"),
                 request.get("id"));
 
-        Member member = memberService.findMemberByLoginId(request.get("loginId"));
-        playlistService.deletePlaylistById(request.get("id"), member);
+        playlistService.deletePlaylistById(request.get("id"), request.get("loginId"));
 
         ResponseDto responseBody = ResponseUtil.getSuccessResponse(ResponseUtil.getDeleteResponse(request.get("id")));
 

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
-import java.time.LocalDate;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 @Getter
@@ -17,6 +19,7 @@ public class Play extends BaseEntity {
     private long end;
     private String thumbnail;
     private String title;
+    @Setter
     private int sequence;
     private String channelAvatar;
     @ManyToOne
@@ -47,5 +50,10 @@ public class Play extends BaseEntity {
         }
         this.playlist = playlist;
         playlist.getPlays().add(this);
+    }
+
+    public void setTime(long start, long end) {
+        this.start = start;
+        this.end = end;
     }
 }

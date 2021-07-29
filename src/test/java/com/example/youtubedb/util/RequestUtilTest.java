@@ -1,5 +1,6 @@
 package com.example.youtubedb.util;
 
+import com.example.youtubedb.exception.InvalidAccessException;
 import com.example.youtubedb.exception.NotExistRequestValueException;
 import org.junit.jupiter.api.Test;
 
@@ -20,5 +21,18 @@ class RequestUtilTest {
 
         // then
         assertThat(e.getMessage()).isEqualTo(NotExistRequestValueException.getErrorMessage());
+    }
+
+    @Test
+    void 요청_본인X() {
+        // given
+        String loginId = "user";
+        String other = "other";
+
+        // when
+        Exception e =  assertThrows(InvalidAccessException.class, () -> RequestUtil.checkOwn(other, loginId));
+
+        // then
+        assertThat(e.getMessage()).isEqualTo(InvalidAccessException.getErrorMessage());
     }
 }

@@ -3,14 +3,15 @@ package com.example.youtubedb.service;
 import com.example.youtubedb.domain.Member;
 import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.domain.Playlist;
-import com.example.youtubedb.exception.InvalidAccessException;
-import com.example.youtubedb.exception.StartAndEndTimeException;
+import com.example.youtubedb.dto.play.PlaySeqDto;
+import com.example.youtubedb.exception.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,6 +54,7 @@ class PlayServiceIntegrationTest {
         // when
         Play play = playService.addPlayToPlaylist(
                 playlist,
+                member.getLoginId(),
                 videoId,
                 start,
                 end,
@@ -83,6 +85,7 @@ class PlayServiceIntegrationTest {
         Exception e = assertThrows(StartAndEndTimeException.class , () ->
                 playService.addPlayToPlaylist(
                         playlist,
+                        member.getLoginId(),
                         videoId,
                         0L,
                         -5L,
@@ -102,6 +105,7 @@ class PlayServiceIntegrationTest {
         Playlist playlist = playlistService.createPlaylist("default", "false", "OTHER", member);
         playService.addPlayToPlaylist(
                 playlist,
+                member.getLoginId(),
                 videoId,
                 start,
                 end,
@@ -110,7 +114,7 @@ class PlayServiceIntegrationTest {
                 channelAvatar);
 
         // when
-        List<Play> plays = playService.getPlaysInPlaylist(playlist, member);
+        List<Play> plays = playService.getPlaysInPlaylist(playlist, member.getLoginId());
 
         // then
         assertAll(
@@ -127,6 +131,7 @@ class PlayServiceIntegrationTest {
         Playlist playlist = playlistService.createPlaylist("default", "false", "OTHER", member);
         playService.addPlayToPlaylist(
                 playlist,
+                member.getLoginId(),
                 videoId,
                 start,
                 end,
@@ -135,9 +140,194 @@ class PlayServiceIntegrationTest {
                 channelAvatar);
 
         // when
-        Exception e = assertThrows(InvalidAccessException.class, () -> playService.getPlaysInPlaylist(playlist, other));
+        Exception e = assertThrows(InvalidAccessException.class, () -> playService.getPlaysInPlaylist(playlist, other.getLoginId()));
 
         // then
         assertThat(e.getMessage()).isEqualTo(InvalidAccessException.getErrorMessage());
+    }
+
+    @Test
+    void 영상_시간_수정() {
+        // given
+        Member member = memberService.registerNon("device001");
+        Playlist playlist = playlistService.createPlaylist("default", "false", "OTHER", member);
+        Play play = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                title,
+                channelAvatar);
+
+        // when
+        playService.editTime(play, member.getLoginId(), 50L, 100L);
+        Play editedPlay = playService.getPlayById(play.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(editedPlay.getStart()).isEqualTo(50L),
+                () -> assertThat(editedPlay.getEnd()).isEqualTo(100L)
+        );
+    }
+
+    @Test
+    void 영상_순서_수정() {
+        // given
+        Member member = memberService.registerNon("device001");
+        Playlist playlist = playlistService.createPlaylist("default", "false", "OTHER", member);
+        Play play1 = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                "play1",
+                channelAvatar);
+        Play play2 = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                "play2",
+                channelAvatar);
+        Play play3 = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                "play3",
+                channelAvatar);
+        List<PlaySeqDto> seqList = new ArrayList<>();
+        seqList.add(PlaySeqDto.builder().id(play1.getId()).sequence(3).build());
+        seqList.add(PlaySeqDto.builder().id(play2.getId()).sequence(1).build());
+        seqList.add(PlaySeqDto.builder().id(play3.getId()).sequence(2).build());
+
+        // when
+        playService.editSeq(member.getLoginId(), playlist.getId(), seqList);
+
+        // then
+        assertAll(
+                () -> assertThat(play1.getSequence()).isEqualTo(3),
+                () -> assertThat(play2.getSequence()).isEqualTo(1),
+                () -> assertThat(play3.getSequence()).isEqualTo(2)
+        );
+    }
+
+    @Test
+    void 영상_순서_수정_순서이상() {
+        // given
+        Member member = memberService.registerNon("device001");
+        Playlist playlist = playlistService.createPlaylist("default", "false", "OTHER", member);
+        Play play1 = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                "play1",
+                channelAvatar);
+        Play play2 = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                "play2",
+                channelAvatar);
+        Play play3 = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                "play3",
+                channelAvatar);
+        List<PlaySeqDto> seqList = new ArrayList<>();
+        seqList.add(PlaySeqDto.builder().id(play1.getId()).sequence(3).build());
+        seqList.add(PlaySeqDto.builder().id(play2.getId()).sequence(4).build());
+        seqList.add(PlaySeqDto.builder().id(play3.getId()).sequence(2).build());
+
+        // when
+        Exception e = assertThrows(InvalidSeqException.class, () -> playService.editSeq(member.getLoginId(), playlist.getId(), seqList));
+
+        // then
+        assertThat(e.getMessage()).isEqualTo(InvalidSeqException.getErrorMessage());
+    }
+
+    @Test
+    void 영상_순서_수정_중복() {
+        // given
+        Member member = memberService.registerNon("device001");
+        Playlist playlist = playlistService.createPlaylist("default", "false", "OTHER", member);
+        Play play1 = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                "play1",
+                channelAvatar);
+        Play play2 = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                "play2",
+                channelAvatar);
+        Play play3 = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                "play3",
+                channelAvatar);
+        List<PlaySeqDto> seqList = new ArrayList<>();
+        seqList.add(PlaySeqDto.builder().id(play1.getId()).sequence(1).build());
+        seqList.add(PlaySeqDto.builder().id(play2.getId()).sequence(2).build());
+        seqList.add(PlaySeqDto.builder().id(play3.getId()).sequence(2).build());
+
+        // when
+        Exception e = assertThrows(DuplicateSeqException.class, () -> playService.editSeq(member.getLoginId(), playlist.getId(), seqList));
+
+        // then
+        assertThat(e.getMessage()).isEqualTo(DuplicateSeqException.getErrorMessage());
+    }
+
+    @Test
+    void 영상_삭제() {
+        // given
+        Member member = memberService.registerNon("device001");
+        Playlist playlist = playlistService.createPlaylist("default", "false", "OTHER", member);
+        Play play = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                title,
+                channelAvatar);
+
+        // when
+        playService.deletePlayById(play, "device001");
+        Exception e = assertThrows(NotExistPlayException.class, () -> playService.getPlayById(play.getId()));
+
+        // then
+        assertThat(e.getMessage()).isEqualTo(NotExistPlayException.getErrorMessage());
     }
 }

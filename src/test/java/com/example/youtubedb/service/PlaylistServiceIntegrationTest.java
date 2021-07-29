@@ -41,7 +41,7 @@ class PlaylistServiceIntegrationTest {
                 () -> assertThat(playlist.getTitle()).isEqualTo(title),
                 () -> assertThat(playlist.getCategory()).isEqualTo(Category.GAME),
                 () -> assertThat(playlist.isPublic()).isEqualTo(true),
-                () -> assertThat(playlist.getMember()).isEqualTo(member),
+                () -> assertThat(playlist.getMember().getId()).isEqualTo(member.getId()),
                 () -> assertThat(playlist.getLikeCnt()).isEqualTo(0)
         );
     }
@@ -65,14 +65,22 @@ class PlaylistServiceIntegrationTest {
     void 플레이리스트_조회() {
         // given
         Member member = memberService.registerNon("devide001");
-        playlistService.createPlaylist("myList", "false", "GAME", member);
-        playlistService.createPlaylist("myList2", "false", "OTHER", member);
+        String title = "myList";
+        String isPublic = "false";
+        String category = "GAME";
+        Playlist playlist = playlistService.createPlaylist(title, isPublic, category, member);
 
         // when
-        List<Playlist> playlists = member.getPlaylists();
+        Playlist result = playlistService.getPlaylistById(playlist.getId());
 
         // then
-        assertThat(playlists.size()).isEqualTo(2);
+        assertAll(
+                () -> assertThat(result.getId()).isEqualTo(playlist.getId()),
+                () -> assertThat(result.getTitle()).isEqualTo(title),
+                () -> assertThat(result.isPublic()).isEqualTo(Boolean.parseBoolean(isPublic)),
+                () -> assertThat(result.getCategory()).isEqualTo(Category.valueOf(category)),
+                () -> assertThat(result.getMember().getId()).isEqualTo(member.getId())
+        );
     }
 
     @Test
@@ -82,7 +90,7 @@ class PlaylistServiceIntegrationTest {
         Playlist playlist = playlistService.createPlaylist("myList", "false", "GAME", member);
         String newTitle = "newList";
         // when
-        Playlist newList = playlistService.editPlaylistTitle(playlist.getId().toString(), newTitle, member);
+        Playlist newList = playlistService.editPlaylistTitle(playlist.getId().toString(), newTitle, member.getLoginId());
 
         // then
         assertThat(newList.getTitle()).isEqualTo(newTitle);
@@ -94,7 +102,7 @@ class PlaylistServiceIntegrationTest {
         Member member = memberService.registerNon("devide001");
         Playlist playlist = playlistService.createPlaylist("myList", "false", "GAME", member);
         // when
-        Exception e = assertThrows(NotExistPlaylistException.class, () -> playlistService.checkExistPlaylist(100L));
+        Exception e = assertThrows(NotExistPlaylistException.class, () -> playlistService.getPlaylistById(100L));
 
         // then
         assertThat(e.getMessage()).isEqualTo(NotExistPlaylistException.getErrorMessage());
@@ -107,26 +115,12 @@ class PlaylistServiceIntegrationTest {
         Playlist playlist = playlistService.createPlaylist("myList", "false", "GAME", member);
 
         // when
-        playlistService.deletePlaylistById(playlist.getId().toString(), member);
+        playlistService.deletePlaylistById(playlist.getId().toString(), member.getLoginId());
         Exception e = assertThrows(NotExistPlaylistException.class,
-                () -> playlistService.checkExistPlaylist(playlist.getId())
+                () -> playlistService.getPlaylistById(playlist.getId())
         );
 
         // then
         assertThat(e.getMessage()).isEqualTo(NotExistPlaylistException.getErrorMessage());
-    }
-
-    @Test
-    void 타유저_접근() {
-        // given
-        Member member1 = memberService.registerNon("device001");
-        Member member2 = memberService.registerNon("device002");
-        Playlist playlist = playlistService.createPlaylist("title", "false", "OTHER", member1);
-
-        // when
-        Exception e = assertThrows(InvalidAccessException.class, () -> playlistService.checkOwn(playlist, member2));
-
-        // then
-        assertThat(e.getMessage()).isEqualTo(InvalidAccessException.getErrorMessage());
     }
 }
