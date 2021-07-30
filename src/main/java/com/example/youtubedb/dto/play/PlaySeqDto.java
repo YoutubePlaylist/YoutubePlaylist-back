@@ -1,5 +1,6 @@
 package com.example.youtubedb.dto.play;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,9 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 public class PlaySeqDto {
+    @Schema(description = "영상 아이디", example = "1")
     private Long id;
+    @Schema(description = "영상 순서", example = "1")
     private int sequence;
 
     @Builder

@@ -24,11 +24,11 @@ public class PlaylistService {
         this.playlistRepository = playlistRepository;
     }
 
-    public Playlist createPlaylist(String title, String isPublic, String category, Member member) {
+    public Playlist createPlaylist(String title, Boolean isPublic, String category, Member member) {
         checkCategory(category);
         Playlist playlist = Playlist.builder()
                 .title(title)
-                .isPublic(Boolean.parseBoolean(isPublic))
+                .isPublic(isPublic)
                 .category(Category.valueOf(category))
                 .build();
         playlist.setMember(member);
@@ -40,26 +40,24 @@ public class PlaylistService {
         Category[] categories = Category.values();
         int count = 0;
         if (Arrays.stream(categories).noneMatch(c -> c.toString().equals(category))) {
+            System.out.println(category);
             throw new NotExistRequestValueException();
         }
     }
 
-    public Playlist editPlaylistTitle(String id, String title, String loginId) {
-        Long lId = Long.parseLong(id);
-        Playlist playlist = getPlaylistById(lId);
-        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
-
+    public Playlist editPlaylistTitle(Long id, String title, String loginId) {
+        Playlist playlist = getPlaylistById(id);
+//        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
         playlist.setTitle(title);
 
         return playlist;
     }
 
-    public void deletePlaylistById(String id, String loginId) {
-        Long lId = Long.parseLong(id);
-        Playlist playlist = getPlaylistById(lId);
-        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
+    public void deletePlaylistById(Long id, String loginId) {
+        Playlist playlist = getPlaylistById(id);
+//        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
 
-        playlistRepository.deleteById(lId);
+        playlistRepository.deleteById(id);
     }
 
     public Playlist getPlaylistById(Long lId) {
