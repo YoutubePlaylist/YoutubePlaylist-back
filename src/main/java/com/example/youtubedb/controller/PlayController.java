@@ -200,7 +200,7 @@ public class PlayController {
 
         Play play = playService.getPlayById(id);
         playService.deletePlayById(play, "loginId?");
-
+        playService.sortPlaysInPlaylist(play.getPlaylist());
         BaseResponseSuccessDto responseBody = new PlayDeleteResponseDto(id);
 
         return ResponseEntity.ok(responseBody);

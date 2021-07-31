@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -115,6 +116,20 @@ public class PlayService {
     private void checkSeqNum(int sequence, int size) {
         if((sequence < 1) || (sequence > size)) {
             throw new InvalidSeqException();
+        }
+    }
+
+    public void sortPlaysInPlaylist(Playlist playlist) {
+        List<Play> plays = playlist.getPlays();
+        plays.sort(new Comparator<Play>() {
+            @Override
+            public int compare(Play p1, Play p2) {
+                return p1.getSequence() - p2.getSequence();
+            }
+        });
+        int seq = 1;
+        for (Play play : plays) {
+            play.setSequence(seq++);
         }
     }
 }

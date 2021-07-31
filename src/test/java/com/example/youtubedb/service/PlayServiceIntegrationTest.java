@@ -330,4 +330,46 @@ class PlayServiceIntegrationTest {
         // then
         assertThat(e.getMessage()).isEqualTo(NotExistPlayException.getErrorMessage());
     }
+
+    @Test
+    void 영상_재정렬() {
+        // given
+        Member member = memberService.registerNon("device001");
+        Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
+        Play play1 = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                title,
+                channelAvatar);
+
+        Play play2 = playService.addPlayToPlaylist(
+                playlist,
+                member.getLoginId(),
+                videoId,
+                start,
+                end,
+                thumbnail,
+                title,
+                channelAvatar);
+        play2.setSequence(3);
+//        Play play3 = playService.addPlayToPlaylist(
+//                playlist,
+//                member.getLoginId(),
+//                videoId,
+//                start,
+//                end,
+//                thumbnail,
+//                title,
+//                channelAvatar);
+        // when
+        playService.sortPlaysInPlaylist(playlist);
+
+        // then
+        List<Play> plays = playlist.getPlays();
+        assertThat(play2.getSequence()).isEqualTo(2);
+    }
 }
