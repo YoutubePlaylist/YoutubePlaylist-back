@@ -140,7 +140,7 @@ public class PlayController {
                 play,
                 "loginId?",
                 request.getStart(),
-                play.getEnd());
+                request.getEnd());
 
         BaseResponseSuccessDto responseBody = new PlayEditTimeResponseDto(request.getId());
 
