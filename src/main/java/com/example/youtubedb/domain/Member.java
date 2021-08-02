@@ -1,5 +1,6 @@
 package com.example.youtubedb.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,18 +12,19 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Member {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String email;
-    private String displayName;
-    @OneToMany(mappedBy = "member")
+public class Member extends BaseEntity {
+    private String loginId;
+    @JsonIgnore
+    private String password;
+    private boolean isMember;
+    @JsonIgnore
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Playlist> playlists = new ArrayList<>();
 
     @Builder
-    public Member(String email, String displayName) {
-        this.email = email;
-        this.displayName = displayName;
+    public Member(String loginId, String password, boolean isMember) {
+        this.loginId = loginId;
+        this.password = password;
+        this.isMember = isMember;
     }
 }
