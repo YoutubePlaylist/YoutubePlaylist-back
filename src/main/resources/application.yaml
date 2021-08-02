@@ -2,23 +2,17 @@ server:
   port: 8080
 
 spring:
-  datasource:
-#    url: jdbc:h2:tcp://localhost/~/spring
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+  profiles:
+    active: prod
 
   boot:
     admin:
       client:
         url: http://localhost:8080
 
-
-
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         show_sql: true
