@@ -1,6 +1,7 @@
 package com.example.youtubedb.service;
 
 import com.example.youtubedb.domain.Member;
+import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.exception.DuplicateMemberException;
 import com.example.youtubedb.exception.NotExistMemberException;
 import com.example.youtubedb.repository.MemberRepository;
