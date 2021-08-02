@@ -1,0 +1,11 @@
+package com.example.youtubedb.repository;
+
+import com.example.youtubedb.domain.Play;
+
+import java.util.Optional;
+
+public interface PlayRepository {
+    Play save(Play play);
+    Optional<Play> findById(Long id);
+    void deleteById(Long id);
+}

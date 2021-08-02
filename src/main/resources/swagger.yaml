@@ -1,0 +1,29 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: '개발이 취미인 남자'
+  description: '프로젝트 설명 RestFul Api 클라이언트 UI 로컬 서버를 구동 후 요청해주세요.'
+
+#내가 요청하고 싶은 서버 url 설정 다수로 설정가능
+servers:
+  - description: "프로젝트 Dev Server"
+    url: http://localhost:8080/api
+
+# API 요청 경로 및 데이터 세팅
+paths:
+  /:
+    get:
+      summary: "Get 방식(1)"
+      description: "서버에 아무 데이터 업이 Get방식으로 요청"
+      tags:
+        - Get 방식
+      responses:
+        '200':
+          description: 서버에게 받은 결과 값
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
