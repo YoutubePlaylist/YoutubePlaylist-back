@@ -63,6 +63,7 @@ public class PlaylistController {
     public ResponseEntity<?> getPlaylist(@Parameter @PathVariable("loginId") String loginId) {
         Member member = memberService.findMemberByLoginId(loginId);
         List<Playlist> playlists = member.getPlaylists();
+        playlistService.addThumbnail(playlists);
 
         BaseResponseSuccessDto responseBody = new PlaylistGetResponseDto(playlists);
 

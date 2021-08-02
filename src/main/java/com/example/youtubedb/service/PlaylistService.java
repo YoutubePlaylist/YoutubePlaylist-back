@@ -1,6 +1,7 @@
 package com.example.youtubedb.service;
 
 import com.example.youtubedb.domain.Member;
+import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.Category;
 import com.example.youtubedb.exception.InvalidAccessException;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 @Transactional
@@ -62,5 +64,21 @@ public class PlaylistService {
 
     public Playlist getPlaylistById(Long lId) {
         return playlistRepository.findById(lId).orElseThrow(NotExistPlaylistException::new);
+    }
+
+    public void addThumbnail(List<Playlist> playlists) {
+        playlists.forEach(playlist -> {
+            String thumbnail = getThumbnailInPlaylist(playlist.getPlays());
+            playlist.setThumbnail(thumbnail);
+        });
+    }
+
+    private String getThumbnailInPlaylist(List<Play> plays) {
+        for (Play play : plays) {
+            if (play.getSequence() == 1) {
+                return play.getThumbnail();
+            }
+        }
+        return null;
     }
 }

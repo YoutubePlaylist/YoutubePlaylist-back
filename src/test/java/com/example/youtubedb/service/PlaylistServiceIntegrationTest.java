@@ -1,6 +1,7 @@
 package com.example.youtubedb.service;
 
 import com.example.youtubedb.domain.Member;
+import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.Category;
 import com.example.youtubedb.exception.NotExistPlaylistException;
@@ -23,6 +24,8 @@ class PlaylistServiceIntegrationTest {
     PlaylistService playlistService;
     @Autowired
     MemberService memberService;
+    @Autowired
+    PlayService playService;
 
     @Test
     void 플레이리스트_생성() {
@@ -121,5 +124,30 @@ class PlaylistServiceIntegrationTest {
 
         // then
         assertThat(e.getMessage()).isEqualTo(NotExistPlaylistException.getErrorMessage());
+    }
+
+    @Test
+    void 썸네일_설정() {
+        // given
+        Member member = memberService.registerNon("device001");
+        Playlist playlist = playlistService.createPlaylist("myList", false, "GAME", member);
+        String thumbnail = "thumbnail";
+
+        // when
+        Play play = Play.builder()
+                .end(100L)
+                .start(20L)
+                .sequence(1)
+                .title("title")
+                .videoId("video001")
+                .thumbnail(thumbnail)
+                .channelAvatar("avatar")
+                .build();
+
+        play.setPlaylist(playlist);
+        playlistService.addThumbnail(member.getPlaylists());
+
+        // then
+        assertThat(playlist.getThumbnail()).isEqualTo(thumbnail);
     }
 }
