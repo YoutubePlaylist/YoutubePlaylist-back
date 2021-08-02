@@ -29,6 +29,10 @@ public class Playlist extends BaseEntity {
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL)
     private List<Play> plays = new ArrayList<>();
 
+    @Transient
+    @Setter
+    private String thumbnail;
+
     @Builder
     public Playlist(String title, boolean isPublic, Category category) {
         this.title = title;
