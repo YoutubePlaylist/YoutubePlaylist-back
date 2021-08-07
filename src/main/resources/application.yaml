@@ -5,6 +5,14 @@ spring:
   profiles:
     active: local
 
+#  security 설정
+  security:
+    user:
+      name: "admin"
+      password: "pass"
+      roles: "ADMIN"
+
+
   boot:
     admin:
       client:
@@ -19,6 +27,8 @@ logging:
   level:
     org.hibernate.SQL: debug
 
+jwt:
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
 
 management:
   endpoints:
@@ -27,7 +37,7 @@ management:
         include: "*"
       #        include: health, metrics
 
-      base-path: "/monitoring"
+      base-path: "/admin/monitoring"
 
   endpoint:
     health:

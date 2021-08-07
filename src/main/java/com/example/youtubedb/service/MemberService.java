@@ -5,7 +5,7 @@ import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.exception.DuplicateMemberException;
 import com.example.youtubedb.exception.NotExistMemberException;
 import com.example.youtubedb.repository.MemberRepository;
-import com.example.youtubedb.util.RequestUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,15 +15,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 @Transactional
 public class MemberService {
     private final MemberRepository memberRepository;
-
-    @Autowired
-    public MemberService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
-
 
     public Member registerNon(String deviceId) {
         checkDuplicateMember(deviceId);

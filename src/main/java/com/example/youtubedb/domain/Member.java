@@ -17,14 +17,22 @@ public class Member extends BaseEntity {
     @JsonIgnore
     private String password;
     private boolean isMember;
+
+    @Enumerated
+    private Authority authority;
+
+
     @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Playlist> playlists = new ArrayList<>();
 
     @Builder
-    public Member(String loginId, String password, boolean isMember) {
+    public Member(String loginId, String password, boolean isMember, Authority authority){
         this.loginId = loginId;
         this.password = password;
         this.isMember = isMember;
+        this.authority = authority;
+
     }
+
 }
