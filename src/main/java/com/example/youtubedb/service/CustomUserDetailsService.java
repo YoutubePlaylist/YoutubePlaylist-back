@@ -1,6 +1,6 @@
 package com.example.youtubedb.service;
 
-import com.example.youtubedb.domain.Member;
+import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,17 +1,13 @@
 package com.example.youtubedb.service;
 
-import com.example.youtubedb.domain.Member;
-import com.example.youtubedb.domain.Playlist;
+import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.exception.DuplicateMemberException;
 import com.example.youtubedb.exception.NotExistMemberException;
 import com.example.youtubedb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service

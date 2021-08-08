@@ -23,6 +23,12 @@ spring:
         show_sql: true
         format_sql: true
 
+  redis:
+    lettuce:
+      pool:
+        max-active: 10
+
+
 logging:
   level:
     org.hibernate.SQL: debug
@@ -35,14 +41,11 @@ management:
     web:
       exposure:
         include: "*"
-      #        include: health, metrics
 
       base-path: "/admin/monitoring"
 
   endpoint:
     health:
-      #      enabled: true
-      #      show-details: always
       group:
         custom:
           include: diskSpace, ping

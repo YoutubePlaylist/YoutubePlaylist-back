@@ -1,13 +1,10 @@
 package com.example.youtubedb.controller;
 
-import com.example.youtubedb.domain.Member;
+import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
-import com.example.youtubedb.dto.ResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
-import com.example.youtubedb.dto.member.response.NonMemberCreateResponseDto;
-import com.example.youtubedb.dto.play.request.PlayCreateRequestDto;
 import com.example.youtubedb.dto.playlist.request.PlaylistCreateRequestDto;
 import com.example.youtubedb.dto.playlist.request.PlaylistEditTitleRequestDto;
 import com.example.youtubedb.dto.playlist.response.PlaylistCreateResponseDto;
@@ -17,7 +14,6 @@ import com.example.youtubedb.dto.playlist.response.PlaylistGetResponseDto;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
-import com.example.youtubedb.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

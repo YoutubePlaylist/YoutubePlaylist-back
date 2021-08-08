@@ -1,5 +1,7 @@
-package com.example.youtubedb.domain;
+package com.example.youtubedb.domain.member;
 
+import com.example.youtubedb.domain.BaseEntity;
+import com.example.youtubedb.domain.Playlist;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,18 +23,19 @@ public class Member extends BaseEntity {
     @Enumerated
     private Authority authority;
 
+    private boolean isPc;
 
     @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Playlist> playlists = new ArrayList<>();
 
     @Builder
-    public Member(String loginId, String password, boolean isMember, Authority authority){
+    public Member(String loginId, String password, boolean isMember, Authority authority, boolean isPc){
         this.loginId = loginId;
         this.password = password;
         this.isMember = isMember;
         this.authority = authority;
-
+        this.isPc = isPc;
     }
 
 }

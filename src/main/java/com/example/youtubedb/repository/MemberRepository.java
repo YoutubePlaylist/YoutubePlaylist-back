@@ -1,8 +1,7 @@
 package com.example.youtubedb.repository;
 
-import com.example.youtubedb.domain.Member;
+import com.example.youtubedb.domain.member.Member;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository {

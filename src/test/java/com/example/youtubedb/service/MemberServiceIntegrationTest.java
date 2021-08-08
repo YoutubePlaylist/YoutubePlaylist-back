@@ -1,6 +1,6 @@
 package com.example.youtubedb.service;
 
-import com.example.youtubedb.domain.Member;
+import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.exception.DuplicateMemberException;
 import com.example.youtubedb.exception.NotExistMemberException;
 import org.junit.jupiter.api.Test;
