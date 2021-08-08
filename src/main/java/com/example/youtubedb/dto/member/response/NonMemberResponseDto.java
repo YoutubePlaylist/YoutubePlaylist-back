@@ -6,11 +6,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
-public class NonMemberCreateResponseDto extends BaseResponseSuccessDto {
+public class NonMemberResponseDto extends BaseResponseSuccessDto {
     @Schema(description = "생성된 비회원")
     private final Member response;
+    @Schema(description = "JWT 토큰")
+    private final String token;
 
-    public NonMemberCreateResponseDto(Member response) {
+    public NonMemberResponseDto(Member response, String token) {
         this.response = response;
+        this. token = token;
     }
 }

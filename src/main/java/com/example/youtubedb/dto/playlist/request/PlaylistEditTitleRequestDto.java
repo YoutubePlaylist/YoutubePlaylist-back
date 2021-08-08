@@ -6,12 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class PlaylistEditTitleRequestDto {
     @Schema(description = "플레이 리스트 아이디", example = "1")
-    private Long id;
+    private final Long id;
     @Schema(description = "제목", example = "영상 목록 1")
-    private String title;
+    private final String title;
 
     @Builder
     public PlaylistEditTitleRequestDto(Long id, String title) {

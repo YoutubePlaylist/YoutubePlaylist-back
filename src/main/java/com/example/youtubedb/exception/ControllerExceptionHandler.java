@@ -1,11 +1,9 @@
 package com.example.youtubedb.exception;
 
 import com.example.youtubedb.dto.BaseResponseFailDto;
-import com.example.youtubedb.dto.ResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.NotAcceptableFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
-import com.example.youtubedb.util.ResponseUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
-    @ExceptionHandler({
+    @ExceptionHandler(value = {
             NotExistRequestValueException.class,
             DuplicateMemberException.class,
             NotExistMemberException.class,
@@ -21,7 +19,8 @@ public class ControllerExceptionHandler {
             StartAndEndTimeException.class,
             NotExistPlayException.class,
             DuplicateSeqException.class,
-            InvalidSeqException.class
+            InvalidSeqException.class,
+            DoNotMatchPasswordException.class
     })
     public ResponseEntity<?> badRequest(Exception e) {
         BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()

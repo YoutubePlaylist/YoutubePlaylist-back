@@ -57,9 +57,9 @@ public class PlaylistService {
 
     public void deletePlaylistById(Long id, String loginId) {
         Playlist playlist = getPlaylistById(id);
-//        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
+        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
 
-        playlistRepository.deleteById(id);
+        playlistRepository.delete(playlist);
     }
 
     public Playlist getPlaylistById(Long lId) {

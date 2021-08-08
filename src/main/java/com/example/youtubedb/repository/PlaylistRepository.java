@@ -9,5 +9,5 @@ public interface PlaylistRepository {
     Playlist save(Playlist playlist);
     Optional<Playlist> findById(Long id);
     List<Playlist> findAll();
-    void deleteById(Long id);
+    void delete(Playlist playlist);
 }

@@ -6,14 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class PlayEditTimeRequestDto {
     @Schema(description = "플레이 아이디", example = "1")
-    private Long id;
+    private final Long id;
     @Schema(description = "시작 시간", example = "100")
-    private Long start;
+    private final Long start;
     @Schema(description = "끝 시간", example = "1000")
-    private Long end;
+    private final Long end;
 
     @Builder
     public PlayEditTimeRequestDto(Long id, Long start, Long end) {

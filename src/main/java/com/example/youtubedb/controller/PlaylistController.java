@@ -1,13 +1,11 @@
 package com.example.youtubedb.controller;
 
+import com.example.youtubedb.auth.JwtTokenProvider;
 import com.example.youtubedb.domain.Member;
 import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
-import com.example.youtubedb.dto.ResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
-import com.example.youtubedb.dto.member.response.NonMemberCreateResponseDto;
-import com.example.youtubedb.dto.play.request.PlayCreateRequestDto;
 import com.example.youtubedb.dto.playlist.request.PlaylistCreateRequestDto;
 import com.example.youtubedb.dto.playlist.request.PlaylistEditTitleRequestDto;
 import com.example.youtubedb.dto.playlist.response.PlaylistCreateResponseDto;
@@ -17,7 +15,6 @@ import com.example.youtubedb.dto.playlist.response.PlaylistGetResponseDto;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
-import com.example.youtubedb.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 // Spring Security로 JWT 적용시 변경 필요
@@ -38,11 +36,15 @@ import java.util.List;
 public class PlaylistController {
     private final PlaylistService playlistService;
     private final MemberService memberService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public PlaylistController(PlaylistService playlistService, MemberService memberService) {
+    public PlaylistController(PlaylistService playlistService,
+                              MemberService memberService,
+                              JwtTokenProvider jwtTokenProvider) {
         this.playlistService = playlistService;
         this.memberService = memberService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @ApiResponses(value = {
@@ -59,8 +61,9 @@ public class PlaylistController {
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
     })
     @Operation(summary = "조회", description = "플레이 리스트들 조회")
-    @GetMapping("/{loginId}")
-    public ResponseEntity<?> getPlaylist(@Parameter @PathVariable("loginId") String loginId) {
+    @GetMapping("/")
+    public ResponseEntity<?> getPlaylist(HttpServletRequest request) {
+        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
         Member member = memberService.findMemberByLoginId(loginId);
         List<Playlist> playlists = member.getPlaylists();
         playlistService.addThumbnail(playlists);
@@ -85,17 +88,19 @@ public class PlaylistController {
     })
     @PostMapping("/create")
     @Operation(summary = "생성", description = "플레이 리스트 생성")
-    public ResponseEntity<?> createPlaylist(@RequestBody PlaylistCreateRequestDto request) { // 여긴 임시로 loginId 필요
+    public ResponseEntity<?> createPlaylist(@RequestBody PlaylistCreateRequestDto playlistCreateRequestDto,
+                                            HttpServletRequest request) { // 여긴 임시로 loginId 필요
         RequestUtil.checkNeedValue(
-                request.getLoginId(),
-                request.getTitle(),
-                request.getIsPublic(),
-                request.getCategory());
-        Member member = memberService.findMemberByLoginId(request.getLoginId());
+                playlistCreateRequestDto.getTitle(),
+                playlistCreateRequestDto.getIsPublic(),
+                playlistCreateRequestDto.getCategory());
+        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
+
+        Member member = memberService.findMemberByLoginId(loginId);
         Playlist playlist = playlistService.createPlaylist(
-                request.getTitle(),
-                request.getIsPublic(),
-                request.getCategory(),
+                playlistCreateRequestDto.getTitle(),
+                playlistCreateRequestDto.getIsPublic(),
+                playlistCreateRequestDto.getCategory(),
                 member);
 
         BaseResponseSuccessDto responseBody = new PlaylistCreateResponseDto(playlist);
@@ -119,13 +124,16 @@ public class PlaylistController {
     })
     @PutMapping("/edit")
     @Operation(summary = "제목 수정", description = "플레이 리스트 제목 수정")
-    public ResponseEntity<?> editPlaylist(@RequestBody PlaylistEditTitleRequestDto request) {
+    public ResponseEntity<?> editPlaylist(@RequestBody PlaylistEditTitleRequestDto playlistEditTitleRequestDto,
+                                          HttpServletRequest request) {
         RequestUtil.checkNeedValue(
-                request.getId(),
-                request.getTitle());
-        playlistService.editPlaylistTitle(request.getId(), request.getTitle(), "loginId");
+                playlistEditTitleRequestDto.getId(),
+                playlistEditTitleRequestDto.getTitle());
+        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
 
-        BaseResponseSuccessDto responseBody = new PlaylistEditTitleResponseDto(request.getId());
+        playlistService.editPlaylistTitle(playlistEditTitleRequestDto.getId(), playlistEditTitleRequestDto.getTitle(), loginId);
+
+        BaseResponseSuccessDto responseBody = new PlaylistEditTitleResponseDto(playlistEditTitleRequestDto.getId());
 
         return ResponseEntity.ok(responseBody);
     }
@@ -145,9 +153,12 @@ public class PlaylistController {
     })
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "삭제", description = "플레이 리스트 삭제")
-    public ResponseEntity<?> deletePlaylist(@Parameter @PathVariable("id") Long id) {
+    public ResponseEntity<?> deletePlaylist(@Parameter @PathVariable("id") Long id,
+                                            HttpServletRequest request) {
         RequestUtil.checkNeedValue(id);
-        playlistService.deletePlaylistById(id, "loginId?");
+        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
+
+        playlistService.deletePlaylistById(id, loginId);
 
         BaseResponseSuccessDto responseBody = new PlaylistDeleteResponseDto(id);
 
