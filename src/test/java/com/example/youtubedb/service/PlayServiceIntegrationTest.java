@@ -24,7 +24,7 @@ class PlayServiceIntegrationTest {
     @Autowired
     private PlayService playService;
     @Autowired
-    private MemberService memberService;
+    private AuthService authService;
     @Autowired
     private PlaylistService playlistService;
 
@@ -34,10 +34,12 @@ class PlayServiceIntegrationTest {
     private String thumbnail;
     private String title;
     private String channelAvatar;
+    private boolean isPc;
 
     @BeforeEach
     void setup() {
         this.videoId = "video001";
+        this.isPc =true;
         this.start = 100;
         this.end = 1000;
         this.thumbnail = "썸네일";
@@ -48,7 +50,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 플레이_추가() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = authService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
 
         // when
@@ -78,7 +80,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 플레이_추가_시간예외() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = authService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
 
         // when
@@ -101,7 +103,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상목록_조회() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = authService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         playService.addPlayToPlaylist(
                 playlist,
@@ -149,7 +151,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_시간_수정() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = authService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play = playService.addPlayToPlaylist(
                 playlist,
@@ -175,7 +177,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_순서_수정() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = authService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play1 = playService.addPlayToPlaylist(
                 playlist,
@@ -223,7 +225,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_순서_수정_순서이상() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = authService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play1 = playService.addPlayToPlaylist(
                 playlist,
@@ -267,7 +269,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_순서_수정_중복() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = authService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play1 = playService.addPlayToPlaylist(
                 playlist,
@@ -311,7 +313,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_삭제() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = authService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play = playService.addPlayToPlaylist(
                 playlist,
@@ -334,7 +336,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_재정렬() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = authService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play1 = playService.addPlayToPlaylist(
                 playlist,

@@ -11,7 +11,7 @@ import com.example.youtubedb.dto.playlist.response.PlaylistCreateResponseDto;
 import com.example.youtubedb.dto.playlist.response.PlaylistDeleteResponseDto;
 import com.example.youtubedb.dto.playlist.response.PlaylistEditTitleResponseDto;
 import com.example.youtubedb.dto.playlist.response.PlaylistGetResponseDto;
-import com.example.youtubedb.service.MemberService;
+import com.example.youtubedb.service.AuthService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,12 +33,12 @@ import java.util.List;
 @RequestMapping("/api/playlist")
 public class PlaylistController {
     private final PlaylistService playlistService;
-    private final MemberService memberService;
+    private final AuthService authService;
 
     @Autowired
-    public PlaylistController(PlaylistService playlistService, MemberService memberService) {
+    public PlaylistController(PlaylistService playlistService, AuthService authService) {
         this.playlistService = playlistService;
-        this.memberService = memberService;
+        this.authService = authService;
     }
 
     @ApiResponses(value = {
@@ -57,7 +57,7 @@ public class PlaylistController {
     @Operation(summary = "조회", description = "플레이 리스트들 조회")
     @GetMapping("/{loginId}")
     public ResponseEntity<?> getPlaylist(@Parameter @PathVariable("loginId") String loginId) {
-        Member member = memberService.findMemberByLoginId(loginId);
+        Member member = authService.findMemberByLoginId(loginId);
         List<Playlist> playlists = member.getPlaylists();
         playlistService.addThumbnail(playlists);
 
@@ -87,7 +87,7 @@ public class PlaylistController {
                 request.getTitle(),
                 request.getIsPublic(),
                 request.getCategory());
-        Member member = memberService.findMemberByLoginId(request.getLoginId());
+        Member member = authService.findMemberByLoginId(request.getLoginId());
         Playlist playlist = playlistService.createPlaylist(
                 request.getTitle(),
                 request.getIsPublic(),
