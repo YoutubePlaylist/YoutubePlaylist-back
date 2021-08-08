@@ -81,7 +81,6 @@ public class AuthService {
                 .value(token.getRefreshToken())
                 .build();
 
-        refreshTokenRepository.save(refreshToken);
 
         //redis 활용 중 - 현재 저장만, expire 못함
 //        RedisUtils.put(authentication.getName(), token.getRefreshToken(), token.re);

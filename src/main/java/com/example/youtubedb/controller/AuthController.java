@@ -73,6 +73,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody MemberLoginRequestDto request) {
+
         RequestUtil.checkNeedValue(
                 request.getLoginId(),
                 request.getPassword());

@@ -9,46 +9,41 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
-
 @Component
 @RequiredArgsConstructor
 public class RedisUtils {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ModelMapper modelMapper;
 
-    public void put(String key, Object value, Long expirationTime){
-        if(expirationTime != null){
-            redisTemplate.opsForValue().set(key, value, expirationTime, TimeUnit.SECONDS);
-        }else{
-            redisTemplate.opsForValue().set(key, value);
-        }
+    public void put(String key, Object value, long expirationTime) {
+        redisTemplate.opsForValue().set(key, value, expirationTime, TimeUnit.SECONDS);
     }
 
-    public void delete(String key){
+    public void delete(String key) {
         redisTemplate.delete(key);
     }
 
-    public <T> T get(String key, Class<T> clazz){
+    public <T> T get(String key, Class<T> clazz) {
         Object o = redisTemplate.opsForValue().get(key);
-        if(o != null) {
-            if(o instanceof LinkedHashMap){
+        if (o != null) {
+            if (o instanceof LinkedHashMap) {
                 return modelMapper.map(o, clazz);
-            }else{
+            } else {
                 return clazz.cast(o);
             }
         }
         return null;
     }
 
-    public boolean isExists(String key){
+    public boolean isExists(String key) {
         return redisTemplate.hasKey(key);
     }
 
-    public void setExpireTime(String key, long expirationTime){
+    public void setExpireTime(String key, long expirationTime) {
         redisTemplate.expire(key, expirationTime, TimeUnit.SECONDS);
     }
 
-    public long getExpireTime(String key){
+    public long getExpireTime(String key) {
         return redisTemplate.getExpire(key, TimeUnit.SECONDS);
     }
 }

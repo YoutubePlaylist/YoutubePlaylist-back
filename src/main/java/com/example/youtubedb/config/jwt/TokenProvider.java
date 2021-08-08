@@ -6,7 +6,6 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,8 +32,10 @@ public class TokenProvider {
     private static final long REFRESH_TOKEN_EXPIRE_TIME_PC = 1000L * 60 * 60 * 24 * 7 * 4 * 3;  // 3개월
 
     private final Key key;
+    private final RedisUtils redisUtils;
 
-    public TokenProvider(@Value("${jwt.secret}") String secretKey) {
+    public TokenProvider(@Value("${jwt.secret}") String secretKey, RedisUtils redisUtils) {
+        this.redisUtils = redisUtils;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -64,7 +65,9 @@ public class TokenProvider {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
-//        RedisUtils.put(authentication.getName(), refreshToken, expireTime);
+
+//        redisUtils.put("1", "2", expireTime);
+        redisUtils.put(authentication.getName(), refreshToken, expireTime);
 
         return Token.builder()
                 .grantType(BEARER_TYPE)
