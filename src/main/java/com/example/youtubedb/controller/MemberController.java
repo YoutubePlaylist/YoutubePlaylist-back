@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-// TODO 비회원 로그인 로직 필요
 // TODO actuator 관련 이슈 해결 필요!
 // TODO 404에러 관리할 수 있으면 좋을듯
 
