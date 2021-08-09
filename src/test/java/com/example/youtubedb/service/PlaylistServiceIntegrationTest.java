@@ -1,6 +1,6 @@
 package com.example.youtubedb.service;
 
-import com.example.youtubedb.domain.Member;
+import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.Category;
@@ -28,7 +28,7 @@ class PlaylistServiceIntegrationTest {
     @Test
     void 플레이리스트_생성() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = memberService.registerNon("device001", true);
         String title = "myList";
         Boolean isPublic = true;
         String category = "GAME";
@@ -49,7 +49,7 @@ class PlaylistServiceIntegrationTest {
     @Test
     void 플레이리스트_생성_Category이상() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = memberService.registerNon("device001", true);
         String title = "myList";
         Boolean isPublic = true;
         String category = "???";
@@ -64,7 +64,7 @@ class PlaylistServiceIntegrationTest {
     @Test
     void 플레이리스트_조회() {
         // given
-        Member member = memberService.registerNon("devide001");
+        Member member = memberService.registerNon("devide001",true);
         String title = "myList";
         Boolean isPublic = false;
         String category = "GAME";
@@ -86,7 +86,7 @@ class PlaylistServiceIntegrationTest {
     @Test
     void 플레이리스트_수정() {
         // given
-        Member member = memberService.registerNon("devide001");
+        Member member = memberService.registerNon("devide001",true);
         Playlist playlist = playlistService.createPlaylist("myList", false, "GAME", member);
         String newTitle = "newList";
         // when
@@ -99,7 +99,7 @@ class PlaylistServiceIntegrationTest {
     @Test
     void 플레이리스트_존재X() {
         // given
-        Member member = memberService.registerNon("devide001");
+        Member member = memberService.registerNon("devide001",true);
         Playlist playlist = playlistService.createPlaylist("myList", false, "GAME", member);
         // when
         Exception e = assertThrows(NotExistPlaylistException.class, () -> playlistService.getPlaylistById(100L));
@@ -111,7 +111,7 @@ class PlaylistServiceIntegrationTest {
     @Test
     void 플레이리스트_삭제() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = memberService.registerNon("device001",true);
         Playlist playlist = playlistService.createPlaylist("myList", false, "GAME", member);
 
         // when
@@ -127,7 +127,7 @@ class PlaylistServiceIntegrationTest {
     @Test
     void 썸네일_설정() {
         // given
-        Member member = memberService.registerNon("device001");
+        Member member = memberService.registerNon("device001",true);
         Playlist playlist = playlistService.createPlaylist("myList", false, "GAME", member);
         String thumbnail = "thumbnail";
 

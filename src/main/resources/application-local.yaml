@@ -1,6 +1,5 @@
 jwt:
-  secret: testKey
-  time: 60000 # 1분
+  secret: VEVTVCBTRUNSRVQgS0VZVEVTVCBTRUNSRVQgS0VZVEVTVCBTRUNSRVQgS0VZVEVTVCBTRUNSRVQgS0VZVEVTVCBTRUNSRVQgS0VZ
 
 spring:
   jpa:
@@ -8,9 +7,13 @@ spring:
       ddl-auto: create
 
   datasource:
-    #    url: jdbc:h2:tcp://localhost/~/spring
+#    url: jdbc:h2:tcp://localhost/~/spring
     url: jdbc:h2:mem:testdb
     username: sa
     password:
     driver-class-name: org.h2.Driver
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
 

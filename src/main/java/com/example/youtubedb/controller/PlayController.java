@@ -1,16 +1,15 @@
 package com.example.youtubedb.controller;
 
-import com.example.youtubedb.auth.JwtTokenProvider;
 import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.NotAcceptableFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
-import com.example.youtubedb.dto.play.request.*;
+import com.example.youtubedb.dto.play.request.PlayCreateRequestDto;
+import com.example.youtubedb.dto.play.request.PlayEditSeqRequestDto;
+import com.example.youtubedb.dto.play.request.PlayEditTimeRequestDto;
 import com.example.youtubedb.dto.play.response.*;
-import com.example.youtubedb.dto.ResponseDto;
-import com.example.youtubedb.dto.playlist.response.PlaylistDeleteResponseDto;
 import com.example.youtubedb.service.PlayService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
@@ -39,15 +38,12 @@ import java.util.Map;
 public class PlayController {
     private final PlayService playService;
     private final PlaylistService playlistService;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     public PlayController(PlayService playService,
-                          PlaylistService playlistService,
-                          JwtTokenProvider jwtTokenProvider) {
+                          PlaylistService playlistService) {
         this.playService = playService;
         this.playlistService = playlistService;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @ApiResponses(value = {
@@ -102,7 +98,8 @@ public class PlayController {
                 playCreateRequestDto.getThumbnail(),
                 playCreateRequestDto.getTitle(),
                 playCreateRequestDto.getChannelAvatar());
-        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
+//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
+        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
 
         Playlist playlist = playlistService.getPlaylistById(playCreateRequestDto.getPlaylistId());
         Play play = playService.addPlayToPlaylist(
@@ -142,7 +139,8 @@ public class PlayController {
                 playEditTimeRequestDto.getId(),
                 playEditTimeRequestDto.getStart(),
                 playEditTimeRequestDto.getEnd());
-        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
+//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
+        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
 
         Play play = playService.getPlayById(playEditTimeRequestDto.getId());
         playService.editTime(
@@ -181,7 +179,8 @@ public class PlayController {
         RequestUtil.checkNeedValue(
                 playEditSeqRequestDto.getPlaylistId(),
                 playEditSeqRequestDto.getSeqList());
-        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
+//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
+        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
 
         playService.editSeq(loginId, playEditSeqRequestDto.getPlaylistId(), playEditSeqRequestDto.getSeqList());
         List<Map<String, Object>> result = ResponseUtil.getEditPlaysResponse(playEditSeqRequestDto.getSeqList());
@@ -209,7 +208,8 @@ public class PlayController {
     public ResponseEntity<?> deletePlay(@Parameter @PathVariable("id") Long id,
                                         HttpServletRequest request) {
         RequestUtil.checkNeedValue(id);
-        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
+//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
+        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
 
         Play play = playService.getPlayById(id);
         playService.deletePlayById(play, loginId);

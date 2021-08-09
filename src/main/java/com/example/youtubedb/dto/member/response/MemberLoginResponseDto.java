@@ -6,11 +6,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
-public class MemberResponseDto extends BaseResponseSuccessDto {
+public class MemberLoginResponseDto extends BaseResponseSuccessDto {
     @Schema(description = "생성된 회원")
     private final Member response;
 
-    public MemberResponseDto(Member response) {
+    public MemberLoginResponseDto(Member response) {
         this.response = response;
     }
 }

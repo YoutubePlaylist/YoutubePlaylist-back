@@ -1,4 +1,4 @@
-package com.example.youtubedb.auth;
+package com.example.youtubedb.config.jwt;
 
 import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
+public class JwtAccessDeniedHandler implements AccessDeniedHandler {
+
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.setContentType("application/json;charset=UTF-8");

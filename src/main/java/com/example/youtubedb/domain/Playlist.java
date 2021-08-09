@@ -1,5 +1,6 @@
 package com.example.youtubedb.domain;
 
+import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.Category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
