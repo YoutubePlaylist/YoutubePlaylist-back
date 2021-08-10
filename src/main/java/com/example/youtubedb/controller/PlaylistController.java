@@ -60,7 +60,7 @@ public class PlaylistController {
     @GetMapping("/")
     public ResponseEntity<?> getPlaylist(HttpServletRequest request) {
 //        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
-        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
+        String loginId = "member002"; // TODO : jwt에서 가져오는 것으로 수정 필요
         Member member = memberService.findMemberByLoginId(loginId);
         List<Playlist> playlists = member.getPlaylists();
         playlistService.addThumbnail(playlists);
