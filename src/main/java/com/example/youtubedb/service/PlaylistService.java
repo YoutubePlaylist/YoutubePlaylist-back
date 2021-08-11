@@ -1,10 +1,9 @@
 package com.example.youtubedb.service;
 
-import com.example.youtubedb.domain.Member;
+import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.Category;
-import com.example.youtubedb.exception.InvalidAccessException;
 import com.example.youtubedb.exception.NotExistPlaylistException;
 import com.example.youtubedb.exception.NotExistRequestValueException;
 import com.example.youtubedb.repository.PlaylistRepository;
@@ -57,9 +56,9 @@ public class PlaylistService {
 
     public void deletePlaylistById(Long id, String loginId) {
         Playlist playlist = getPlaylistById(id);
-//        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
+        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
 
-        playlistRepository.deleteById(id);
+        playlistRepository.delete(playlist);
     }
 
     public Playlist getPlaylistById(Long lId) {
