@@ -1,7 +1,7 @@
 package com.example.youtubedb.controller;
 
-import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.domain.Playlist;
+import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
@@ -11,9 +11,10 @@ import com.example.youtubedb.dto.playlist.response.PlaylistCreateResponseDto;
 import com.example.youtubedb.dto.playlist.response.PlaylistDeleteResponseDto;
 import com.example.youtubedb.dto.playlist.response.PlaylistEditTitleResponseDto;
 import com.example.youtubedb.dto.playlist.response.PlaylistGetResponseDto;
-import com.example.youtubedb.service.AuthService;
+import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
+import io.jsonwebtoken.Jwts;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,24 +22,29 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 // Spring Security로 JWT 적용시 변경 필요
+@Slf4j
 @Tag(name = "플레이 리스트 관련 API")
 @RestController
 @RequestMapping("/api/playlist")
 public class PlaylistController {
     private final PlaylistService playlistService;
-    private final AuthService authService;
+    private final MemberService memberService;
 
     @Autowired
-    public PlaylistController(PlaylistService playlistService, AuthService authService) {
+    public PlaylistController(PlaylistService playlistService,
+                              MemberService memberService) {
         this.playlistService = playlistService;
-        this.authService = authService;
+        this.memberService = memberService;
     }
 
     @ApiResponses(value = {
@@ -48,16 +54,19 @@ public class PlaylistController {
             @ApiResponse(responseCode = "400",
                     description = "* 잘못된 요청\n " +
                             "1. 필요값 X\n" +
-                            "2. 멤버 존재 X" ,
+                            "2. 멤버 존재 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "서버 에러",
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
     })
     @Operation(summary = "조회", description = "플레이 리스트들 조회")
-    @GetMapping("/{loginId}")
-    public ResponseEntity<?> getPlaylist(@Parameter @PathVariable("loginId") String loginId) {
-        Member member = authService.findMemberByLoginId(loginId);
+    @GetMapping("/")
+    public ResponseEntity<?> getPlaylist(Authentication authentication) {
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+
+        Member member = memberService.findMemberByLoginId(loginId);
         List<Playlist> playlists = member.getPlaylists();
         playlistService.addThumbnail(playlists);
 
@@ -65,6 +74,7 @@ public class PlaylistController {
 
         return ResponseEntity.ok(responseBody);
     }
+
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "생성 성공",
@@ -73,7 +83,7 @@ public class PlaylistController {
                     description = "* 잘못된 요청\n " +
                             "1. 필요값 X\n" +
                             "2. 멤버 존재 X\n" +
-                            "3. 카테고리 존재 X" ,
+                            "3. 카테고리 존재 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "서버 에러",
@@ -81,17 +91,21 @@ public class PlaylistController {
     })
     @PostMapping("/create")
     @Operation(summary = "생성", description = "플레이 리스트 생성")
-    public ResponseEntity<?> createPlaylist(@RequestBody PlaylistCreateRequestDto request) { // 여긴 임시로 loginId 필요
+    public ResponseEntity<?> createPlaylist(@RequestBody PlaylistCreateRequestDto playlistCreateRequestDto,
+                                            Authentication authentication) { // 여긴 임시로 loginId 필요
         RequestUtil.checkNeedValue(
-                request.getLoginId(),
-                request.getTitle(),
-                request.getIsPublic(),
-                request.getCategory());
-        Member member = authService.findMemberByLoginId(request.getLoginId());
+                playlistCreateRequestDto.getTitle(),
+                playlistCreateRequestDto.getIsPublic(),
+                playlistCreateRequestDto.getCategory());
+
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+
+        Member member = memberService.findMemberByLoginId(loginId);
         Playlist playlist = playlistService.createPlaylist(
-                request.getTitle(),
-                request.getIsPublic(),
-                request.getCategory(),
+                playlistCreateRequestDto.getTitle(),
+                playlistCreateRequestDto.getIsPublic(),
+                playlistCreateRequestDto.getCategory(),
                 member);
 
         BaseResponseSuccessDto responseBody = new PlaylistCreateResponseDto(playlist);
@@ -107,7 +121,7 @@ public class PlaylistController {
                     description = "* 잘못된 요청\n " +
                             "1. 필요값 X\n" +
                             "2. 멤버 존재 X\n" +
-                            "3. 플레이 리스트 존재 X" ,
+                            "3. 플레이 리스트 존재 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "서버 에러",
@@ -115,13 +129,18 @@ public class PlaylistController {
     })
     @PutMapping("/edit")
     @Operation(summary = "제목 수정", description = "플레이 리스트 제목 수정")
-    public ResponseEntity<?> editPlaylist(@RequestBody PlaylistEditTitleRequestDto request) {
+    public ResponseEntity<?> editPlaylist(@RequestBody PlaylistEditTitleRequestDto playlistEditTitleRequestDto,
+                                          Authentication authentication) {
         RequestUtil.checkNeedValue(
-                request.getId(),
-                request.getTitle());
-        playlistService.editPlaylistTitle(request.getId(), request.getTitle(), "loginId");
+                playlistEditTitleRequestDto.getId(),
+                playlistEditTitleRequestDto.getTitle());
 
-        BaseResponseSuccessDto responseBody = new PlaylistEditTitleResponseDto(request.getId());
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+
+        playlistService.editPlaylistTitle(playlistEditTitleRequestDto.getId(), playlistEditTitleRequestDto.getTitle(), loginId);
+
+        BaseResponseSuccessDto responseBody = new PlaylistEditTitleResponseDto(playlistEditTitleRequestDto.getId());
 
         return ResponseEntity.ok(responseBody);
     }
@@ -133,7 +152,7 @@ public class PlaylistController {
             @ApiResponse(responseCode = "400",
                     description = "* 잘못된 요청\n " +
                             "1. 필요값 X\n" +
-                            "2. 플레이 리스트 존재 X" ,
+                            "2. 플레이 리스트 존재 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "서버 에러",
@@ -141,9 +160,14 @@ public class PlaylistController {
     })
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "삭제", description = "플레이 리스트 삭제")
-    public ResponseEntity<?> deletePlaylist(@Parameter @PathVariable("id") Long id) {
+    public ResponseEntity<?> deletePlaylist(@Parameter @PathVariable("id") Long id,
+                                            Authentication authentication) {
         RequestUtil.checkNeedValue(id);
-        playlistService.deletePlaylistById(id, "loginId?");
+
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+
+        playlistService.deletePlaylistById(id, loginId);
 
         BaseResponseSuccessDto responseBody = new PlaylistDeleteResponseDto(id);
 

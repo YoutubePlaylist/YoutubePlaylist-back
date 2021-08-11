@@ -1,12 +1,15 @@
 package com.example.youtubedb.config.jwt;
 
 import com.example.youtubedb.domain.Token;
-import com.example.youtubedb.util.RedisUtils;
+//import com.example.youtubedb.util.RedisUtils;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +22,7 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,15 +31,17 @@ public class TokenProvider {
 
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
-    private static final long REFRESH_TOKEN_EXPIRE_TIME_APP = 1000L * 60 * 60 * 24 * 7;  // 7일
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 *30 ;            // 30분
+    private static final long REFRESH_TOKEN_EXPIRE_TIME_APP =  1000L * 60; // 7일 1000L * 60 * 60 * 24 * 7;
     private static final long REFRESH_TOKEN_EXPIRE_TIME_PC = 1000L * 60 * 60 * 24 * 7 * 4 * 3;  // 3개월
 
     private final Key key;
-    private final RedisUtils redisUtils;
+//    private final RedisUtils redisUtils;
+    private final StringRedisTemplate template;
 
-    public TokenProvider(@Value("${jwt.secret}") String secretKey, RedisUtils redisUtils) {
-        this.redisUtils = redisUtils;
+    @Autowired
+    public TokenProvider(@Value("${jwt.secret}") String secretKey, StringRedisTemplate template) {
+        this.template = template;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -67,14 +73,16 @@ public class TokenProvider {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
+        ValueOperations<String, String> stringStringValueOperations = template.opsForValue();
 
 //        redisUtils.put("1", "2", expireTime);
-        redisUtils.put(authentication.getName(), refreshToken, expireTime);
+//        redisUtils.put(authentication.getName(), refreshToken, expireTime);
+        stringStringValueOperations.set(authentication.getName(), refreshToken, expireTime, TimeUnit.MILLISECONDS); // redis에 refreshToken 보관
 
         return Token.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
-                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
+                .accessTokenExpiresIn(accessTokenExpiresIn)
                 .refreshToken(refreshToken)
                 .build();
     }
@@ -112,8 +120,14 @@ public class TokenProvider {
         } catch (IllegalArgumentException e) {
             log.info("JWT 토큰이 잘못되었습니다.");
         }
+
         return false;
     }
+
+//    public String parse
+
+
+
 
     private Claims parseClaims(String accessToken) {
         try {
@@ -122,4 +136,8 @@ public class TokenProvider {
             return e.getClaims();
         }
     }
+
+
+
+
 }

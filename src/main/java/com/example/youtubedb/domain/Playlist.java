@@ -3,10 +3,7 @@ package com.example.youtubedb.domain;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.Category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Playlist extends BaseEntity {
     @Setter
     private String title;

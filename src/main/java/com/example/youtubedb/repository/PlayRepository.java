@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface PlayRepository {
     Play save(Play play);
     Optional<Play> findById(Long id);
-    void deleteById(Long id);
+    void delete(Play play);
 }

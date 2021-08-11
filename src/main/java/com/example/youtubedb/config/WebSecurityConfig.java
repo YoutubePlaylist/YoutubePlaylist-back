@@ -42,10 +42,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/auth/**").permitAll()
-//                .antMatchers("/api/playlist/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-
+                .antMatchers("/api/member/**").permitAll()
+//                .antMatchers("/api/playlist/**").hasRole("USER")
+//                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
 

@@ -1,20 +1,21 @@
 package com.example.youtubedb.dto.member.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-public class NonMemberCreateRequestDto {
+public class NonMemberRequestDto {
     @Schema(description = "장치 ID", example = "device001")
-    private String deviceId;
-    private Boolean isPc;
+    private final String deviceId;
+    @Schema(description = "PC여부", example = "false")
+    private final Boolean isPC;
 
     @Builder
-    public NonMemberCreateRequestDto(String deviceId, boolean isPc) {
+    public NonMemberRequestDto(String deviceId, Boolean isPC) {
         this.deviceId = deviceId;
-        this.isPc = isPc;
+        this.isPC = isPC;
     }
 }

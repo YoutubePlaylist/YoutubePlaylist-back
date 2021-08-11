@@ -34,7 +34,7 @@ public class PlayService {
             String title,
             String channelAvatar) {
         checkTime(start, end);
-//        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
+        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
 
         int sequence = playlist.getPlays().size() + 1;
 
@@ -60,7 +60,7 @@ public class PlayService {
     }
 
     public List<Play> getPlaysInPlaylist(Playlist playlist, String loginId) {
-//        validateWatch(playlist, loginId);
+        validateWatch(playlist, loginId);
 
         return playlist.getPlays();
     }
@@ -72,8 +72,8 @@ public class PlayService {
     }
 
     public void deletePlayById(Play play, String loginId) {
-//        RequestUtil.checkOwn(play.getPlaylist().getMember().getLoginId(), loginId);
-        playRepository.deleteById(play.getId());
+        RequestUtil.checkOwn(play.getPlaylist().getMember().getLoginId(), loginId);
+        playRepository.delete(play);
     }
 
     public Play getPlayById(Long id) {
@@ -81,7 +81,7 @@ public class PlayService {
     }
 
     public void editTime(Play play, String loginId, long start, long end) {
-//        RequestUtil.checkOwn(play.getPlaylist().getMember().getLoginId(), loginId);
+        RequestUtil.checkOwn(play.getPlaylist().getMember().getLoginId(), loginId);
         checkTime(start, end);
         play.setTime(start, end);
         playRepository.save(play);
@@ -92,7 +92,7 @@ public class PlayService {
         seqList.forEach(p -> {
             Play play = getPlayById(p.getId());
             RequestUtil.checkOwn(playlistId, play.getPlaylist().getId());
-//            RequestUtil.checkOwn(loginId, play.getPlaylist().getMember().getLoginId());
+            RequestUtil.checkOwn(loginId, play.getPlaylist().getMember().getLoginId());
             play.setSequence(p.getSequence());
         });
     }

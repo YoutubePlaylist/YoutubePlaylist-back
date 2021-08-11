@@ -1,3 +1,6 @@
+jwt:
+  secret: VEVTVCBTRUNSRVQgS0VZVEVTVCBTRUNSRVQgS0VZVEVTVCBTRUNSRVQgS0VZVEVTVCBTRUNSRVQgS0VZVEVTVCBTRUNSRVQgS0VZ
+
 spring:
   jpa:
     hibernate:
@@ -9,3 +12,8 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+

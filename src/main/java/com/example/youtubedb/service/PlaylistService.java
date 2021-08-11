@@ -7,6 +7,7 @@ import com.example.youtubedb.dto.Category;
 import com.example.youtubedb.exception.NotExistPlaylistException;
 import com.example.youtubedb.exception.NotExistRequestValueException;
 import com.example.youtubedb.repository.PlaylistRepository;
+import com.example.youtubedb.util.RequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,9 +56,9 @@ public class PlaylistService {
 
     public void deletePlaylistById(Long id, String loginId) {
         Playlist playlist = getPlaylistById(id);
-//        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
+        RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
 
-        playlistRepository.deleteById(id);
+        playlistRepository.delete(playlist);
     }
 
     public Playlist getPlaylistById(Long lId) {

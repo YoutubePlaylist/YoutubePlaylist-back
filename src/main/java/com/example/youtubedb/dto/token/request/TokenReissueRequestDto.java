@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 public class TokenReissueRequestDto {
     private String accessToken;
     private String refreshToken;
-    private Boolean isPc;
+    private Boolean isPC;
 
     @Builder
-    public TokenReissueRequestDto(String accessToken, String refreshToken, Boolean isPc) {
+    public TokenReissueRequestDto(String accessToken, String refreshToken, Boolean isPC) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        this.isPc = isPc;
+        this.isPC = isPC;
     }
 }

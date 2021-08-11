@@ -6,22 +6,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class PlayCreateRequestDto {
     @Schema(description = "플레이 리스트 아이디" , example = "1")
-    private Long playlistId;
+    private final Long playlistId;
     @Schema(description = "비디오 아이디" , example = "video123")
-    private String videoId;
+    private final String videoId;
     @Schema(description = "시작 시간" , example = "100")
-    private Long start;
+    private final Long start;
     @Schema(description = "끝 시간" , example = "1000")
-    private Long end;
+    private final Long end;
     @Schema(description = "썸네일 이미지 주소" , example = "img1")
-    private String thumbnail;
+    private final String thumbnail;
     @Schema(description = "제목" , example = "제목1")
-    private String title;
+    private final String title;
     @Schema(description = "아바타 이미지 주소" , example = "img2")
-    private String channelAvatar;
+    private final String channelAvatar;
 
     @Builder
     public PlayCreateRequestDto(

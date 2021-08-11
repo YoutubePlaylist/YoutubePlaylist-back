@@ -24,7 +24,7 @@ class PlayServiceIntegrationTest {
     @Autowired
     private PlayService playService;
     @Autowired
-    private AuthService authService;
+    private MemberService memberService;
     @Autowired
     private PlaylistService playlistService;
 
@@ -50,7 +50,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 플레이_추가() {
         // given
-        Member member = authService.registerNon("device001", isPc);
+        Member member = memberService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
 
         // when
@@ -80,7 +80,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 플레이_추가_시간예외() {
         // given
-        Member member = authService.registerNon("device001", isPc);
+        Member member = memberService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
 
         // when
@@ -103,7 +103,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상목록_조회() {
         // given
-        Member member = authService.registerNon("device001", isPc);
+        Member member = memberService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         playService.addPlayToPlaylist(
                 playlist,
@@ -151,7 +151,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_시간_수정() {
         // given
-        Member member = authService.registerNon("device001", isPc);
+        Member member = memberService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play = playService.addPlayToPlaylist(
                 playlist,
@@ -177,7 +177,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_순서_수정() {
         // given
-        Member member = authService.registerNon("device001", isPc);
+        Member member = memberService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play1 = playService.addPlayToPlaylist(
                 playlist,
@@ -225,7 +225,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_순서_수정_순서이상() {
         // given
-        Member member = authService.registerNon("device001", isPc);
+        Member member = memberService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play1 = playService.addPlayToPlaylist(
                 playlist,
@@ -269,7 +269,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_순서_수정_중복() {
         // given
-        Member member = authService.registerNon("device001", isPc);
+        Member member = memberService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play1 = playService.addPlayToPlaylist(
                 playlist,
@@ -313,7 +313,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_삭제() {
         // given
-        Member member = authService.registerNon("device001", isPc);
+        Member member = memberService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play = playService.addPlayToPlaylist(
                 playlist,
@@ -336,7 +336,7 @@ class PlayServiceIntegrationTest {
     @Test
     void 영상_재정렬() {
         // given
-        Member member = authService.registerNon("device001", isPc);
+        Member member = memberService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
         Play play1 = playService.addPlayToPlaylist(
                 playlist,
