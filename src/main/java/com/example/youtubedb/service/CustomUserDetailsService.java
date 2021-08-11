@@ -21,13 +21,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("CustomUserDetailsService.loadUserByUsername");
         return memberRepository.findByLoginId(username)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
     }
     private UserDetails createUserDetails(Member member) {
-        System.out.println("CustomUserDetailsService.createUserDetails");
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(member.getAuthority().toString());
 
         return new User(
