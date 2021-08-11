@@ -120,7 +120,6 @@ public class MemberController {
     public ResponseEntity<?> login(@RequestBody MemberRequestDto memberRequestDto) {
         RequestUtil.checkNeedValue(
                 memberRequestDto.getLoginId(),
-                memberRequestDto.getPassword(),
                 memberRequestDto.getIsPC());
 
         Member member = memberService.findMemberByLoginId(memberRequestDto.getLoginId());

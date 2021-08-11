@@ -7,6 +7,7 @@ import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.exception.DoNotMatchPasswordException;
 import com.example.youtubedb.exception.DuplicateMemberException;
 import com.example.youtubedb.exception.NotExistMemberException;
+import com.example.youtubedb.exception.RefreshTokenException;
 import com.example.youtubedb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +121,7 @@ public class MemberService implements UserDetailsService {
     ) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(refreshToken)) {
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
+            throw new RefreshTokenException("Refresh Token 이 유효하지 않습니다.");
         }
 
         // 2. Access Token 에서 Member ID(pk) 가져오기
@@ -131,21 +132,21 @@ public class MemberService implements UserDetailsService {
 //                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
         String redisRefreshToken = stringStringValueOperations.get(authentication.getName());
         if(redisRefreshToken == null) {
-            throw new RuntimeException("다시 로그인이 필요합니다.");
+            throw new RefreshTokenException("다시 로그인이 필요합니다.");
         }
 
         // 4. Refresh Token 일치하는지 검사
         if (!redisRefreshToken.equals(refreshToken)) {
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+            throw new RefreshTokenException("토큰의 유저 정보가 일치하지 않습니다.");
         }
 
         // 5. 새로운 토큰 생성
         Token tokenDto = tokenProvider.generateTokenDto(authentication, isPc);
-
+        tokenDto.setRefreshToken(redisRefreshToken);
         // 6. 저장소 정보 업데이트
 //        RefreshToken newRefreshToken = findByIdRefreshToken.updateValue(tokenDto.getRefreshToken());
 //        refreshTokenRepository.save(newRefreshToken);
-        stringStringValueOperations.set(authentication.getName(), tokenDto.getRefreshToken(), tokenDto.getAccessTokenExpiresIn().getTime(), TimeUnit.MILLISECONDS);
+        stringStringValueOperations.set(authentication.getName(), redisRefreshToken, tokenDto.getAccessTokenExpiresIn().getTime(), TimeUnit.MILLISECONDS);
         // 토큰 발급
         return tokenDto;
     }

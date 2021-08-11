@@ -1,6 +1,7 @@
 package com.example.youtubedb.exception;
 
 import com.example.youtubedb.dto.BaseResponseFailDto;
+import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.NotAcceptableFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
@@ -20,7 +21,8 @@ public class ControllerExceptionHandler {
             NotExistPlayException.class,
             DuplicateSeqException.class,
             InvalidSeqException.class,
-            DoNotMatchPasswordException.class
+            DoNotMatchPasswordException.class,
+            RefreshTokenException.class
     })
     public ResponseEntity<?> badRequest(Exception e) {
         BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()

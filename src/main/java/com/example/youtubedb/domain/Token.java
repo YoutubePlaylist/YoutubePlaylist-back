@@ -1,9 +1,6 @@
 package com.example.youtubedb.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -13,6 +10,7 @@ public class Token{
 
     private String grantType;
     private String accessToken;
+    @Setter
     private String refreshToken;
     private Date accessTokenExpiresIn;
 

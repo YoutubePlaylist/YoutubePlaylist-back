@@ -6,11 +6,11 @@ spring:
     active: local
 
 #  security 설정
-  security:
-    user:
-      name: "admin"
-      password: "pass"
-      roles: "ADMIN"
+#  security:
+#    user:
+#      name: "admin"
+#      password: "pass"
+#      roles: "ADMIN"
 
 
   boot:
@@ -42,7 +42,7 @@ management:
       exposure:
         include: "*"
 
-      base-path: "/admin/monitoring"
+      base-path: "/monitoring"
 
   endpoint:
     health:
