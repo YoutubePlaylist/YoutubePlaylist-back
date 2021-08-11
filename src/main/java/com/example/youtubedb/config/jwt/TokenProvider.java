@@ -31,7 +31,7 @@ public class TokenProvider {
 
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 30;  //30초          // 30분
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 *30 ;            // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME_APP =  1000L * 60; // 7일 1000L * 60 * 60 * 24 * 7;
     private static final long REFRESH_TOKEN_EXPIRE_TIME_PC = 1000L * 60 * 60 * 24 * 7 * 4 * 3;  // 3개월
 
@@ -66,6 +66,8 @@ public class TokenProvider {
         // Refresh Token 생성
         long expireTime = now + (isPc? REFRESH_TOKEN_EXPIRE_TIME_PC : REFRESH_TOKEN_EXPIRE_TIME_APP);
         Date expireDate = new Date(expireTime);
+        System.out.println("expireDate = " + expireDate);
+        System.out.println("expireTime = " + expireTime);
         String refreshToken = Jwts.builder()
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS512)
@@ -118,8 +120,14 @@ public class TokenProvider {
         } catch (IllegalArgumentException e) {
             log.info("JWT 토큰이 잘못되었습니다.");
         }
+
         return false;
     }
+
+//    public String parse
+
+
+
 
     private Claims parseClaims(String accessToken) {
         try {
@@ -128,4 +136,8 @@ public class TokenProvider {
             return e.getClaims();
         }
     }
+
+
+
+
 }

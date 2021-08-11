@@ -182,7 +182,7 @@ public class MemberService implements UserDetailsService {
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(member.getAuthority().toString());
 
         return new User(
-                String.valueOf(member.getId()),
+                String.valueOf(member.getLoginId()),
                 member.getPassword(),
                 Collections.singleton(grantedAuthority)
         );

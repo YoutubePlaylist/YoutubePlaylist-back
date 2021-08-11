@@ -38,12 +38,15 @@ public class MemberController {
 
     private final MemberService memberService;
     private final PlaylistService playlistService;
+    private final TokenProvider tokenProvider;
 
     @Autowired
     public MemberController(MemberService memberService,
-                            PlaylistService playlistService) {
+                            PlaylistService playlistService,
+                            TokenProvider tokenProvider) {
         this.memberService = memberService;
         this.playlistService = playlistService;
+        this.tokenProvider = tokenProvider;
     }
 
     @ApiResponses(value = {

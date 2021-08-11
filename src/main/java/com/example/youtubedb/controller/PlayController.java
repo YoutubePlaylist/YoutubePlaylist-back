@@ -21,8 +21,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +33,7 @@ import java.util.Map;
 
 // play, playlist의 변경 작업 시 본인인지 확인하는 부분을 aop로 빼도 괜찮을 듯?
 // 근데 세부사항이 좀 다를 수 있어서..우선 Util로 빼놓자!
-
+@Slf4j
 @Tag(name = "영상 관련 API")
 @RestController
 @RequestMapping("/api/play")
@@ -89,7 +91,7 @@ public class PlayController {
     @PostMapping("/create")
     @Operation(summary = "생성", description = "영상 생성")
     public ResponseEntity<?> createPlay(@RequestBody PlayCreateRequestDto playCreateRequestDto,
-                                        HttpServletRequest request) {
+                                        Authentication authentication) {
         RequestUtil.checkNeedValue(
                 playCreateRequestDto.getPlaylistId(),
                 playCreateRequestDto.getVideoId(),
@@ -98,8 +100,9 @@ public class PlayController {
                 playCreateRequestDto.getThumbnail(),
                 playCreateRequestDto.getTitle(),
                 playCreateRequestDto.getChannelAvatar());
-//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
-        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
+
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
 
         Playlist playlist = playlistService.getPlaylistById(playCreateRequestDto.getPlaylistId());
         Play play = playService.addPlayToPlaylist(
@@ -134,13 +137,14 @@ public class PlayController {
     @PutMapping("/edit/time")
     @Operation(summary = "재생 시간 변경", description = "영상 재생시간 변경")
     public ResponseEntity<?> editPlayTime(@RequestBody PlayEditTimeRequestDto playEditTimeRequestDto,
-                                          HttpServletRequest request) {
+                                          Authentication authentication) {
         RequestUtil.checkNeedValue(
                 playEditTimeRequestDto.getId(),
                 playEditTimeRequestDto.getStart(),
                 playEditTimeRequestDto.getEnd());
-//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
-        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
+
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
 
         Play play = playService.getPlayById(playEditTimeRequestDto.getId());
         playService.editTime(
@@ -175,12 +179,14 @@ public class PlayController {
     })
     @Operation(summary = "순서 변경", description = "영상 재생순서 변경")
     public ResponseEntity<?> editPlaySequence(@RequestBody PlayEditSeqRequestDto playEditSeqRequestDto,
-                                              HttpServletRequest request) {
+                                              Authentication authentication) {
         RequestUtil.checkNeedValue(
                 playEditSeqRequestDto.getPlaylistId(),
                 playEditSeqRequestDto.getSeqList());
-//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
-        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
+
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+
 
         playService.editSeq(loginId, playEditSeqRequestDto.getPlaylistId(), playEditSeqRequestDto.getSeqList());
         List<Map<String, Object>> result = ResponseUtil.getEditPlaysResponse(playEditSeqRequestDto.getSeqList());
@@ -206,10 +212,10 @@ public class PlayController {
     })
     @Operation(summary = "삭제", description = "영상 삭제")
     public ResponseEntity<?> deletePlay(@Parameter @PathVariable("id") Long id,
-                                        HttpServletRequest request) {
+                                        Authentication authentication) {
         RequestUtil.checkNeedValue(id);
-//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
-        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
 
         Play play = playService.getPlayById(id);
         playService.deletePlayById(play, loginId);

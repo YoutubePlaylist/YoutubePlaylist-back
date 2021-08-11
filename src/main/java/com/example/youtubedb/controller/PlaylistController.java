@@ -14,6 +14,7 @@ import com.example.youtubedb.dto.playlist.response.PlaylistGetResponseDto;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
+import io.jsonwebtoken.Jwts;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,14 +22,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 // Spring Security로 JWT 적용시 변경 필요
+@Slf4j
 @Tag(name = "플레이 리스트 관련 API")
 @RestController
 @RequestMapping("/api/playlist")
@@ -50,7 +54,7 @@ public class PlaylistController {
             @ApiResponse(responseCode = "400",
                     description = "* 잘못된 요청\n " +
                             "1. 필요값 X\n" +
-                            "2. 멤버 존재 X" ,
+                            "2. 멤버 존재 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "서버 에러",
@@ -58,9 +62,10 @@ public class PlaylistController {
     })
     @Operation(summary = "조회", description = "플레이 리스트들 조회")
     @GetMapping("/")
-    public ResponseEntity<?> getPlaylist(HttpServletRequest request) {
-//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
-        String loginId = "member002"; // TODO : jwt에서 가져오는 것으로 수정 필요
+    public ResponseEntity<?> getPlaylist(Authentication authentication) {
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+
         Member member = memberService.findMemberByLoginId(loginId);
         List<Playlist> playlists = member.getPlaylists();
         playlistService.addThumbnail(playlists);
@@ -69,6 +74,7 @@ public class PlaylistController {
 
         return ResponseEntity.ok(responseBody);
     }
+
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "생성 성공",
@@ -77,7 +83,7 @@ public class PlaylistController {
                     description = "* 잘못된 요청\n " +
                             "1. 필요값 X\n" +
                             "2. 멤버 존재 X\n" +
-                            "3. 카테고리 존재 X" ,
+                            "3. 카테고리 존재 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "서버 에러",
@@ -86,13 +92,14 @@ public class PlaylistController {
     @PostMapping("/create")
     @Operation(summary = "생성", description = "플레이 리스트 생성")
     public ResponseEntity<?> createPlaylist(@RequestBody PlaylistCreateRequestDto playlistCreateRequestDto,
-                                            HttpServletRequest request) { // 여긴 임시로 loginId 필요
+                                            Authentication authentication) { // 여긴 임시로 loginId 필요
         RequestUtil.checkNeedValue(
                 playlistCreateRequestDto.getTitle(),
                 playlistCreateRequestDto.getIsPublic(),
                 playlistCreateRequestDto.getCategory());
-//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
-        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
+
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
 
         Member member = memberService.findMemberByLoginId(loginId);
         Playlist playlist = playlistService.createPlaylist(
@@ -114,7 +121,7 @@ public class PlaylistController {
                     description = "* 잘못된 요청\n " +
                             "1. 필요값 X\n" +
                             "2. 멤버 존재 X\n" +
-                            "3. 플레이 리스트 존재 X" ,
+                            "3. 플레이 리스트 존재 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "서버 에러",
@@ -123,12 +130,13 @@ public class PlaylistController {
     @PutMapping("/edit")
     @Operation(summary = "제목 수정", description = "플레이 리스트 제목 수정")
     public ResponseEntity<?> editPlaylist(@RequestBody PlaylistEditTitleRequestDto playlistEditTitleRequestDto,
-                                          HttpServletRequest request) {
+                                          Authentication authentication) {
         RequestUtil.checkNeedValue(
                 playlistEditTitleRequestDto.getId(),
                 playlistEditTitleRequestDto.getTitle());
-//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
-        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
+
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
 
         playlistService.editPlaylistTitle(playlistEditTitleRequestDto.getId(), playlistEditTitleRequestDto.getTitle(), loginId);
 
@@ -144,7 +152,7 @@ public class PlaylistController {
             @ApiResponse(responseCode = "400",
                     description = "* 잘못된 요청\n " +
                             "1. 필요값 X\n" +
-                            "2. 플레이 리스트 존재 X" ,
+                            "2. 플레이 리스트 존재 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "서버 에러",
@@ -153,10 +161,11 @@ public class PlaylistController {
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "삭제", description = "플레이 리스트 삭제")
     public ResponseEntity<?> deletePlaylist(@Parameter @PathVariable("id") Long id,
-                                            HttpServletRequest request) {
+                                            Authentication authentication) {
         RequestUtil.checkNeedValue(id);
-//        String loginId = jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN"));
-        String loginId = "member001"; // TODO : jwt에서 가져오는 것으로 수정 필요
+
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
 
         playlistService.deletePlaylistById(id, loginId);
 
