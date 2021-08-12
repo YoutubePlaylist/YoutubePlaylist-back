@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class NonMemberCreateRequestDto {
+public class MemberLoginRequestDto {
     @Schema(description = "장치 ID", example = "device001")
-    private String deviceId;
+    private String loginId;
+    private String password;
 
     @Builder
-    public NonMemberCreateRequestDto(String deviceId) {
-        this.deviceId = deviceId;
+    public MemberLoginRequestDto(String loginId, String password) {
+        this.loginId = loginId;
+        this.password = password;
     }
 }

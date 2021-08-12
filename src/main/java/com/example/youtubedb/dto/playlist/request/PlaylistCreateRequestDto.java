@@ -7,20 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class PlaylistCreateRequestDto {
-    @Schema(description = "로그인 아이디", example = "tester")
-    private String loginId;
     @Schema(description = "제목", example = "영상 목록 1")
-    private String title;
+    private final String title;
     @Schema(description = "공개 여부", example = "true")
-    private Boolean isPublic;
+    private final Boolean isPublic;
     @Schema(description = "카테고리", example = "GAME")
-    private String category;
+    private final String category;
 
     @Builder
-    public PlaylistCreateRequestDto(String loginId, String title, Boolean isPublic, String category) {
-        this.loginId = loginId;
+    public PlaylistCreateRequestDto(String title, Boolean isPublic, String category) {
         this.title = title;
         this.isPublic = isPublic;
         this.category = category;

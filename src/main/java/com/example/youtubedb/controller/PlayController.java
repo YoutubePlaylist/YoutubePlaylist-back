@@ -6,10 +6,10 @@ import com.example.youtubedb.dto.BaseResponseSuccessDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.NotAcceptableFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
-import com.example.youtubedb.dto.play.request.*;
+import com.example.youtubedb.dto.play.request.PlayCreateRequestDto;
+import com.example.youtubedb.dto.play.request.PlayEditSeqRequestDto;
+import com.example.youtubedb.dto.play.request.PlayEditTimeRequestDto;
 import com.example.youtubedb.dto.play.response.*;
-import com.example.youtubedb.dto.ResponseDto;
-import com.example.youtubedb.dto.playlist.response.PlaylistDeleteResponseDto;
 import com.example.youtubedb.service.PlayService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
@@ -21,8 +21,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +32,7 @@ import java.util.Map;
 
 // play, playlist의 변경 작업 시 본인인지 확인하는 부분을 aop로 빼도 괜찮을 듯?
 // 근데 세부사항이 좀 다를 수 있어서..우선 Util로 빼놓자!
-
+@Slf4j
 @Tag(name = "영상 관련 API")
 @RestController
 @RequestMapping("/api/play")
@@ -39,7 +41,8 @@ public class PlayController {
     private final PlaylistService playlistService;
 
     @Autowired
-    public PlayController(PlayService playService, PlaylistService playlistService) {
+    public PlayController(PlayService playService,
+                          PlaylistService playlistService) {
         this.playService = playService;
         this.playlistService = playlistService;
     }
@@ -51,7 +54,7 @@ public class PlayController {
             @ApiResponse(responseCode = "400",
                     description = "* 잘못된 요청\n " +
                             "1. 필요값 X\n" +
-                            "2. 플레이 리스트 존재 X" ,
+                            "2. 플레이 리스트 존재 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "서버 에러",
@@ -86,27 +89,30 @@ public class PlayController {
     })
     @PostMapping("/create")
     @Operation(summary = "생성", description = "영상 생성")
-    public ResponseEntity<?> createPlay(@RequestBody PlayCreateRequestDto request) {
+    public ResponseEntity<?> createPlay(@RequestBody PlayCreateRequestDto playCreateRequestDto,
+                                        Authentication authentication) {
         RequestUtil.checkNeedValue(
-//                request.getLoginId(),
-                request.getPlaylistId(),
-                request.getVideoId(),
-                request.getStart(),
-                request.getEnd(),
-                request.getThumbnail(),
-                request.getTitle(),
-                request.getChannelAvatar());
+                playCreateRequestDto.getPlaylistId(),
+                playCreateRequestDto.getVideoId(),
+                playCreateRequestDto.getStart(),
+                playCreateRequestDto.getEnd(),
+                playCreateRequestDto.getThumbnail(),
+                playCreateRequestDto.getTitle(),
+                playCreateRequestDto.getChannelAvatar());
 
-        Playlist playlist = playlistService.getPlaylistById(request.getPlaylistId());
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+
+        Playlist playlist = playlistService.getPlaylistById(playCreateRequestDto.getPlaylistId());
         Play play = playService.addPlayToPlaylist(
                 playlist,
-                "loginId?",
-                request.getVideoId(),
-                request.getStart(),
-                request.getEnd(),
-                request.getThumbnail(),
-                request.getTitle(),
-                request.getChannelAvatar());
+                loginId,
+                playCreateRequestDto.getVideoId(),
+                playCreateRequestDto.getStart(),
+                playCreateRequestDto.getEnd(),
+                playCreateRequestDto.getThumbnail(),
+                playCreateRequestDto.getTitle(),
+                playCreateRequestDto.getChannelAvatar());
 
         BaseResponseSuccessDto responseBody = new PlayCreateResponseDto(play);
 
@@ -129,20 +135,24 @@ public class PlayController {
     })
     @PutMapping("/edit/time")
     @Operation(summary = "재생 시간 변경", description = "영상 재생시간 변경")
-    public ResponseEntity<?> editPlayTime(@RequestBody PlayEditTimeRequestDto request) {
+    public ResponseEntity<?> editPlayTime(@RequestBody PlayEditTimeRequestDto playEditTimeRequestDto,
+                                          Authentication authentication) {
         RequestUtil.checkNeedValue(
-                request.getId(),
-                request.getStart(),
-                request.getEnd());
+                playEditTimeRequestDto.getId(),
+                playEditTimeRequestDto.getStart(),
+                playEditTimeRequestDto.getEnd());
 
-        Play play = playService.getPlayById(request.getId());
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+
+        Play play = playService.getPlayById(playEditTimeRequestDto.getId());
         playService.editTime(
                 play,
-                "loginId?",
-                request.getStart(),
-                request.getEnd());
+                loginId,
+                playEditTimeRequestDto.getStart(),
+                playEditTimeRequestDto.getEnd());
 
-        BaseResponseSuccessDto responseBody = new PlayEditTimeResponseDto(request.getId());
+        BaseResponseSuccessDto responseBody = new PlayEditTimeResponseDto(playEditTimeRequestDto.getId());
 
         return ResponseEntity.ok(responseBody);
     }
@@ -167,15 +177,20 @@ public class PlayController {
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
     })
     @Operation(summary = "순서 변경", description = "영상 재생순서 변경")
-    public ResponseEntity<?> editPlaySequence(@RequestBody PlayEditSeqRequestDto request) {
+    public ResponseEntity<?> editPlaySequence(@RequestBody PlayEditSeqRequestDto playEditSeqRequestDto,
+                                              Authentication authentication) {
         RequestUtil.checkNeedValue(
-                request.getPlaylistId(),
-                request.getSeqList());
+                playEditSeqRequestDto.getPlaylistId(),
+                playEditSeqRequestDto.getSeqList());
 
-        playService.editSeq("loginId?", request.getPlaylistId(), request.getSeqList());
-        List<Map<String, Object>> result = ResponseUtil.getEditPlaysResponse(request.getSeqList());
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
 
-        BaseResponseSuccessDto responseBody = new PlayEditSeqResponseDto(request.getSeqList());
+
+        playService.editSeq(loginId, playEditSeqRequestDto.getPlaylistId(), playEditSeqRequestDto.getSeqList());
+        List<Map<String, Object>> result = ResponseUtil.getEditPlaysResponse(playEditSeqRequestDto.getSeqList());
+
+        BaseResponseSuccessDto responseBody = new PlayEditSeqResponseDto(playEditSeqRequestDto.getSeqList());
 
         return ResponseEntity.ok(responseBody);
     }
@@ -195,11 +210,14 @@ public class PlayController {
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
     })
     @Operation(summary = "삭제", description = "영상 삭제")
-    public ResponseEntity<?> deletePlay(@Parameter @PathVariable("id") Long id) {
+    public ResponseEntity<?> deletePlay(@Parameter @PathVariable("id") Long id,
+                                        Authentication authentication) {
         RequestUtil.checkNeedValue(id);
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
 
         Play play = playService.getPlayById(id);
-        playService.deletePlayById(play, "loginId?");
+        playService.deletePlayById(play, loginId);
         playService.sortPlaysInPlaylist(play.getPlaylist());
         BaseResponseSuccessDto responseBody = new PlayDeleteResponseDto(id);
 

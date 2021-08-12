@@ -6,6 +6,8 @@ build/
 !**/src/test/**/build/
 application-prod.yaml
 
+**/src/main/resources/application*
+
 ### STS ###
 .apt_generated
 .classpath

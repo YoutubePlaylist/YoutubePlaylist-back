@@ -10,12 +10,11 @@ import lombok.ToString;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 public class PlayEditSeqRequestDto {
     @Schema(description = "로그인 아이디", example = "tester")
-    private Long playlistId;
+    private final Long playlistId;
     @Schema(description = "영상 순서 목록")
-    private List<PlaySeqDto> seqList;
+    private final List<PlaySeqDto> seqList;
 
     @Builder
     public PlayEditSeqRequestDto(Long playlistId, List<PlaySeqDto> seqList) {
