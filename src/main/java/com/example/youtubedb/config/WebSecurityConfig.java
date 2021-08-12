@@ -44,7 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/member/**").permitAll()
                 .antMatchers("/api/**").authenticated()
-                .antMatchers("/swagger-ui/**").hasRole("ADMIN")
+//                .antMatchers("/swagger-ui/**").hasRole("ADMIN")
 //                .anyRequest().permitAll()
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
