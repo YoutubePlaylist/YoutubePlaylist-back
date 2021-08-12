@@ -1,15 +1,11 @@
-/*
 package com.example.youtubedb.service;
 
-import com.example.youtubedb.domain.Member;
+import com.example.youtubedb.domain.Token;
 import com.example.youtubedb.domain.member.Member;
-import com.example.youtubedb.exception.DoNotMatchPasswordException;
-import com.example.youtubedb.exception.DuplicateMemberException;
-import com.example.youtubedb.exception.NotExistMemberException;
+import com.example.youtubedb.exception.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,8 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MemberServiceIntegrationTest {
     @Autowired
     MemberService memberService;
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
     @Test
     void 비회원_등록() {
@@ -30,13 +24,12 @@ class MemberServiceIntegrationTest {
         String deviceId = "device001";
 
         // when
-        Member nonMember = memberService.registerNon(deviceId);
+        Member nonMember = memberService.registerNon(deviceId, false);
 
         // then
         assertAll(
                 () -> assertThat(nonMember.isMember()).isEqualTo(false),
-                () -> assertThat(nonMember.getLoginId()).isEqualTo(deviceId),
-                () -> assertThat(nonMember.getPassword()).isEqualTo(null)
+                () -> assertThat(nonMember.getLoginId()).isEqualTo(deviceId)
         );
     }
 
@@ -46,8 +39,8 @@ class MemberServiceIntegrationTest {
         String deviceId = "device001";
 
         // when
-        memberService.registerNon(deviceId);
-        Exception e = assertThrows(DuplicateMemberException.class, () -> memberService.registerNon(deviceId));
+        memberService.registerNon(deviceId, false);
+        Exception e = assertThrows(DuplicateMemberException.class, () -> memberService.registerNon(deviceId, false));
 
         // then
         assertThat(e.getMessage()).isEqualTo(DuplicateMemberException.getErrorMessage());
@@ -65,8 +58,7 @@ class MemberServiceIntegrationTest {
         // then
         assertAll(
                 () -> assertThat(result.isMember()).isEqualTo(false),
-                () -> assertThat(result.getLoginId()).isEqualTo(deviceId),
-                () -> assertThat(result.getPassword()).isEqualTo(null)
+                () -> assertThat(result.getLoginId()).isEqualTo(deviceId)
         );
     }
 
@@ -86,7 +78,7 @@ class MemberServiceIntegrationTest {
     void 회원_비회원_삭제() {
         // given
         String deviceId = "device001";
-        Member nonMember = memberService.registerNon(deviceId);
+        Member nonMember = memberService.registerNon(deviceId, false);
 
         // when
         memberService.deleteUserByLoginId(deviceId);
@@ -100,7 +92,7 @@ class MemberServiceIntegrationTest {
     void 회원가입() {
         // given
         String loginId = "helloMan";
-        String password = "hello123";
+        String password = "hello123*";
 
         // when
         Member member = memberService.registerReal(loginId, password, false);
@@ -116,22 +108,44 @@ class MemberServiceIntegrationTest {
     }
 
     @Test
+    void 회원가입_비밀번호_공백() {
+        // given
+        String loginId = "helloMan";
+        String password = "he llo";
+
+        // when
+        Exception e = assertThrows(InvalidBlankPasswordException.class, () -> memberService.registerReal(loginId, password, false));
+
+        // then
+        assertThat(e.getMessage()).isEqualTo(InvalidBlankPasswordException.getErrorMessage());
+    }
+
+    @Test
+    void 회원가입_비밀번호규칙X() {
+        // given
+        String loginId = "helloMan";
+        String password = "hello";
+
+        // when
+        Exception e = assertThrows(InvalidRegexPasswordException.class, () -> memberService.registerReal(loginId, password, false));
+
+        // then
+        assertThat(e.getMessage()).isEqualTo(InvalidRegexPasswordException.getErrorMessage());
+    }
+
+    @Test
     void 로그인() {
         // given
         String loginId = "helloMan";
         String password = "hello123";
+        String BEARER_TYPE = "bearer";
 
         // when
         Member member = memberService.registerReal(loginId, password, false);
-        Member loginMember = memberService.login(loginId, password, false);
+        Token token = memberService.login(loginId, password, false);
 
         // then
-        assertAll(
-                () -> assertThat(loginMember.getId()).isEqualTo(member.getId()),
-                () -> assertThat(loginMember.getLoginId()).isEqualTo(member.getLoginId()),
-                () -> assertThat(loginMember.getPassword()).isEqualTo(member.getPassword()),
-                () -> assertThat(loginMember.isMember()).isEqualTo(member.isMember())
-        );
+        assertThat(token.getGrantType()).isEqualTo(BEARER_TYPE);
     }
 
     @Test
@@ -140,12 +154,12 @@ class MemberServiceIntegrationTest {
         String loginId = "helloMan";
         String password = "hello123";
         String otherPassword = "bye123";
-        Member member = memberService.register(loginId, password);
+        Member member = memberService.registerReal(loginId, password, false);
 
         // when
-       Exception e = assertThrows(DoNotMatchPasswordException.class, () -> memberService.login(loginId, otherPassword));
+       Exception e = assertThrows(DoNotMatchPasswordException.class, () -> memberService.login(loginId, otherPassword, false));
 
         // then
         assertThat(e.getMessage()).isEqualTo(DoNotMatchPasswordException.getErrorMessage());
     }
-}*/
+}
