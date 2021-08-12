@@ -42,10 +42,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-//                .antMatchers("/api/member/**").permitAll()
-//                .antMatchers("/api/playlist/**").hasRole("USER")
-//                .anyRequest().authenticated()
-                .anyRequest().permitAll()
+          
+                .antMatchers("/api/member/**").permitAll()
+                .antMatchers("/api/**").authenticated()
+//                .antMatchers("/swagger-ui/**").hasRole("ADMIN")
+//                .anyRequest().permitAll()
+
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
 

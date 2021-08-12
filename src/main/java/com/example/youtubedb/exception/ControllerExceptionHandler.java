@@ -24,7 +24,8 @@ public class ControllerExceptionHandler {
             DoNotMatchPasswordException.class,
             RefreshTokenException.class,
             InvalidBlankPasswordException.class,
-            InvalidRegexPasswordException.class
+            InvalidRegexPasswordException.class,
+            OverNomMemberMaxListException.class
     })
     public ResponseEntity<?> badRequest(Exception e) {
         BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()
