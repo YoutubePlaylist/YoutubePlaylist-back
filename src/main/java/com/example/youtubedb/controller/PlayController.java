@@ -62,11 +62,15 @@ public class PlayController {
     })
     @GetMapping("/list/{playlistId}")
     @Operation(summary = "조회", description = "영상 목록 조회")
-    public ResponseEntity<?> getPlays(@Parameter @PathVariable("playlistId") Long playlistId) {
+    public ResponseEntity<?> getPlays(@Parameter @PathVariable("playlistId") Long playlistId,
+                                      Authentication authentication) {
+
         RequestUtil.checkNeedValue(playlistId);
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
 
         Playlist playlist = playlistService.getPlaylistById(playlistId);
-        List<Play> plays = playService.getPlaysInPlaylist(playlist, "loginId?");
+        List<Play> plays = playService.getPlaysInPlaylist(playlist, loginId);
 
         BaseResponseSuccessDto responseBody = new PlaysGetResponseDto(plays);
 
