@@ -39,15 +39,12 @@ public class MemberController {
 
     private final MemberService memberService;
     private final PlaylistService playlistService;
-    private final TokenProvider tokenProvider;
 
     @Autowired
     public MemberController(MemberService memberService,
-                            PlaylistService playlistService,
-                            TokenProvider tokenProvider) {
+                            PlaylistService playlistService) {
         this.memberService = memberService;
         this.playlistService = playlistService;
-        this.tokenProvider = tokenProvider;
     }
 
     @ApiResponses(value = {
@@ -60,7 +57,7 @@ public class MemberController {
                             "2. 필요값 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
-                    description = "서버 에러",
+                    description = "* 서버 에러",
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
     })
     @Operation(summary = "가입", description = "비회원 가입")
@@ -87,7 +84,7 @@ public class MemberController {
                             "2. 필요값 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
-                    description = "서버 에러",
+                    description = "* 서버 에러",
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
     })
     @Operation(summary = "가입", description = "회원 가입")
@@ -116,10 +113,10 @@ public class MemberController {
                             "3. 필요값 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
-                    description = "서버 에러",
+                    description = "* 서버 에러",
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
     })
-    @Operation(summary = "로그인", description = "회원 로그인")
+    @Operation(summary = "로그인(회원+비회원)", description = "비회원+회원 로그인")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody MemberRequestDto memberRequestDto) {
         RequestUtil.checkNeedValue(
@@ -143,9 +140,10 @@ public class MemberController {
                             "1. 아이디 존재 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
-                    description = "서버 에러",
+                    description = "* 서버 에러",
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
     })
+    @Operation(summary = "회원 삭제", description = "회원 삭제")
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteMember(Authentication authentication) {
         log.info(" authentication = {}", authentication);
@@ -157,6 +155,21 @@ public class MemberController {
         return ResponseEntity.ok(responseBody);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "토큰 재발급 성공",
+                    content = @Content(schema = @Schema(implementation = TokenResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "* 잘못된 요청\n" +
+                            "1. refresh 토큰 유효X\n" +
+                            "2. refresh 토큰 기간 만료\n" +
+                            "3. refresh 토큰 불일치\n",
+                    content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "* 서버 에러",
+                    content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
+    })
+    @Operation(summary = "토큰 재발급", description = "access토큰 재발급")
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(@RequestBody TokenReissueRequestDto reissueRequestDto) {
         RequestUtil.checkNeedValue(

@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 public class TokenResponseDto extends BaseResponseSuccessDto {
-    @Schema(description = "토큰", example = "token123")
+    @Schema(description = "토큰")
     private final Token response;
 
     public TokenResponseDto(Token response) {
