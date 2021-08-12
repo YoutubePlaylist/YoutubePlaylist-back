@@ -106,7 +106,7 @@ public class MemberService implements UserDetailsService {
 
             //redis 활용 중 - 현재 저장만, expire 못함
 //        RedisUtils.put(authentication.getName(), token.getRefreshToken(), token.re);
-            stringStringValueOperations.set(authentication.getName(), token.getRefreshToken(), token.getAccessTokenExpiresIn().getTime(), TimeUnit.MILLISECONDS);
+            stringStringValueOperations.set(authentication.getName(), token.getRefreshToken(), token.getRefreshTokenExpiresIn().getTime(), TimeUnit.MILLISECONDS);
 
             // 5. 토큰 발급
             return token;
@@ -143,10 +143,7 @@ public class MemberService implements UserDetailsService {
         // 5. 새로운 토큰 생성
         Token tokenDto = tokenProvider.generateTokenDto(authentication, isPc);
         tokenDto.setRefreshToken(redisRefreshToken);
-        // 6. 저장소 정보 업데이트
-//        RefreshToken newRefreshToken = findByIdRefreshToken.updateValue(tokenDto.getRefreshToken());
-//        refreshTokenRepository.save(newRefreshToken);
-        stringStringValueOperations.set(authentication.getName(), redisRefreshToken, tokenDto.getAccessTokenExpiresIn().getTime(), TimeUnit.MILLISECONDS);
+
         // 토큰 발급
         return tokenDto;
     }

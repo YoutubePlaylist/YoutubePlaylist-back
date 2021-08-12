@@ -77,13 +77,12 @@ public class TokenProvider {
 
 //        redisUtils.put("1", "2", expireTime);
 //        redisUtils.put(authentication.getName(), refreshToken, expireTime);
-        stringStringValueOperations.set(authentication.getName(), refreshToken, expireTime, TimeUnit.MILLISECONDS); // redis에 refreshToken 보관
-
         return Token.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn)
                 .refreshToken(refreshToken)
+                .refreshTokenExpiresIn(expireDate)
                 .build();
     }
 
