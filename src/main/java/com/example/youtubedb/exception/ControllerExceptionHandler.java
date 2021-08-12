@@ -22,7 +22,9 @@ public class ControllerExceptionHandler {
             DuplicateSeqException.class,
             InvalidSeqException.class,
             DoNotMatchPasswordException.class,
-            RefreshTokenException.class
+            RefreshTokenException.class,
+            OverNomMemberMaxListException.class
+
     })
     public ResponseEntity<?> badRequest(Exception e) {
         BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()

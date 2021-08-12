@@ -66,7 +66,9 @@ public class PlaylistController {
         log.info(" loginId = {}", authentication.getName());
         String loginId = authentication.getName();
 
+
         Member member = memberService.findMemberByLoginId(loginId);
+
         List<Playlist> playlists = member.getPlaylists();
         playlistService.addThumbnail(playlists);
 
@@ -92,16 +94,17 @@ public class PlaylistController {
     @PostMapping("/create")
     @Operation(summary = "생성", description = "플레이 리스트 생성")
     public ResponseEntity<?> createPlaylist(@RequestBody PlaylistCreateRequestDto playlistCreateRequestDto,
-                                            Authentication authentication) { // 여긴 임시로 loginId 필요
+                                            Authentication authentication) {
         RequestUtil.checkNeedValue(
                 playlistCreateRequestDto.getTitle(),
                 playlistCreateRequestDto.getIsPublic(),
                 playlistCreateRequestDto.getCategory());
 
-        log.info(" loginId = {}", authentication.getName());
         String loginId = authentication.getName();
-
         Member member = memberService.findMemberByLoginId(loginId);
+        List<Playlist> playlists = member.getPlaylists();
+
+
         Playlist playlist = playlistService.createPlaylist(
                 playlistCreateRequestDto.getTitle(),
                 playlistCreateRequestDto.getIsPublic(),
