@@ -61,7 +61,7 @@ public class PlaylistController {
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
     })
     @Operation(summary = "조회", description = "플레이 리스트들 조회")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> getPlaylist(Authentication authentication) {
         log.info(" loginId = {}", authentication.getName());
         String loginId = authentication.getName();

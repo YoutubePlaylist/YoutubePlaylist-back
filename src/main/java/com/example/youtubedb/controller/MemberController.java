@@ -8,6 +8,7 @@ import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
 import com.example.youtubedb.dto.member.request.MemberRequestDto;
 import com.example.youtubedb.dto.member.request.NonMemberRequestDto;
+import com.example.youtubedb.dto.member.response.MemberDeleteResponseDto;
 import com.example.youtubedb.dto.member.response.MemberResponseDto;
 import com.example.youtubedb.dto.member.response.NonMemberResponseDto;
 import com.example.youtubedb.dto.token.request.TokenReissueRequestDto;
@@ -21,12 +22,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 // TODO actuator 관련 이슈 해결 필요!
 // TODO 404에러 관리할 수 있으면 좋을듯
@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "회원 관련 API")
 @RestController
 @RequestMapping("/api/member")
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
@@ -133,15 +134,29 @@ public class MemberController {
         return ResponseEntity.ok(responseBody);
     }
 
-    //    @DeleteMapping("/delete")
-//    public ResponseEntity<?> deleteMember(HttpServletRequest request) {
-////        String token = token.resolveToken(request);
-//        String loginId = tokenProvider.resolveToken(token);
-//        memberService.deleteUserByLoginId(loginId);
-//        jwtTokenProvider.abandonToken(token);
-//
-//        return ResponseEntity.ok(null);
-//    }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "회원 삭제 성공",
+                    content = @Content(schema = @Schema(implementation = MemberDeleteResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "* 잘못된 요청\n" +
+                            "1. 아이디 존재 X",
+                    content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "서버 에러",
+                    content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
+    })
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteMember(Authentication authentication) {
+        log.info(" authentication = {}", authentication);
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+        memberService.deleteUserByLoginId(loginId);
+
+        BaseResponseSuccessDto responseBody = new MemberDeleteResponseDto(loginId);
+        return ResponseEntity.ok(responseBody);
+    }
+
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(@RequestBody TokenReissueRequestDto reissueRequestDto) {
         RequestUtil.checkNeedValue(
