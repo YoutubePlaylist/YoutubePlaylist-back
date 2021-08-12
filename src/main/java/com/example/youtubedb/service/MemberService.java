@@ -137,10 +137,7 @@ public class MemberService implements UserDetailsService {
         }
     }
 
-    @Transactional
-    public Token reissue(String accessToken, String refreshToken, boolean isPc
-//            TokenReissueRequestDto tokenRequestDto
-    ) {
+    public Token reissue(String accessToken, String refreshToken, boolean isPc) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(refreshToken)) {
             throw new RefreshTokenException("Refresh Token 이 유효하지 않습니다.");
@@ -168,7 +165,7 @@ public class MemberService implements UserDetailsService {
         // 6. 저장소 정보 업데이트
 //        RefreshToken newRefreshToken = findByIdRefreshToken.updateValue(tokenDto.getRefreshToken());
 //        refreshTokenRepository.save(newRefreshToken);
-        stringStringValueOperations.set(authentication.getName(), redisRefreshToken, tokenDto.getAccessTokenExpiresIn().getTime(), TimeUnit.MILLISECONDS);
+        stringStringValueOperations.set(authentication.getName(), redisRefreshToken);
         // 토큰 발급
         return tokenDto;
     }
