@@ -19,6 +19,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @EnableRedisRepositories
 public class RedisConfig {
 
+    // TODO Redis 현재 DEAMON으로 돌려놓음 -> SYSTEMD로 추후 전환 필요
+
     //    private final ObjectMapper objectMapper;
 //    private final RedisProperties redisProperties;
     @Value("${spring.redis.host}")
