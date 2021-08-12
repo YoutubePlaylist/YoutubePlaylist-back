@@ -13,13 +13,15 @@ public class Token{
     @Setter
     private String refreshToken;
     private Date accessTokenExpiresIn;
+    private Date refreshTokenExpiresIn;
 
     @Builder
 
-    public Token(String grantType, String accessToken, String refreshToken, Date accessTokenExpiresIn) {
+    public Token(String grantType, String accessToken, String refreshToken, Date accessTokenExpiresIn, Date refreshTokenExpiresIn) {
         this.grantType = grantType;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.accessTokenExpiresIn = accessTokenExpiresIn;
+        this.refreshTokenExpiresIn = refreshTokenExpiresIn;
     }
 }
