@@ -7,6 +7,7 @@ build/
 application-prod.yaml
 
 **/src/main/resources/application*
+**/src/main/resources/application-local.yaml
 
 ### STS ###
 .apt_generated
