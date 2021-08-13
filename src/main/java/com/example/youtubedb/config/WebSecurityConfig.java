@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsUtils;
 
 @Configuration
 @RequiredArgsConstructor
@@ -42,12 +43,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-          
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("/api/member/**").permitAll()
                 .antMatchers("/api/**").authenticated()
 //                .antMatchers("/swagger-ui/**").hasRole("ADMIN")
 //                .anyRequest().permitAll()
-
+                .and()
+                .cors()
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
 
