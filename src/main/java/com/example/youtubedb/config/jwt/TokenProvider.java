@@ -60,10 +60,8 @@ public class TokenProvider {
                 .compact();
 
         // Refresh Token 생성
-        long expireTime = isPc? REFRESH_TOKEN_EXPIRE_TIME_PC : REFRESH_TOKEN_EXPIRE_TIME_APP;
-        Date expireDate = new Date(now + expireTime);
+        Date expireDate = new Date(now + (isPc? REFRESH_TOKEN_EXPIRE_TIME_PC : REFRESH_TOKEN_EXPIRE_TIME_APP));
         System.out.println("expireDate = " + expireDate);
-        System.out.println("expireTime = " + expireTime);
         String refreshToken = Jwts.builder()
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS512)

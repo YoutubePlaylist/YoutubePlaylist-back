@@ -31,18 +31,18 @@ public class Member extends BaseEntity {
     private Authority authority;
 
     @Transient
-    private boolean isPc;
+    private boolean isPC;
 
     @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Playlist> playlists = new ArrayList<>();
 
     @Builder
-    public Member(String loginId, String password, boolean isMember, Authority authority, boolean isPc){
+    public Member(String loginId, String password, boolean isMember, Authority authority, boolean isPC){
         this.loginId = loginId;
         this.password = password;
         this.isMember = isMember;
         this.authority = authority;
-        this.isPc = isPc;
+        this.isPC = isPC;
     }
 }
