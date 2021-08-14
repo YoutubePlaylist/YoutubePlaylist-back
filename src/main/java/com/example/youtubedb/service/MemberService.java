@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,7 +58,7 @@ public class MemberService implements UserDetailsService {
         this.stringStringValueOperations = template.opsForValue();
     }
 
-    public Member registerNon(String deviceId, Boolean isPc) {
+    public Member registerNon(String deviceId, Boolean isPC) {
         checkDuplicateMember(deviceId);
 
         Member nonMember = Member.builder()
@@ -65,13 +66,13 @@ public class MemberService implements UserDetailsService {
                 .loginId(deviceId)
                 .authority(Authority.ROLE_USER)
                 .password(passwordEncoder.encode(deviceId))
-                .isPc(isPc)
+                .isPC(isPC)
                 .build();
 
         return memberRepository.save(nonMember);
     }
 
-    public Member registerReal(String loginId, String password, Boolean isPc) {
+    public Member registerReal(String loginId, String password, Boolean isPC) {
         checkDuplicateMember(loginId);
         checkValidPassword(password);
         Member realMember = Member.builder()
@@ -79,7 +80,7 @@ public class MemberService implements UserDetailsService {
                 .loginId(loginId)
                 .authority(Authority.ROLE_USER)
                 .password(passwordEncoder.encode(password))
-                .isPc(isPc)
+                .isPC(isPC)
                 .build();
 
         return memberRepository.save(realMember);
@@ -108,7 +109,7 @@ public class MemberService implements UserDetailsService {
         }
     }
 
-    public Token login(String loginID, String password, boolean isPc) {
+    public Token login(String loginID, String password, boolean isPC) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = toAuthentication(loginID, password);
 
@@ -118,14 +119,15 @@ public class MemberService implements UserDetailsService {
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
             System.out.println("authentication = " + authentication.getName());
             // 3. 인증 정보를 기반으로 JWT 토큰 생성
-            Token token = tokenProvider.generateTokenDto(authentication, isPc);
+            Token token = tokenProvider.generateTokenDto(authentication, isPC);
 
 
 
-            if(isPc) {
-            stringStringValueOperations.set("PC"+authentication.getName(), token.getRefreshToken(), token.getRefreshTokenExpiresIn().getTime(), TimeUnit.MILLISECONDS);
+            long now = (new Date()).getTime();
+            if(isPC) {
+            stringStringValueOperations.set("PC"+authentication.getName(), token.getRefreshToken(), token.getRefreshTokenExpiresIn().getTime()- now, TimeUnit.MILLISECONDS);
             }else {
-            stringStringValueOperations.set("APP"+authentication.getName(), token.getRefreshToken(), token.getRefreshTokenExpiresIn().getTime(), TimeUnit.MILLISECONDS);
+            stringStringValueOperations.set("APP"+authentication.getName(), token.getRefreshToken(), token.getRefreshTokenExpiresIn().getTime() -now, TimeUnit.MILLISECONDS);
             }
 
             // 4. 토큰 발급
