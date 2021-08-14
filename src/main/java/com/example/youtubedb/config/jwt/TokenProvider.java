@@ -35,12 +35,9 @@ public class TokenProvider {
     private static final long REFRESH_TOKEN_EXPIRE_TIME_PC = 1000L * 60 * 60 * 24 * 7 * 4 * 3;  // 3개월
 
     private final Key key;
-//    private final RedisUtils redisUtils;
-    private final StringRedisTemplate template;
 
     @Autowired
-    public TokenProvider(@Value("${jwt.secret}") String secretKey, StringRedisTemplate template) {
-        this.template = template;
+    public TokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -63,16 +60,13 @@ public class TokenProvider {
                 .compact();
 
         // Refresh Token 생성
-        long expireTime = now + (isPc? REFRESH_TOKEN_EXPIRE_TIME_PC : REFRESH_TOKEN_EXPIRE_TIME_APP);
-        Date expireDate = new Date(expireTime);
+        Date expireDate = new Date(now + (isPc? REFRESH_TOKEN_EXPIRE_TIME_PC : REFRESH_TOKEN_EXPIRE_TIME_APP));
         System.out.println("expireDate = " + expireDate);
-        System.out.println("expireTime = " + expireTime);
         String refreshToken = Jwts.builder()
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
-        ValueOperations<String, String> stringStringValueOperations = template.opsForValue();
 
 //        redisUtils.put("1", "2", expireTime);
 //        redisUtils.put(authentication.getName(), refreshToken, expireTime);
