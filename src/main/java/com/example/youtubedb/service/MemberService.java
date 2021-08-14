@@ -136,9 +136,8 @@ public class MemberService implements UserDetailsService {
     }
 
     @Transactional
-    public Token reissue(String accessToken, String refreshToken, boolean isPC
-//            TokenReissueRequestDto tokenRequestDto
-    ) {
+    public Token reissue(String accessToken, String refreshToken, boolean isPC)
+    {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(refreshToken)) {
             throw new RefreshTokenException("Refresh Token 이 유효하지 않습니다.");
