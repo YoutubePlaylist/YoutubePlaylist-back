@@ -1,7 +1,6 @@
 package com.example.youtubedb.service;
 
 import com.example.youtubedb.config.jwt.TokenProvider;
-import com.example.youtubedb.domain.RefreshToken;
 import com.example.youtubedb.domain.Token;
 import com.example.youtubedb.domain.member.Authority;
 import com.example.youtubedb.domain.member.Member;
@@ -10,8 +9,6 @@ import com.example.youtubedb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.BadCredentialsException;
