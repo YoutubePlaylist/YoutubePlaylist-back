@@ -61,7 +61,7 @@ public class TokenProvider {
 
         // Refresh Token 생성
         long expireTime = isPc? REFRESH_TOKEN_EXPIRE_TIME_PC : REFRESH_TOKEN_EXPIRE_TIME_APP;
-        Date expireDate = new Date(expireTime);
+        Date expireDate = new Date(now + expireTime);
         System.out.println("expireDate = " + expireDate);
         System.out.println("expireTime = " + expireTime);
         String refreshToken = Jwts.builder()
