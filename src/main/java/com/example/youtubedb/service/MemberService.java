@@ -137,9 +137,9 @@ public class MemberService implements UserDetailsService {
         }
     }
 
+
     @Transactional
-    public Token reissue(String accessToken, String refreshToken, boolean isPC)
-    {
+    public Token reissue(String accessToken, String refreshToken, boolean isPC) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(refreshToken)) {
             throw new RefreshTokenException("Refresh Token 이 유효하지 않습니다.");
@@ -168,7 +168,7 @@ public class MemberService implements UserDetailsService {
         // 5. 새로운 토큰 생성
         Token tokenDto = tokenProvider.generateTokenDto(authentication, isPC);
         tokenDto.setRefreshToken(redisRefreshToken);
-
+      
         // 토큰 발급
         return tokenDto;
     }
