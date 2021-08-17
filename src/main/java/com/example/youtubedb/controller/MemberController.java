@@ -17,6 +17,7 @@ import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -169,7 +171,8 @@ public class MemberController {
                     description = "* 잘못된 요청\n" +
                             "1. refresh 토큰 유효X\n" +
                             "2. refresh 토큰 기간 만료\n" +
-                            "3. refresh 토큰 불일치\n",
+                            "3. refresh 토큰 불일치\n" +
+                            "4. 필요값 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "* 서버 에러",
@@ -188,15 +191,37 @@ public class MemberController {
         return ResponseEntity.ok(responseBody);
     }
 
-    @PostMapping("/upload")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "프로필 이미지 업로드",
+                    content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "* 잘못된 요청\n" +
+                            "1. 필요값 X\n" +
+                            "2. 해당 회원이 없을 때\n" +
+                            "3. 회원이 아닌 비회원일 때",
+                    content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "* 서버 에러",
+                    content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
+    })
+    @Operation(summary = "프로필 이미지 업로드", description = "프로필 이미지 업로드 & 수정")
+    @PostMapping(value = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
-    public ResponseEntity<?> upload(@RequestParam("img") MultipartFile img, @RequestParam("loginId") String loginId) throws IOException {
+    public ResponseEntity<?> upload(
+            @Parameter(
+                    description = "프로필 이미지 파일"
+            )
+            @RequestParam("img") MultipartFile img,
+            @RequestPart("loginId") String loginId) throws IOException {
+        RequestUtil.checkNeedValue(img, loginId);
+
         Member member = memberService.findMemberByLoginId(loginId);
+        memberService.checkMember(member);
         String profileImg = s3Uploader.upload(img, "static");
         memberService.setProfileImg(member, profileImg);
 
         BaseResponseSuccessDto responseBody = new MemberResponseDto(member);
-
         return ResponseEntity.ok(responseBody);
     }
 }
