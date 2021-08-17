@@ -208,4 +208,8 @@ public class MemberService implements UserDetailsService {
                 Collections.singleton(grantedAuthority)
         );
     }
+
+    public void setProfileImg(Member member, String profileImg) {
+        member.setProfileImg(profileImg);
+    }
 }

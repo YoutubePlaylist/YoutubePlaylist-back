@@ -1,6 +1,5 @@
 package com.example.youtubedb.controller;
 
-import com.example.youtubedb.config.jwt.TokenProvider;
 import com.example.youtubedb.domain.Token;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
@@ -13,6 +12,7 @@ import com.example.youtubedb.dto.member.response.MemberResponseDto;
 import com.example.youtubedb.dto.member.response.NonMemberResponseDto;
 import com.example.youtubedb.dto.token.request.TokenReissueRequestDto;
 import com.example.youtubedb.dto.token.resposne.TokenResponseDto;
+import com.example.youtubedb.s3.S3Uploader;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
@@ -27,6 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 // TODO actuator 관련 이슈 해결 필요!
 // TODO 404에러 관리할 수 있으면 좋을듯
@@ -39,12 +42,15 @@ public class MemberController {
 
     private final MemberService memberService;
     private final PlaylistService playlistService;
+    private final S3Uploader s3Uploader;
 
     @Autowired
     public MemberController(MemberService memberService,
-                            PlaylistService playlistService) {
+                            PlaylistService playlistService,
+                            S3Uploader s3Uploader) {
         this.memberService = memberService;
         this.playlistService = playlistService;
+        this.s3Uploader = s3Uploader;
     }
 
     @ApiResponses(value = {
@@ -179,6 +185,18 @@ public class MemberController {
         Token token = memberService.reissue(reissueRequestDto.getAccessToken(), reissueRequestDto.getRefreshToken(), reissueRequestDto.getIsPC());
 
         BaseResponseSuccessDto responseBody = new TokenResponseDto(token);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @PostMapping("/upload")
+    @ResponseBody
+    public ResponseEntity<?> upload(@RequestParam("img") MultipartFile img, @RequestParam("loginId") String loginId) throws IOException {
+        Member member = memberService.findMemberByLoginId(loginId);
+        String profileImg = s3Uploader.upload(img, "static");
+        memberService.setProfileImg(member, profileImg);
+
+        BaseResponseSuccessDto responseBody = new MemberResponseDto(member);
+
         return ResponseEntity.ok(responseBody);
     }
 }

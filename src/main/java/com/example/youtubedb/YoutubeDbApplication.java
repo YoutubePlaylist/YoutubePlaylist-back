@@ -9,9 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableAdminServer
 @EnableJpaAuditing
 public class YoutubeDbApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(YoutubeDbApplication.class, args);
     }
-
 }
