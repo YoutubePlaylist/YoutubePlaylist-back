@@ -3,10 +3,7 @@ package com.example.youtubedb.domain.member;
 import com.example.youtubedb.domain.BaseEntity;
 import com.example.youtubedb.domain.Playlist;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +23,8 @@ public class Member extends BaseEntity {
     @JsonIgnore
     private String password;
     private boolean isMember;
+    @Setter
+    private String profileImg = null;
 
     @Enumerated(value = EnumType.STRING)
     private Authority authority;

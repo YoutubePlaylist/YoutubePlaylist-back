@@ -30,9 +30,9 @@ public class TokenProvider {
 
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 *30 ; // 30분
-    private static final long REFRESH_TOKEN_EXPIRE_TIME_APP = 1000L * 60 * 60 * 24 * 7; // 7일
-    private static final long REFRESH_TOKEN_EXPIRE_TIME_PC = 1000L * 60 * 60 * 24 * 7 * 4 * 3;  // 3개월
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 ; //test용 1분  * 30 // 30분
+    private static final long REFRESH_TOKEN_EXPIRE_TIME_APP = 1000L * 60;  //test용 5분  * 60 * 24 * 7; // 7일
+    private static final long REFRESH_TOKEN_EXPIRE_TIME_PC = 1000L * 60; // test용 5분 //* 60 * 24 * 7 * 4 * 3;  // 3개월
 
     private final Key key;
 

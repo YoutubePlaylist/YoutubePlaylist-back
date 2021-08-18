@@ -1,6 +1,5 @@
 package com.example.youtubedb.controller;
 
-import com.example.youtubedb.config.jwt.TokenProvider;
 import com.example.youtubedb.domain.Token;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
@@ -13,10 +12,12 @@ import com.example.youtubedb.dto.member.response.MemberResponseDto;
 import com.example.youtubedb.dto.member.response.NonMemberResponseDto;
 import com.example.youtubedb.dto.token.request.TokenReissueRequestDto;
 import com.example.youtubedb.dto.token.resposne.TokenResponseDto;
+import com.example.youtubedb.s3.S3Uploader;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,9 +25,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 // TODO actuator 관련 이슈 해결 필요!
 // TODO 404에러 관리할 수 있으면 좋을듯
@@ -39,12 +44,15 @@ public class MemberController {
 
     private final MemberService memberService;
     private final PlaylistService playlistService;
+    private final S3Uploader s3Uploader;
 
     @Autowired
     public MemberController(MemberService memberService,
-                            PlaylistService playlistService) {
+                            PlaylistService playlistService,
+                            S3Uploader s3Uploader) {
         this.memberService = memberService;
         this.playlistService = playlistService;
+        this.s3Uploader = s3Uploader;
     }
 
     @ApiResponses(value = {
@@ -163,7 +171,8 @@ public class MemberController {
                     description = "* 잘못된 요청\n" +
                             "1. refresh 토큰 유효X\n" +
                             "2. refresh 토큰 기간 만료\n" +
-                            "3. refresh 토큰 불일치\n",
+                            "3. refresh 토큰 불일치\n" +
+                            "4. 필요값 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "* 서버 에러",
@@ -179,6 +188,40 @@ public class MemberController {
         Token token = memberService.reissue(reissueRequestDto.getAccessToken(), reissueRequestDto.getRefreshToken(), reissueRequestDto.getIsPC());
 
         BaseResponseSuccessDto responseBody = new TokenResponseDto(token);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "프로필 이미지 업로드",
+                    content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "* 잘못된 요청\n" +
+                            "1. 필요값 X\n" +
+                            "2. 해당 회원이 없을 때\n" +
+                            "3. 회원이 아닌 비회원일 때",
+                    content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "* 서버 에러",
+                    content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
+    })
+    @Operation(summary = "프로필 이미지 업로드", description = "프로필 이미지 업로드 & 수정")
+    @PostMapping(value = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @ResponseBody
+    public ResponseEntity<?> upload(
+            @Parameter(
+                    description = "프로필 이미지 파일"
+            )
+            @RequestParam("img") MultipartFile img,
+            @RequestPart("loginId") String loginId) throws IOException {
+        RequestUtil.checkNeedValue(img, loginId);
+
+        Member member = memberService.findMemberByLoginId(loginId);
+        memberService.checkMember(member);
+        String profileImg = s3Uploader.upload(img, "static");
+        memberService.setProfileImg(member, profileImg);
+
+        BaseResponseSuccessDto responseBody = new MemberResponseDto(member);
         return ResponseEntity.ok(responseBody);
     }
 }
