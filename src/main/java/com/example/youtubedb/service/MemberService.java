@@ -175,7 +175,7 @@ public class MemberService implements UserDetailsService {
 
     public Member findMemberByLoginId(String loginId) {
         return memberRepository.findByLoginId(loginId).orElseThrow(NotExistMemberException::new);
-    }
+     }
 
     private void checkDuplicateMember(String loginId) {
         memberRepository.findByLoginId(loginId).ifPresent(m -> {

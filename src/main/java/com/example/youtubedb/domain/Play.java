@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Play extends BaseEntity {
+public class  Play extends BaseEntity {
     private String videoId;
     private long start;
     private long end;
