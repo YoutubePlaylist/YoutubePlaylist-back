@@ -17,6 +17,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -85,6 +89,27 @@ public class MemberService implements UserDetailsService {
 
         return memberRepository.save(realMember);
     }
+
+    public Member changePassword(Member updateMember, String oldPassword, String newPassword) {
+        checkCorrectPassword(updateMember, oldPassword, newPassword);
+        checkValidPassword(newPassword);
+
+        updateMember.setPassword(passwordEncoder.encode(newPassword));
+        template.delete("PC" + updateMember.getLoginId());
+        template.delete("APP" + updateMember.getLoginId());
+
+        return memberRepository.save(updateMember);
+    }
+
+    private void checkCorrectPassword(Member updateMember, String oldPassword, String newPassword) {
+        if(!passwordEncoder.matches(oldPassword, updateMember.getPassword())){
+            throw new DoNotMatchPasswordException();
+        }
+        if (oldPassword.equals(newPassword)) {
+            throw new DoNotChangePasswordException();
+        }
+    }
+
 
     private void checkValidPassword(String password) {
         int min = 8;
@@ -168,7 +193,7 @@ public class MemberService implements UserDetailsService {
         // 5. 새로운 토큰 생성
         Token tokenDto = tokenProvider.generateTokenDto(authentication, isPC);
         tokenDto.setRefreshToken(redisRefreshToken);
-      
+
         // 토큰 발급
         return tokenDto;
     }

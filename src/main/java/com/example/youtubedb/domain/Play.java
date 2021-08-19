@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class  Play extends BaseEntity {
+public class Play extends BaseEntity {
     private String videoId;
     private long start;
     private long end;
@@ -19,6 +19,7 @@ public class  Play extends BaseEntity {
     @Setter
     private int sequence;
     private String channelAvatar;
+    private String channelTitle;
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "playlist_id")
@@ -31,7 +32,8 @@ public class  Play extends BaseEntity {
                 String thumbnail,
                 String title,
                 int sequence,
-                String channelAvatar) {
+                String channelAvatar,
+                String channelTitle) {
         this.videoId = videoId;
         this.start = start;
         this.end = end;
@@ -39,6 +41,7 @@ public class  Play extends BaseEntity {
         this.title = title;
         this.sequence = sequence;
         this.channelAvatar = channelAvatar;
+        this.channelTitle = channelTitle;
     }
 
     public void setPlaylist(Playlist playlist) {

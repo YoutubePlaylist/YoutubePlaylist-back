@@ -19,8 +19,10 @@ public class PlayCreateRequestDto {
     private final String thumbnail;
     @Schema(description = "제목" , example = "제목1")
     private final String title;
-    @Schema(description = "아바타 이미지 주소" , example = "img2")
+    @Schema(description = "채널 아바타 이미지 주소" , example = "img2")
     private final String channelAvatar;
+    @Schema(description = "채널 이름" , example = "채널이름1")
+    private final String channelTitle;
 
     @Builder
     public PlayCreateRequestDto(
@@ -30,7 +32,8 @@ public class PlayCreateRequestDto {
             Long end,
             String thumbnail,
             String title,
-            String channelAvatar) {
+            String channelAvatar,
+            String channelTitle) {
         this.playlistId = playlistId;
         this.videoId = videoId;
         this.start = start;
@@ -38,5 +41,6 @@ public class PlayCreateRequestDto {
         this.thumbnail = thumbnail;
         this.title = title;
         this.channelAvatar = channelAvatar;
+        this.channelTitle =channelTitle;
     }
 }

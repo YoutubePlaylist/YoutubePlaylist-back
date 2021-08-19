@@ -34,6 +34,7 @@ class PlayServiceIntegrationTest {
     private String thumbnail;
     private String title;
     private String channelAvatar;
+    private String channelTitle;
     private boolean isPc;
 
     @BeforeEach
@@ -45,6 +46,7 @@ class PlayServiceIntegrationTest {
         this.thumbnail = "썸네일";
         this.title = "영상1";
         this.channelAvatar = "아바타 이미지";
+        this.channelTitle ="채널이름1";
     }
 
     @Test
@@ -62,7 +64,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 title,
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
 
         // then
         assertAll(
@@ -73,7 +76,8 @@ class PlayServiceIntegrationTest {
                 () -> assertThat(play.getThumbnail()).isEqualTo(thumbnail),
                 () -> assertThat(play.getSequence()).isEqualTo(1),
                 () -> assertThat(play.getChannelAvatar()).isEqualTo(channelAvatar),
-                () -> assertThat(play.getPlaylist().getId()).isEqualTo(playlist.getId())
+                () -> assertThat(play.getPlaylist().getId()).isEqualTo(playlist.getId()),
+                () -> assertThat(play.getChannelTitle()).isEqualTo(channelTitle)
         );
     }
 
@@ -93,7 +97,8 @@ class PlayServiceIntegrationTest {
                         -5L,
                         thumbnail,
                         title,
-                        channelAvatar)
+                        channelAvatar,
+                        channelTitle)
                 );
 
         // then
@@ -113,7 +118,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 title,
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
 
         // when
         List<Play> plays = playService.getPlaysInPlaylist(playlist, member.getLoginId());
@@ -161,7 +167,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 title,
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
 
         // when
         playService.editTime(play, member.getLoginId(), 50L, 100L);
@@ -187,7 +194,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 "play1",
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
         Play play2 = playService.addPlayToPlaylist(
                 playlist,
                 member.getLoginId(),
@@ -196,7 +204,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 "play2",
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
         Play play3 = playService.addPlayToPlaylist(
                 playlist,
                 member.getLoginId(),
@@ -205,7 +214,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 "play3",
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
         List<PlaySeqDto> seqList = new ArrayList<>();
         seqList.add(PlaySeqDto.builder().id(play1.getId()).sequence(3).build());
         seqList.add(PlaySeqDto.builder().id(play2.getId()).sequence(1).build());
@@ -235,7 +245,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 "play1",
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
         Play play2 = playService.addPlayToPlaylist(
                 playlist,
                 member.getLoginId(),
@@ -244,7 +255,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 "play2",
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
         Play play3 = playService.addPlayToPlaylist(
                 playlist,
                 member.getLoginId(),
@@ -253,7 +265,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 "play3",
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
         List<PlaySeqDto> seqList = new ArrayList<>();
         seqList.add(PlaySeqDto.builder().id(play1.getId()).sequence(3).build());
         seqList.add(PlaySeqDto.builder().id(play2.getId()).sequence(4).build());
@@ -279,7 +292,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 "play1",
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
         Play play2 = playService.addPlayToPlaylist(
                 playlist,
                 member.getLoginId(),
@@ -288,7 +302,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 "play2",
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
         Play play3 = playService.addPlayToPlaylist(
                 playlist,
                 member.getLoginId(),
@@ -297,7 +312,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 "play3",
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
         List<PlaySeqDto> seqList = new ArrayList<>();
         seqList.add(PlaySeqDto.builder().id(play1.getId()).sequence(1).build());
         seqList.add(PlaySeqDto.builder().id(play2.getId()).sequence(2).build());
@@ -323,7 +339,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 title,
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
 
         // when
         playService.deletePlayById(play, "device001");
@@ -346,7 +363,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 title,
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
 
         Play play2 = playService.addPlayToPlaylist(
                 playlist,
@@ -356,7 +374,8 @@ class PlayServiceIntegrationTest {
                 end,
                 thumbnail,
                 title,
-                channelAvatar);
+                channelAvatar,
+                channelTitle);
         play2.setSequence(3);
 //        Play play3 = playService.addPlayToPlaylist(
 //                playlist,

@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-// Spring Security로 JWT 적용시 변경 필요
+// TODO: 현재 중복된 플레이 리스트 이름 가능한데 논의 해봐야할듯
 @Slf4j
 @Tag(name = "플레이 리스트 관련 API")
 @RestController

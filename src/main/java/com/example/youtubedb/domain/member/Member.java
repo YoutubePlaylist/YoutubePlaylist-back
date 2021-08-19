@@ -44,4 +44,8 @@ public class Member extends BaseEntity {
         this.authority = authority;
         this.isPC = isPC;
     }
+
+    public void setPassword(String password){
+        this.password = password;
+    }
 }
