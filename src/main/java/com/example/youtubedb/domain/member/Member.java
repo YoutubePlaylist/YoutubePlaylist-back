@@ -44,4 +44,10 @@ public class Member extends BaseEntity {
         this.authority = authority;
         this.isPC = isPC;
     }
+
+    public void changeToMember(String loginId, String password) {
+        this.loginId = loginId;
+        this.password = password;
+        this.isMember = true;
+    }
 }

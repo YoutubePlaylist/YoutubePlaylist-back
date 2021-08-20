@@ -218,4 +218,9 @@ public class MemberService implements UserDetailsService {
             throw new NotMemberException();
         }
     }
+
+    public void change(Member member, String loginId, String password) {
+        checkValidPassword(password);
+        member.changeToMember(loginId, passwordEncoder.encode(password));
+    }
 }
