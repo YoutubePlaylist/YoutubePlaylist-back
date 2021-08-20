@@ -3,6 +3,7 @@ package com.example.youtubedb.controller;
 import com.example.youtubedb.domain.Token;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
+import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
 import com.example.youtubedb.dto.member.request.MemberRequestDto;
@@ -53,6 +54,33 @@ public class MemberController {
         this.memberService = memberService;
         this.playlistService = playlistService;
         this.s3Uploader = s3Uploader;
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "* 잘못된 요청\n" +
+                            "1. 아이디 존재 X",
+                    content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "인증되지 않음",
+                    content = @Content(schema = @Schema(implementation = AuthenticationEntryPointFailResponseDto.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "서버 에러",
+                    content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
+    })
+    @Operation(summary = "조회", description = "회원&비회원 정보 조회")
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<?> getMemberInfo(Authentication authentication) {
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+        Member member = memberService.findMemberByLoginId(loginId);
+
+        BaseResponseSuccessDto responseBody = new MemberResponseDto(member);
+        return ResponseEntity.ok(responseBody);
     }
 
     @ApiResponses(value = {
@@ -197,10 +225,13 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "* 잘못된 요청\n" +
-                            "1. 필요값 X\n" +
-                            "2. 해당 회원이 없을 때\n" +
-                            "3. 회원이 아닌 비회원일 때",
+                            "1. 아이디 존재 X\n" +
+                            "2. 회원이 아닌 비회원일 때\n" +
+                            "3. 필요값 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "인증되지 않음",
+                    content = @Content(schema = @Schema(implementation = AuthenticationEntryPointFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "* 서버 에러",
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
@@ -213,9 +244,10 @@ public class MemberController {
                     description = "프로필 이미지 파일"
             )
             @RequestParam("img") MultipartFile img,
-            @RequestPart("loginId") String loginId) throws IOException {
-        RequestUtil.checkNeedValue(img, loginId);
-
+            Authentication authentication) throws IOException {
+        RequestUtil.checkNeedValue(img);
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
         Member member = memberService.findMemberByLoginId(loginId);
         memberService.checkMember(member);
         String profileImg = s3Uploader.upload(img, "static");

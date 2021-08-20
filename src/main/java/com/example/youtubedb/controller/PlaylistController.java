@@ -65,10 +65,7 @@ public class PlaylistController {
     public ResponseEntity<?> getPlaylist(Authentication authentication) {
         log.info(" loginId = {}", authentication.getName());
         String loginId = authentication.getName();
-
-
         Member member = memberService.findMemberByLoginId(loginId);
-
         List<Playlist> playlists = member.getPlaylists();
         playlistService.addThumbnail(playlists);
 
