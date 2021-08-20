@@ -6,6 +6,7 @@ import com.example.youtubedb.dto.BaseResponseSuccessDto;
 import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
+import com.example.youtubedb.dto.member.request.MemberChangePasswordRequestDto;
 import com.example.youtubedb.dto.member.request.MemberLoginRequestDto;
 import com.example.youtubedb.dto.member.request.MemberRequestDto;
 import com.example.youtubedb.dto.member.request.NonMemberRequestDto;
@@ -16,6 +17,7 @@ import com.example.youtubedb.dto.token.request.TokenReissueRequestDto;
 import com.example.youtubedb.dto.token.resposne.TokenResponseDto;
 import com.example.youtubedb.s3.S3Uploader;
 import com.example.youtubedb.service.MemberService;
+import com.example.youtubedb.service.MessageService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,13 +32,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 // TODO actuator 관련 이슈 해결 필요!
-// TODO 404에러 관리할 수 있으면 좋을듯
 
 @Tag(name = "회원 관련 API")
 @RestController
@@ -48,13 +50,18 @@ public class MemberController {
     private final PlaylistService playlistService;
     private final S3Uploader s3Uploader;
 
+    //test
+    private final MessageService messageService;
+
     @Autowired
     public MemberController(MemberService memberService,
                             PlaylistService playlistService,
-                            S3Uploader s3Uploader) {
+                            S3Uploader s3Uploader,
+                            MessageService messageService) {
         this.memberService = memberService;
         this.playlistService = playlistService;
         this.s3Uploader = s3Uploader;
+        this.messageService = messageService;
     }
 
     @ApiResponses(value = {
@@ -133,6 +140,8 @@ public class MemberController {
                 memberRequestDto.getPassword(),
                 memberRequestDto.getIsPC());
 
+//        log.info("sms test 중, checkpoint:1");
+//        messageService.sendMessage("01086231917","1234");
         Member member = memberService.registerReal(memberRequestDto.getLoginId(), memberRequestDto.getPassword(), memberRequestDto.getIsPC());
         playlistService.createPlaylist("default", false, "OTHER", member);
 
@@ -218,6 +227,37 @@ public class MemberController {
         Token token = memberService.reissue(reissueRequestDto.getAccessToken(), reissueRequestDto.getRefreshToken(), reissueRequestDto.getIsPC());
 
         BaseResponseSuccessDto responseBody = new TokenResponseDto(token);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    // TODO: 비밀번호 변경
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "비밀 번호 변경 성공",
+                    content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "* 잘못된 요청\n" +
+                            "1. 비밀번호가 일치하지 않습니다.\n" +
+                            "2. 기존 비밀번호와 같은 비밀번호 입니다.\n" +
+                            "3. 필요값 X",
+                    content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "* 서버 에러",
+                    content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
+    })
+    @Operation(summary = "비밀 번호 변경", description = "비밀 번호 변경")
+    @PostMapping("/changePassword")
+    public ResponseEntity<?> changePassword(@RequestBody MemberChangePasswordRequestDto memberChangePasswordRequestDto,
+                                            Authentication authentication) {
+        String loginId = authentication.getName();
+        RequestUtil.checkNeedValue(
+                memberChangePasswordRequestDto.getOldPassword(),
+                memberChangePasswordRequestDto.getNewPassword());
+
+        Member updateMember = memberService.findMemberByLoginId(loginId);
+        updateMember = memberService.changePassword(updateMember, memberChangePasswordRequestDto.getOldPassword(),memberChangePasswordRequestDto.getNewPassword());
+
+        BaseResponseSuccessDto responseBody = new MemberResponseDto(updateMember);
         return ResponseEntity.ok(responseBody);
     }
 

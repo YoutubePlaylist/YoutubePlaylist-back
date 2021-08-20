@@ -32,7 +32,8 @@ public class PlayService {
             Long end,
             String thumbnail,
             String title,
-            String channelAvatar) {
+            String channelAvatar,
+            String channelTitle) {
         checkTime(start, end);
         RequestUtil.checkOwn(playlist.getMember().getLoginId(), loginId);
 
@@ -46,6 +47,7 @@ public class PlayService {
                 .start(start)
                 .end(end)
                 .channelAvatar(channelAvatar)
+                .channelTitle(channelTitle)
                 .build();
         play.setPlaylist(playlist);
         playRepository.save(play);
