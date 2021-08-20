@@ -245,6 +245,7 @@ public class MemberService implements UserDetailsService {
     }
 
     public void change(Member member, String loginId, String password) {
+        checkDuplicateMember(loginId);
         checkValidPassword(password);
         member.changeToMember(loginId, passwordEncoder.encode(password));
     }
