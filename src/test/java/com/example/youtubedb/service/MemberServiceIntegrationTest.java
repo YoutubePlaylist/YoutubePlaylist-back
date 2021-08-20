@@ -12,7 +12,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.config.location="
+        + "classpath:application.yaml,"
+        + "classpath:aws.yaml")
 @Transactional
 class MemberServiceIntegrationTest {
     @Autowired
@@ -161,5 +163,31 @@ class MemberServiceIntegrationTest {
 
         // then
         assertThat(e.getMessage()).isEqualTo(DoNotMatchPasswordException.getErrorMessage());
+    }
+
+    @Test
+    void 프로필_이미지() {
+        // given
+        String loginId = "helloMan";
+        String password = "hello123**";
+        String profileImg = "profile123";
+        Member member = memberService.registerReal(loginId, password, false);
+
+        // when
+        memberService.setProfileImg(member, profileImg);
+        // then
+        assertThat(member.getProfileImg()).isEqualTo(profileImg);
+    }
+
+    @Test
+    void 회원X_비회원() {
+        // given
+        String loginId = "helloMan";
+        Member member = memberService.registerNon(loginId, false);
+
+        // when
+        Exception e = assertThrows(NotMemberException.class, () -> memberService.checkMember(member));
+        // then
+        assertThat(e.getMessage()).isEqualTo(NotMemberException.getErrorMessage());
     }
 }

@@ -208,4 +208,19 @@ public class MemberService implements UserDetailsService {
                 Collections.singleton(grantedAuthority)
         );
     }
+
+    public void setProfileImg(Member member, String profileImg) {
+        member.setProfileImg(profileImg);
+    }
+
+    public void checkMember(Member member) {
+        if(!member.isMember()) {
+            throw new NotMemberException();
+        }
+    }
+
+    public void change(Member member, String loginId, String password) {
+        checkValidPassword(password);
+        member.changeToMember(loginId, passwordEncoder.encode(password));
+    }
 }
