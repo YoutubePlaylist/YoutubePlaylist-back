@@ -3,9 +3,11 @@ package com.example.youtubedb.controller;
 import com.example.youtubedb.domain.Token;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
+import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
 import com.example.youtubedb.dto.member.request.MemberChangePasswordRequestDto;
+import com.example.youtubedb.dto.member.request.MemberLoginRequestDto;
 import com.example.youtubedb.dto.member.request.MemberRequestDto;
 import com.example.youtubedb.dto.member.request.NonMemberRequestDto;
 import com.example.youtubedb.dto.member.response.MemberDeleteResponseDto;
@@ -64,6 +66,33 @@ public class MemberController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "* 잘못된 요청\n" +
+                            "1. 아이디 존재 X",
+                    content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "인증되지 않음",
+                    content = @Content(schema = @Schema(implementation = AuthenticationEntryPointFailResponseDto.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "서버 에러",
+                    content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
+    })
+    @Operation(summary = "조회", description = "회원&비회원 정보 조회")
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<?> getMemberInfo(Authentication authentication) {
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+        Member member = memberService.findMemberByLoginId(loginId);
+
+        BaseResponseSuccessDto responseBody = new MemberResponseDto(member);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
                     description = "비회원 생성 성공",
                     content = @Content(schema = @Schema(implementation = NonMemberResponseDto.class))),
             @ApiResponse(responseCode = "400",
@@ -96,7 +125,8 @@ public class MemberController {
             @ApiResponse(responseCode = "400",
                     description = "* 잘못된 요청\n" +
                             "1. 중복된 아이디 존재\n" +
-                            "2. 필요값 X",
+                            "2. 필요값 X\n" +
+                            "3. 비밀번호 생성규칙 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "* 서버 에러",
@@ -237,10 +267,13 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "* 잘못된 요청\n" +
-                            "1. 필요값 X\n" +
-                            "2. 해당 회원이 없을 때\n" +
-                            "3. 회원이 아닌 비회원일 때",
+                            "1. 아이디 존재 X\n" +
+                            "2. 회원이 아닌 비회원일 때\n" +
+                            "3. 필요값 X",
                     content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "인증되지 않음",
+                    content = @Content(schema = @Schema(implementation = AuthenticationEntryPointFailResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "* 서버 에러",
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
@@ -253,13 +286,46 @@ public class MemberController {
                     description = "프로필 이미지 파일"
             )
             @RequestParam("img") MultipartFile img,
-            @RequestPart("loginId") String loginId) throws IOException {
-        RequestUtil.checkNeedValue(img, loginId);
-
+            Authentication authentication) throws IOException {
+        RequestUtil.checkNeedValue(img);
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
         Member member = memberService.findMemberByLoginId(loginId);
         memberService.checkMember(member);
         String profileImg = s3Uploader.upload(img, "static");
         memberService.setProfileImg(member, profileImg);
+
+        BaseResponseSuccessDto responseBody = new MemberResponseDto(member);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "회원으로 변경",
+                    content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "* 잘못된 요청\n" +
+                            "1. 아이디 존재 X\n" +
+                            "2. 필요값 X\n" +
+                            "3. 비밀번호 생성규칙 X",
+                    content = @Content(schema = @Schema(implementation = BadRequestFailResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "인증되지 않음",
+                    content = @Content(schema = @Schema(implementation = AuthenticationEntryPointFailResponseDto.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "서버 에러",
+                    content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
+    })
+    @Operation(summary = "회원으로 변경", description = "비회원에서 회원으로 변경")
+    @PutMapping("/change")
+    @ResponseBody
+    public ResponseEntity<?> changeToMember(Authentication authentication,
+                                            @RequestBody MemberLoginRequestDto memberLoginRequestDto) {
+        RequestUtil.checkNeedValue(memberLoginRequestDto.getLoginId(), memberLoginRequestDto.getPassword());
+        log.info(" loginId = {}", authentication.getName());
+        String loginId = authentication.getName();
+        Member member = memberService.findMemberByLoginId(loginId);
+        memberService.change(member, memberLoginRequestDto.getLoginId(), memberLoginRequestDto.getPassword());
 
         BaseResponseSuccessDto responseBody = new MemberResponseDto(member);
         return ResponseEntity.ok(responseBody);
