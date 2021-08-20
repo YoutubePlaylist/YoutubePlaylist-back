@@ -19,22 +19,22 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.5.3'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools:2.5.3'
 
-    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2:1.4.200'
 //    runtimeOnly 'mysql:mysql-connector-java'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.5.3'
 
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.5.3'
     implementation 'de.codecentric:spring-boot-admin-starter-server:2.4.1'
     implementation 'de.codecentric:spring-boot-admin-starter-client:2.4.1'
 
     implementation 'org.springdoc:springdoc-openapi-ui:1.5.7'
 
     //security
-    implementation "org.springframework.boot:spring-boot-starter-security"
-    implementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.boot:spring-boot-starter-security:2.5.3'
+    implementation 'org.springframework.security:spring-security-test:5.5.1'
 
     //jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
@@ -44,6 +44,13 @@ dependencies {
     //redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.modelmapper:modelmapper:2.3.6'
+
+    // aws cloud
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
+
+    //sms 인증
+    implementation 'net.nurigo:javaSDK:2.2'
+
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

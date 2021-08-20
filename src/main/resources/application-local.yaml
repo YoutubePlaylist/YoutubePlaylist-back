@@ -6,13 +6,10 @@ spring:
     hibernate:
       ddl-auto: create
 
-
-
-
-
   datasource:
-    url: jdbc:h2:tcp://localhost/~/spring
+    url: jdbc:h2:tcp://localhost:9092/~/spring
 #    url: jdbc:h2:mem:testdb
+
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -21,4 +18,8 @@ spring:
     host: 127.0.0.1
     port: 6379
     password:
-
+# multipart 용량 설정
+  servlet:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 10MB
