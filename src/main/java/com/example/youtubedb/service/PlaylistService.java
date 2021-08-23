@@ -23,7 +23,7 @@ import java.util.List;
 public class PlaylistService {
     private final PlaylistRepository playlistRepository;
 
-    private final int NON_MEMBER_MAX_PLAYLISTS = 10;
+    private final int NON_MEMBER_MAX_PLAYLISTS = 5;
 
     @Autowired
     public PlaylistService(PlaylistRepository playlistRepository) {
