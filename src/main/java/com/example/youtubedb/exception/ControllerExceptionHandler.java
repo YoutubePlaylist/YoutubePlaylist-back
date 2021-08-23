@@ -26,7 +26,8 @@ public class ControllerExceptionHandler {
             InvalidBlankPasswordException.class,
             InvalidRegexPasswordException.class,
             OverNomMemberMaxListException.class,
-            NotMemberException.class
+            NotMemberException.class,
+            DoNotChangePasswordException.class
     })
     public ResponseEntity<?> badRequest(Exception e) {
         BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()

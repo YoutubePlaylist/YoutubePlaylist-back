@@ -102,7 +102,8 @@ public class PlayController {
                 playCreateRequestDto.getEnd(),
                 playCreateRequestDto.getThumbnail(),
                 playCreateRequestDto.getTitle(),
-                playCreateRequestDto.getChannelAvatar());
+                playCreateRequestDto.getChannelAvatar(),
+                playCreateRequestDto.getChannelTitle());
 
         log.info(" loginId = {}", authentication.getName());
         String loginId = authentication.getName();
@@ -116,7 +117,8 @@ public class PlayController {
                 playCreateRequestDto.getEnd(),
                 playCreateRequestDto.getThumbnail(),
                 playCreateRequestDto.getTitle(),
-                playCreateRequestDto.getChannelAvatar());
+                playCreateRequestDto.getChannelAvatar(),
+                playCreateRequestDto.getChannelTitle());
 
         BaseResponseSuccessDto responseBody = new PlayCreateResponseDto(play);
 

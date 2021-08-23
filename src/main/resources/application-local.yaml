@@ -7,8 +7,9 @@ spring:
       ddl-auto: create
 
   datasource:
-#    url: jdbc:h2:tcp://localhost/~/spring
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:tcp://localhost:9092/~/spring
+#    url: jdbc:h2:mem:testdb
+
     username: sa
     password:
     driver-class-name: org.h2.Driver
