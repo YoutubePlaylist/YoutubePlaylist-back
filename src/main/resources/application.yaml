@@ -12,11 +12,10 @@ spring:
 #      password: "pass"
 #      roles: "ADMIN"
 
-
   boot:
     admin:
       client:
-        url: http://localhost:8080
+        url: http://localhost:8090
 
     properties:
       hibernate:
@@ -37,17 +36,18 @@ jwt:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
 
 management:
+  server:
+    port: 8001
   endpoints:
     web:
       exposure:
         include: "*"
-
       base-path: "/monitoring"
 
   endpoint:
     health:
       group:
         custom:
-          include: diskSpace, ping
+          include: "*"
           show-components: always
           show-details: always
