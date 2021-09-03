@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: local
+
+#  security 설정
+#  security:
+#    user:
+#      name: "admin"
+#      password: "pass"
+#      roles: "ADMIN"
+
+  boot:
+    admin:
+      client:
+        url: http://localhost:8090
+
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  redis:
+    lettuce:
+      pool:
+        max-active: 10
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+jwt:
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
+
+coolsms:
+  devHee:
+    apiKey: NCSVJBMVYB7TOOQV
+
+management:
+  server:
+    port: 8001
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: "/monitoring"
+
+  endpoint:
+    health:
+      group:
+        custom:
+          include: "*"
+          show-components: always
+          show-details: always
