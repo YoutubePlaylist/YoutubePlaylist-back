@@ -4,11 +4,10 @@ import com.example.youtubedb.domain.Token;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jdk.vm.ci.meta.Local;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,21 +17,27 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static java.sql.Timestamp.valueOf;
 
 @Slf4j
 @Component
 public class TokenProvider {
 
-    private static final String AUTHORITIES_KEY = "auth";
-    private static final String BEARER_TYPE = "bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 2 * 30; // 30분
-    private static final long REFRESH_TOKEN_EXPIRE_TIME_APP = 1000L * 60 * 60 * 24 * 7; // 7일
-    private static final long REFRESH_TOKEN_EXPIRE_TIME_PC = 1000L * 60 * 60 * 24 * 7 * 4 * 3;  // 3개월
+    private final String AUTHORITIES_KEY = "auth";
+    private final String BEARER_TYPE = "bearer";
+
+    private static final Duration ACCESS_TOKEN_EXPIRE_TIME = Duration.ofMinutes(30);
+    private static final Period REFRESH_TOKEN_EXPIRE_DATE_APP = Period.ofDays(7);
+    private static final Period REFRESH_TOKEN_EXPIRE_DATE_PC = Period.ofMonths(3);
+
 
     private final Key key;
 
@@ -51,7 +56,9 @@ public class TokenProvider {
         long now = (new Date()).getTime();
 
         // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+
+        Date accessTokenExpiresIn = valueOf(LocalDateTime.now().plus(ACCESS_TOKEN_EXPIRE_TIME));
+//                new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())       // payload "sub": "name"
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
@@ -60,7 +67,7 @@ public class TokenProvider {
                 .compact();
 
         // Refresh Token 생성
-        Date expireDate = new Date(now + (isPc? REFRESH_TOKEN_EXPIRE_TIME_PC : REFRESH_TOKEN_EXPIRE_TIME_APP));
+        Date expireDate = valueOf(LocalDateTime.now().plus(isPc ? REFRESH_TOKEN_EXPIRE_DATE_PC : REFRESH_TOKEN_EXPIRE_DATE_APP));
         System.out.println("expireDate = " + expireDate);
         String refreshToken = Jwts.builder()
                 .setExpiration(expireDate)
@@ -122,8 +129,6 @@ public class TokenProvider {
 //    public String parse
 
 
-
-
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
@@ -131,8 +136,6 @@ public class TokenProvider {
             return e.getClaims();
         }
     }
-
-
 
 
 }
