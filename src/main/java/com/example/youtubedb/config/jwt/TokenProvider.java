@@ -1,14 +1,13 @@
 package com.example.youtubedb.config.jwt;
 
 import com.example.youtubedb.domain.Token;
+import com.example.youtubedb.exception.NotExistAuthorityException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,8 +19,8 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -60,16 +59,13 @@ public class TokenProvider {
                 .compact();
 
         // Refresh Token 생성
-        Date expireDate = new Date(now + (isPc? REFRESH_TOKEN_EXPIRE_TIME_PC : REFRESH_TOKEN_EXPIRE_TIME_APP));
+        Date expireDate = new Date(now + (isPc ? REFRESH_TOKEN_EXPIRE_TIME_PC : REFRESH_TOKEN_EXPIRE_TIME_APP));
         System.out.println("expireDate = " + expireDate);
         String refreshToken = Jwts.builder()
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
-
-//        redisUtils.put("1", "2", expireTime);
-//        redisUtils.put(authentication.getName(), refreshToken, expireTime);
         return Token.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
@@ -83,15 +79,14 @@ public class TokenProvider {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
-        if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
-        }
 
+        if (claims.get(AUTHORITIES_KEY) == null) {
+            throw new NotExistAuthorityException();
+        }
         // 클레임에서 권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+        Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
         UserDetails principal = new User(claims.getSubject(), "", authorities);
@@ -100,29 +95,22 @@ public class TokenProvider {
     }
 
     public boolean validateToken(String token) {
-
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-//            throw new CustomValidationException();
             log.info("잘못된 JWT 서명입니다.");
+            throw e;
         } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다.");
+            throw e;
         } catch (UnsupportedJwtException e) {
             log.info("지원되지 않는 JWT 토큰입니다.");
+            throw e;
         } catch (IllegalArgumentException e) {
-//            throw new CustomValidationException();
             log.info("JWT 토큰이 잘못되었습니다.");
+            throw e;
         }
-
-        return false;
     }
-
-//    public String parse
-
-
-
 
     private Claims parseClaims(String accessToken) {
         try {
@@ -131,8 +119,4 @@ public class TokenProvider {
             return e.getClaims();
         }
     }
-
-
-
-
 }

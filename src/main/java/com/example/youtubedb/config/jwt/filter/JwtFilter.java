@@ -1,5 +1,6 @@
-package com.example.youtubedb.config.jwt;
+package com.example.youtubedb.config.jwt.filter;
 
+import com.example.youtubedb.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

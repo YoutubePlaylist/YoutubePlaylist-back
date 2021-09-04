@@ -1,4 +1,4 @@
-package com.example.youtubedb.config.jwt;
+package com.example.youtubedb.config.jwt.handler;
 
 import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;

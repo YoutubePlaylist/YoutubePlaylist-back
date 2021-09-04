@@ -1,5 +1,8 @@
-package com.example.youtubedb.config.jwt;
+package com.example.youtubedb.config;
 
+import com.example.youtubedb.config.jwt.filter.ExceptionHandlerFilter;
+import com.example.youtubedb.config.jwt.filter.JwtFilter;
+import com.example.youtubedb.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +17,8 @@ public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
     @Override
     public void configure(HttpSecurity http) throws Exception {
         JwtFilter customFilter = new JwtFilter(tokenProvider);
+        ExceptionHandlerFilter exceptionHandlerFilter = new ExceptionHandlerFilter();
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
     }
 }
