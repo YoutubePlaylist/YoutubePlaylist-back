@@ -3,7 +3,6 @@ package com.example.youtubedb.dto.playlist.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class PlaylistEditTitleRequestDto {

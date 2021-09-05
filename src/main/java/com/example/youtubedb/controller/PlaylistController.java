@@ -14,7 +14,6 @@ import com.example.youtubedb.dto.playlist.response.PlaylistGetResponseDto;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
-import io.jsonwebtoken.Jwts;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,7 +27,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 // TODO: 현재 중복된 플레이 리스트 이름 가능한데 논의 해봐야할듯

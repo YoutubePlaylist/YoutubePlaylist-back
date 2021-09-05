@@ -3,7 +3,6 @@ package com.example.youtubedb.dto.member.request;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 @Getter
 @NoArgsConstructor
