@@ -2,10 +2,8 @@ package com.example.youtubedb.dto.error;
 
 import com.example.youtubedb.dto.BaseResponseFailDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class ServerErrorFailResponseDto extends BaseResponseFailDto {

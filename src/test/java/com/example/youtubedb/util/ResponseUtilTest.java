@@ -1,6 +1,5 @@
 package com.example.youtubedb.util;
 
-import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.dto.ResponseDto;
 import com.example.youtubedb.dto.play.PlaySeqDto;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,10 @@
 package com.example.youtubedb.config.jwt;
 
+import com.example.youtubedb.adapter.DateAdapter;
 import com.example.youtubedb.domain.Token;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jdk.vm.ci.meta.Local;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,10 +22,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.stream.Collectors;
-
-import static java.sql.Timestamp.valueOf;
 
 @Slf4j
 @Component
@@ -53,24 +50,22 @@ public class TokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        long now = (new Date()).getTime();
-
         // Access Token 생성
 
-        Date accessTokenExpiresIn = valueOf(LocalDateTime.now().plus(ACCESS_TOKEN_EXPIRE_TIME));
+        LocalDateTime accessTokenExpiresIn = LocalDateTime.now().plus(ACCESS_TOKEN_EXPIRE_TIME);
 //                new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())       // payload "sub": "name"
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
-                .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
+                .setExpiration(DateAdapter.toDate(accessTokenExpiresIn))        // payload "exp": 1516239022 (예시)
                 .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
                 .compact();
 
         // Refresh Token 생성
-        Date expireDate = valueOf(LocalDateTime.now().plus(isPc ? REFRESH_TOKEN_EXPIRE_DATE_PC : REFRESH_TOKEN_EXPIRE_DATE_APP));
-        System.out.println("expireDate = " + expireDate);
+        LocalDateTime expireDate = LocalDateTime.now().plus(isPc ? REFRESH_TOKEN_EXPIRE_DATE_PC : REFRESH_TOKEN_EXPIRE_DATE_APP);
+
         String refreshToken = Jwts.builder()
-                .setExpiration(expireDate)
+                .setExpiration(DateAdapter.toDate(expireDate))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
@@ -80,9 +75,9 @@ public class TokenProvider {
         return Token.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
-                .accessTokenExpiresIn(accessTokenExpiresIn)
+                .accessTokenExpiresIn(DateAdapter.toDate(accessTokenExpiresIn))
                 .refreshToken(refreshToken)
-                .refreshTokenExpiresIn(expireDate)
+                .refreshTokenExpiresIn(DateAdapter.toDate(expireDate))
                 .build();
     }
 
