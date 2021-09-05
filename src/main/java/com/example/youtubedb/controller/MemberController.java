@@ -50,18 +50,13 @@ public class MemberController {
     private final PlaylistService playlistService;
     private final S3Uploader s3Uploader;
 
-    //test
-    private final MessageService messageService;
-
     @Autowired
     public MemberController(MemberService memberService,
                             PlaylistService playlistService,
-                            S3Uploader s3Uploader,
-                            MessageService messageService) {
+                            S3Uploader s3Uploader) {
         this.memberService = memberService;
         this.playlistService = playlistService;
         this.s3Uploader = s3Uploader;
-        this.messageService = messageService;
     }
 
     @ApiResponses(value = {

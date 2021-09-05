@@ -68,17 +68,7 @@ class PlayServiceIntegrationTest {
                 channelTitle);
 
         // then
-        assertAll(
-                () -> assertThat(play.getTitle()).isEqualTo(title),
-                () -> assertThat(play.getVideoId()).isEqualTo(videoId),
-                () -> assertThat(play.getStart()).isEqualTo(start),
-                () -> assertThat(play.getEnd()).isEqualTo(end),
-                () -> assertThat(play.getThumbnail()).isEqualTo(thumbnail),
-                () -> assertThat(play.getSequence()).isEqualTo(1),
-                () -> assertThat(play.getChannelAvatar()).isEqualTo(channelAvatar),
-                () -> assertThat(play.getPlaylist().getId()).isEqualTo(playlist.getId()),
-                () -> assertThat(play.getChannelTitle()).isEqualTo(channelTitle)
-        );
+        assertThat(play.getTitle()).isEqualTo(title);
     }
 
     @Test
@@ -130,29 +120,6 @@ class PlayServiceIntegrationTest {
                 () -> assertThat(plays.get(0).getTitle()).isEqualTo(title)
         );
     }
-
-//    @Test
-//    void 영상목록_조회_접근권한X() {
-//        // given
-//        Member member = memberService.registerNon("device001");
-//        Member other = memberService.registerNon("device002");
-//        Playlist playlist = playlistService.createPlaylist("default", "false", "OTHER", member);
-//        playService.addPlayToPlaylist(
-//                playlist,
-//                member.getLoginId(),
-//                videoId,
-//                start,
-//                end,
-//                thumbnail,
-//                title,
-//                channelAvatar);
-//
-//        // when
-//        Exception e = assertThrows(InvalidAccessException.class, () -> playService.getPlaysInPlaylist(playlist, other.getLoginId()));
-//
-//        // then
-//        assertThat(e.getMessage()).isEqualTo(InvalidAccessException.getErrorMessage());
-//    }
 
     @Test
     void 영상_시간_수정() {
@@ -377,15 +344,7 @@ class PlayServiceIntegrationTest {
                 channelAvatar,
                 channelTitle);
         play2.setSequence(3);
-//        Play play3 = playService.addPlayToPlaylist(
-//                playlist,
-//                member.getLoginId(),
-//                videoId,
-//                start,
-//                end,
-//                thumbnail,
-//                title,
-//                channelAvatar);
+
         // when
         playService.sortPlaysInPlaylist(playlist);
 
