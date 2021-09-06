@@ -6,7 +6,7 @@ import java.util.Date;
 
 import static java.sql.Timestamp.valueOf;
 
-public class DateAdapter {
+public class DateAdapter{
 
     public static LocalDateTime toLocalDate(Date date){
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
