@@ -1,7 +1,8 @@
-package com.example.youtubedb.util;
+package com.example.youtubedb.unitTest.util;
 
 import com.example.youtubedb.exception.InvalidAccessException;
 import com.example.youtubedb.exception.NotExistRequestValueException;
+import com.example.youtubedb.util.RequestUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

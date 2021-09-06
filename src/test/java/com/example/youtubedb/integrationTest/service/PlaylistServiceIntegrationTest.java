@@ -1,4 +1,4 @@
-package com.example.youtubedb.service;
+package com.example.youtubedb.integrationTest.service;
 
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.domain.Play;
@@ -6,6 +6,9 @@ import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.Category;
 import com.example.youtubedb.exception.NotExistPlaylistException;
 import com.example.youtubedb.exception.NotExistRequestValueException;
+import com.example.youtubedb.service.MemberService;
+import com.example.youtubedb.service.PlayService;
+import com.example.youtubedb.service.PlaylistService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

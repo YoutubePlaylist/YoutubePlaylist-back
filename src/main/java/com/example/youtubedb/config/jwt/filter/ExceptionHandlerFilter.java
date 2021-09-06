@@ -28,7 +28,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             setErrorResponse(HttpStatus.UNAUTHORIZED, response, e);
         } catch (ExpiredJwtException e) {
             log.error("만료된 JWT 토큰입니다.");
-            setErrorResponse(HttpStatus.UNAUTHORIZED, response, e);
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, e);
         } catch (UnsupportedJwtException e) {
             log.error("지원되지 않는 JWT 토큰입니다.");
             setErrorResponse(HttpStatus.UNAUTHORIZED, response, e);

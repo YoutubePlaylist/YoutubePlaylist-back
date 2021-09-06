@@ -1,14 +1,34 @@
-package com.example.youtubedb.service;
+package com.example.youtubedb.integrationTest.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.example.youtubedb.controller.MemberController;
+import com.example.youtubedb.domain.member.Authority;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.domain.Playlist;
+import com.example.youtubedb.dto.Category;
 import com.example.youtubedb.dto.play.PlaySeqDto;
 import com.example.youtubedb.exception.*;
+import com.example.youtubedb.repository.PlayRepository;
+import com.example.youtubedb.repository.SpringDataJpaPlayRepository;
+import com.example.youtubedb.s3.S3Uploader;
+import com.example.youtubedb.service.MemberService;
+import com.example.youtubedb.service.PlayService;
+import com.example.youtubedb.service.PlaylistService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.SpyBeans;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -17,15 +37,14 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
-@SpringBootTest
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class PlayServiceIntegrationTest {
-    @Autowired
-    private PlayService playService;
-    @Autowired
+    @Mock
     private MemberService memberService;
-    @Autowired
+    @Mock
     private PlaylistService playlistService;
 
     private String videoId;
@@ -37,23 +56,29 @@ class PlayServiceIntegrationTest {
     private String channelTitle;
     private boolean isPc;
 
+    @Spy
+    PlayRepository playRepository;
+
+    @InjectMocks
+    private PlayService playService;
+
     @BeforeEach
     void setup() {
         this.videoId = "video001";
-        this.isPc =true;
+        this.isPc = true;
         this.start = 100;
         this.end = 1000;
         this.thumbnail = "썸네일";
         this.title = "영상1";
         this.channelAvatar = "아바타 이미지";
-        this.channelTitle ="채널이름1";
+        this.channelTitle = "채널이름1";
     }
 
     @Test
     void 플레이_추가() {
         // given
-        Member member = memberService.registerNon("device001", isPc);
-        Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
+        Member member = getNonMember();
+        Playlist playlist = getPlaylist(member);
 
         // when
         Play play = playService.addPlayToPlaylist(
@@ -71,6 +96,26 @@ class PlayServiceIntegrationTest {
         assertThat(play.getTitle()).isEqualTo(title);
     }
 
+    private Playlist getPlaylist(Member member) {
+        Playlist testPlayList = Playlist.builder()
+                .title("default")
+                .isPublic(false)
+                .category(Category.OTHER)
+                .build();
+        testPlayList.setMember(member);
+
+        return testPlayList;
+    }
+
+    private Member getNonMember() {
+        return Member.builder()
+                .isMember(false)
+                .loginId("device001")
+                .authority(Authority.ROLE_USER)
+                .isPC(true)
+                .build();
+    }
+
     @Test
     void 플레이_추가_시간예외() {
         // given
@@ -78,7 +123,7 @@ class PlayServiceIntegrationTest {
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
 
         // when
-        Exception e = assertThrows(StartAndEndTimeException.class , () ->
+        Exception e = assertThrows(StartAndEndTimeException.class, () ->
                 playService.addPlayToPlaylist(
                         playlist,
                         member.getLoginId(),
@@ -89,7 +134,7 @@ class PlayServiceIntegrationTest {
                         title,
                         channelAvatar,
                         channelTitle)
-                );
+        );
 
         // then
         assertThat(e.getMessage()).isEqualTo(StartAndEndTimeException.getErrorMessage());

@@ -214,7 +214,7 @@ public class MemberController {
     })
     @Operation(summary = "토큰 재발급", description = "access토큰 재발급")
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissue(@RequestBody TokenReissueRequestDto reissueRequestDto) {
+    public ResponseEntity<?> reissue(@RequestBody TokenReissueRequestDto reissueRequestDto) throws Exception {
         RequestUtil.checkNeedValue(
                 reissueRequestDto.getAccessToken(),
                 reissueRequestDto.getRefreshToken(),
