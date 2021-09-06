@@ -1,17 +1,16 @@
 package com.example.youtubedb.integrationTest.service;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.example.youtubedb.controller.MemberController;
-import com.example.youtubedb.domain.member.Authority;
-import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.domain.Playlist;
+import com.example.youtubedb.domain.member.Authority;
+import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.Category;
 import com.example.youtubedb.dto.play.PlaySeqDto;
-import com.example.youtubedb.exception.*;
+import com.example.youtubedb.exception.DuplicateSeqException;
+import com.example.youtubedb.exception.InvalidSeqException;
+import com.example.youtubedb.exception.NotExistPlayException;
+import com.example.youtubedb.exception.StartAndEndTimeException;
 import com.example.youtubedb.repository.PlayRepository;
-import com.example.youtubedb.repository.SpringDataJpaPlayRepository;
-import com.example.youtubedb.s3.S3Uploader;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlayService;
 import com.example.youtubedb.service.PlaylistService;
@@ -22,14 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.boot.test.mock.mockito.SpyBeans;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +28,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class PlayServiceIntegrationTest {
@@ -122,8 +111,8 @@ class PlayServiceIntegrationTest {
         Member member = memberService.registerNon("device001", isPc);
         Playlist playlist = playlistService.createPlaylist("default", false, "OTHER", member);
 
-        // when
-        Exception e = assertThrows(StartAndEndTimeException.class, () ->
+        // when & then
+        assertThrows(StartAndEndTimeException.class, () ->
                 playService.addPlayToPlaylist(
                         playlist,
                         member.getLoginId(),
@@ -135,9 +124,6 @@ class PlayServiceIntegrationTest {
                         channelAvatar,
                         channelTitle)
         );
-
-        // then
-        assertThat(e.getMessage()).isEqualTo(StartAndEndTimeException.getErrorMessage());
     }
 
     @Test
@@ -284,11 +270,8 @@ class PlayServiceIntegrationTest {
         seqList.add(PlaySeqDto.builder().id(play2.getId()).sequence(4).build());
         seqList.add(PlaySeqDto.builder().id(play3.getId()).sequence(2).build());
 
-        // when
-        Exception e = assertThrows(InvalidSeqException.class, () -> playService.editSeq(member.getLoginId(), playlist.getId(), seqList));
-
-        // then
-        assertThat(e.getMessage()).isEqualTo(InvalidSeqException.getErrorMessage());
+        // when & then
+        assertThrows(InvalidSeqException.class, () -> playService.editSeq(member.getLoginId(), playlist.getId(), seqList));
     }
 
     @Test
@@ -331,11 +314,8 @@ class PlayServiceIntegrationTest {
         seqList.add(PlaySeqDto.builder().id(play2.getId()).sequence(2).build());
         seqList.add(PlaySeqDto.builder().id(play3.getId()).sequence(2).build());
 
-        // when
-        Exception e = assertThrows(DuplicateSeqException.class, () -> playService.editSeq(member.getLoginId(), playlist.getId(), seqList));
-
-        // then
-        assertThat(e.getMessage()).isEqualTo(DuplicateSeqException.getErrorMessage());
+        // when & then
+        assertThrows(DuplicateSeqException.class, () -> playService.editSeq(member.getLoginId(), playlist.getId(), seqList));
     }
 
     @Test
@@ -353,13 +333,10 @@ class PlayServiceIntegrationTest {
                 title,
                 channelAvatar,
                 channelTitle);
-
-        // when
         playService.deletePlayById(play, "device001");
-        Exception e = assertThrows(NotExistPlayException.class, () -> playService.getPlayById(play.getId()));
 
-        // then
-        assertThat(e.getMessage()).isEqualTo(NotExistPlayException.getErrorMessage());
+        // when & then
+        assertThrows(NotExistPlayException.class, () -> playService.getPlayById(play.getId()));
     }
 
     @Test

@@ -6,8 +6,4 @@ public class InvalidSeqException extends RuntimeException {
     public InvalidSeqException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }

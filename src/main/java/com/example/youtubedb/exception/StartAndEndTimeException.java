@@ -5,8 +5,4 @@ public class StartAndEndTimeException extends RuntimeException {
     public StartAndEndTimeException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }

@@ -6,8 +6,4 @@ public class InvalidAccessException extends RuntimeException {
     public InvalidAccessException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }

@@ -6,8 +6,4 @@ public class DuplicateMemberException extends RuntimeException {
     public DuplicateMemberException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }

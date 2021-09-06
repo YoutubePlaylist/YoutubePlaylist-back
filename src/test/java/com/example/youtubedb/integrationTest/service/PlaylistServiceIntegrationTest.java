@@ -57,11 +57,8 @@ class PlaylistServiceIntegrationTest {
         Boolean isPublic = true;
         String category = "???";
 
-        // when
-        Exception e = assertThrows(NotExistRequestValueException.class, () -> playlistService.createPlaylist(title, isPublic, category, member));
-
-        // then
-        assertThat(e.getMessage()).isEqualTo(NotExistRequestValueException.getErrorMessage());
+        // when & then
+        assertThrows(NotExistRequestValueException.class, () -> playlistService.createPlaylist(title, isPublic, category, member));
     }
 
     @Test
@@ -104,11 +101,9 @@ class PlaylistServiceIntegrationTest {
         // given
         Member member = memberService.registerNon("devide001",true);
         Playlist playlist = playlistService.createPlaylist("myList", false, "GAME", member);
-        // when
-        Exception e = assertThrows(NotExistPlaylistException.class, () -> playlistService.getPlaylistById(100L));
 
-        // then
-        assertThat(e.getMessage()).isEqualTo(NotExistPlaylistException.getErrorMessage());
+        // when & then
+        assertThrows(NotExistPlaylistException.class, () -> playlistService.getPlaylistById(100L));
     }
 
     @Test
@@ -116,15 +111,12 @@ class PlaylistServiceIntegrationTest {
         // given
         Member member = memberService.registerNon("device001",true);
         Playlist playlist = playlistService.createPlaylist("myList", false, "GAME", member);
-
-        // when
         playlistService.deletePlaylistById(playlist.getId(), member.getLoginId());
-        Exception e = assertThrows(NotExistPlaylistException.class,
+
+        // when & then
+        assertThrows(NotExistPlaylistException.class,
                 () -> playlistService.getPlaylistById(playlist.getId())
         );
-
-        // then
-        assertThat(e.getMessage()).isEqualTo(NotExistPlaylistException.getErrorMessage());
     }
 
     @Test

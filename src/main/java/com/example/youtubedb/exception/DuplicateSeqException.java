@@ -6,8 +6,4 @@ public class DuplicateSeqException extends RuntimeException {
     public DuplicateSeqException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }
