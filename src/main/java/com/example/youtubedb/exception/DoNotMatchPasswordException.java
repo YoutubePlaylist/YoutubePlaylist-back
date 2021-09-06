@@ -6,8 +6,4 @@ public class DoNotMatchPasswordException extends RuntimeException {
     public DoNotMatchPasswordException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }

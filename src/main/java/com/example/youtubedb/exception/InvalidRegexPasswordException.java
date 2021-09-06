@@ -6,8 +6,4 @@ public class InvalidRegexPasswordException extends RuntimeException {
     public InvalidRegexPasswordException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }

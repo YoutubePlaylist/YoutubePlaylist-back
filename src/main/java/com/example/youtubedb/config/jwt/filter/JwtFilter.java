@@ -1,6 +1,8 @@
-package com.example.youtubedb.config.jwt;
+package com.example.youtubedb.config.jwt.filter;
 
+import com.example.youtubedb.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -20,6 +22,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
 
+    @SneakyThrows
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 1. Request Header 에서 토큰을 꺼냄

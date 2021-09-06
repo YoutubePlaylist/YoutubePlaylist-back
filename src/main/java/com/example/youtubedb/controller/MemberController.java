@@ -49,18 +49,13 @@ public class MemberController {
     private final PlaylistService playlistService;
     private final S3Uploader s3Uploader;
 
-    //test
-    private final MessageService messageService;
-
     @Autowired
     public MemberController(MemberService memberService,
                             PlaylistService playlistService,
-                            S3Uploader s3Uploader,
-                            MessageService messageService) {
+                            S3Uploader s3Uploader) {
         this.memberService = memberService;
         this.playlistService = playlistService;
         this.s3Uploader = s3Uploader;
-        this.messageService = messageService;
     }
 
     @ApiResponses(value = {
@@ -218,7 +213,7 @@ public class MemberController {
     })
     @Operation(summary = "토큰 재발급", description = "access토큰 재발급")
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissue(@RequestBody TokenReissueRequestDto reissueRequestDto) {
+    public ResponseEntity<?> reissue(@RequestBody TokenReissueRequestDto reissueRequestDto) throws Exception {
         RequestUtil.checkNeedValue(
                 reissueRequestDto.getAccessToken(),
                 reissueRequestDto.getRefreshToken(),

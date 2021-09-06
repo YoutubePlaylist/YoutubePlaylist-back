@@ -1,9 +1,9 @@
 package com.example.youtubedb.config;
 
-import com.example.youtubedb.config.jwt.JwtAccessDeniedHandler;
-import com.example.youtubedb.config.jwt.JwtAuthenticationEntryPoint;
-import com.example.youtubedb.config.jwt.JwtSecurityConfig;
+import com.example.youtubedb.config.jwt.handler.JwtAccessDeniedHandler;
+import com.example.youtubedb.config.jwt.handler.JwtAuthenticationEntryPoint;
 import com.example.youtubedb.config.jwt.TokenProvider;
+import com.example.youtubedb.domain.member.Authority;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,32 +44,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers("/api/member").authenticated()
-                .antMatchers("/api/member/change").authenticated()
-                .antMatchers("/api/member/upload").authenticated()
+                .antMatchers("/api/member").hasAuthority(Authority.ROLE_USER.name())
+                .antMatchers("/api/member/change").hasAuthority(Authority.ROLE_USER.name())
+                .antMatchers("/api/member/upload").hasAuthority(Authority.ROLE_USER.name())
                 .antMatchers("/api/member/**").permitAll()
-                .antMatchers("/api/**").authenticated()
-//                .antMatchers("/swagger-ui/**").hasRole("ADMIN")
-//                .anyRequest().permitAll()
+                .antMatchers("/api/**").hasAuthority(Authority.ROLE_USER.name())
                 .and()
                 .cors()
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
-
-
-
-//            .authorizeRequests()
-//                .antMatchers("/", "/applications").authenticated()
-//                .antMatchers("/admin").hasRole("ADMIN")
-//                .anyRequest().permitAll()
-//                .and()
-//            .formLogin()
-//                .loginPage("/login")
-//                .successForwardUrl("/")
-//                .permitAll()
-//                .and()
-//            .logout()
-//                .permitAll();
     }
 
     @Bean

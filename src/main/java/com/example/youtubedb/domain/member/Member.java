@@ -24,6 +24,7 @@ public class Member extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Authority authority;
 
+    @JsonIgnore
     @Transient
     private boolean isPC;
 

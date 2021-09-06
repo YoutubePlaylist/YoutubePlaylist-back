@@ -6,8 +6,4 @@ public class NotExistPlayException extends RuntimeException {
     public NotExistPlayException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }

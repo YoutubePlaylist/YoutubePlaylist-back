@@ -12,11 +12,10 @@ spring:
 #      password: "pass"
 #      roles: "ADMIN"
 
-
   boot:
     admin:
       client:
-        url: http://localhost:8080
+        url: http://127.0.0.1:8090
 
     properties:
       hibernate:
@@ -41,17 +40,18 @@ coolsms:
     apiKey: NCSVJBMVYB7TOOQV
 
 management:
+  server:
+    port: 8001
   endpoints:
     web:
       exposure:
         include: "*"
-
       base-path: "/monitoring"
 
   endpoint:
     health:
       group:
         custom:
-          include: diskSpace, ping
+          include: "*"
           show-components: always
           show-details: always

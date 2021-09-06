@@ -6,8 +6,4 @@ public class NotExistRequestValueException extends RuntimeException {
     public NotExistRequestValueException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }

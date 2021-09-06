@@ -6,8 +6,4 @@ public class NotMemberException extends RuntimeException {
     public NotMemberException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }
