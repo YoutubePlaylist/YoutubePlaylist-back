@@ -10,10 +10,12 @@ import com.example.youtubedb.exception.DuplicateSeqException;
 import com.example.youtubedb.exception.InvalidSeqException;
 import com.example.youtubedb.exception.NotExistPlayException;
 import com.example.youtubedb.exception.StartAndEndTimeException;
+import com.example.youtubedb.mapper.PlayMapper;
 import com.example.youtubedb.repository.PlayRepository;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PlayService;
 import com.example.youtubedb.service.PlaylistService;
+import com.example.youtubedb.vo.PlayVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -80,9 +82,15 @@ class PlayServiceIntegrationTest {
                 title,
                 channelAvatar,
                 channelTitle);
+        PlayVO testPlayVO = getTestPlayVO(play.getSequence());
+        PlayVO playVO = PlayMapper.INSTANCE.toPlayVO(play);
 
         // then
-        assertThat(play.getTitle()).isEqualTo(title);
+        assertThat(playVO.sameAs(testPlayVO)).isTrue();
+    }
+
+    private PlayVO getTestPlayVO(int sequence) {
+        return new PlayVO(videoId, start, end, thumbnail, title, sequence, channelAvatar, channelTitle);
     }
 
     private Playlist getPlaylist(Member member) {

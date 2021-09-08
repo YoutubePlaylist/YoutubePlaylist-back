@@ -50,9 +50,15 @@ dependencies {
     //sms 인증
     implementation 'net.nurigo:javaSDK:2.2'
 
-
     compileOnly 'org.projectlombok:lombok'
+
+    // MapStruct
+    implementation 'org.mapstruct:mapstruct:1.4.1.Final'
+
+    // AP
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.1.Final'
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

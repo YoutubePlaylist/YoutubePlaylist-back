@@ -17,7 +17,6 @@ import com.example.youtubedb.dto.token.request.TokenReissueRequestDto;
 import com.example.youtubedb.dto.token.resposne.TokenResponseDto;
 import com.example.youtubedb.s3.S3Uploader;
 import com.example.youtubedb.service.MemberService;
-import com.example.youtubedb.service.MessageService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
