@@ -142,8 +142,6 @@ public class MemberService implements UserDetailsService {
             // 3. 인증 정보를 기반으로 JWT 토큰 생성
             Token token = tokenProvider.generateTokenDto(authentication, isPC);
 
-
-
             long now = (new Date()).getTime();
             if(isPC) {
             stringStringValueOperations.set("PC"+authentication.getName(), token.getRefreshToken(), token.getRefreshTokenExpiresIn().getTime()- now, TimeUnit.MILLISECONDS);

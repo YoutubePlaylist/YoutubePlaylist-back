@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 // TODO: 현재 중복된 플레이 리스트 이름 가능한데 논의 해봐야할듯
@@ -88,7 +89,7 @@ public class PlaylistController {
     })
     @PostMapping("/create")
     @Operation(summary = "생성", description = "플레이 리스트 생성")
-    public ResponseEntity<?> createPlaylist(@RequestBody PlaylistCreateRequestDto playlistCreateRequestDto,
+    public ResponseEntity<?> createPlaylist(@Valid  @RequestBody PlaylistCreateRequestDto playlistCreateRequestDto,
                                             Authentication authentication) {
         RequestUtil.checkNeedValue(
                 playlistCreateRequestDto.getTitle(),
@@ -127,7 +128,7 @@ public class PlaylistController {
     })
     @PutMapping("/edit")
     @Operation(summary = "제목 수정", description = "플레이 리스트 제목 수정")
-    public ResponseEntity<?> editPlaylist(@RequestBody PlaylistEditTitleRequestDto playlistEditTitleRequestDto,
+    public ResponseEntity<?> editPlaylist(@Valid @RequestBody PlaylistEditTitleRequestDto playlistEditTitleRequestDto,
                                           Authentication authentication) {
         RequestUtil.checkNeedValue(
                 playlistEditTitleRequestDto.getId(),

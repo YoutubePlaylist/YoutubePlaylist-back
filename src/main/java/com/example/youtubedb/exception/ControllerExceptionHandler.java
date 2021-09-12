@@ -6,6 +6,7 @@ import com.example.youtubedb.dto.error.NotAcceptableFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -59,5 +60,15 @@ public class ControllerExceptionHandler {
                 .build();
 
         return ResponseEntity.internalServerError().body(responseBody);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> validationException(Exception e) {
+        BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("필요값이 없습니다.")
+                .build();
+
+        return ResponseEntity.badRequest().body(responseBody);
     }
 }

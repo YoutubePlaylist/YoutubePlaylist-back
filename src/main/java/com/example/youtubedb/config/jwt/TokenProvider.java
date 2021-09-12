@@ -107,11 +107,11 @@ public class TokenProvider {
         private static final Period REFRESH_TOKEN_EXPIRE_DATE_APP = Period.ofDays(7);
         private static final Period REFRESH_TOKEN_EXPIRE_DATE_PC = Period.ofMonths(3);
 
-        public static Date getAccessTokenExpiresIn(){
+        private static Date getAccessTokenExpiresIn(){
             return valueOf(LocalDateTime.now().plus(ACCESS_TOKEN_EXPIRE_TIME));
         }
 
-        public static Date getRefreshTokenExpiresIn(boolean isPC){
+        private static Date getRefreshTokenExpiresIn(boolean isPC){
             return valueOf(LocalDateTime.now().plus(isPC ? REFRESH_TOKEN_EXPIRE_DATE_PC : REFRESH_TOKEN_EXPIRE_DATE_APP));
         }
     }
