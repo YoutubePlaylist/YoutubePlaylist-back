@@ -236,8 +236,7 @@ public class MemberController {
     })
     @Operation(summary = "비밀 번호 변경", description = "비밀 번호 변경")
     @PostMapping("/changePassword")
-    public ResponseEntity<?> changePassword(@Valid
-                                                @RequestBody MemberChangePasswordRequestDto memberChangePasswordRequestDto,
+    public ResponseEntity<?> changePassword(@Valid @RequestBody MemberChangePasswordRequestDto memberChangePasswordRequestDto,
                                             Authentication authentication) {
         String loginId = authentication.getName();
         RequestUtil.checkNeedValue(
@@ -245,7 +244,7 @@ public class MemberController {
                 memberChangePasswordRequestDto.getNewPassword());
 
         Member updateMember = memberService.findMemberByLoginId(loginId);
-        updateMember = memberService.changePassword(updateMember, memberChangePasswordRequestDto.getOldPassword(),memberChangePasswordRequestDto.getNewPassword());
+        updateMember = memberService.changePassword(updateMember, memberChangePasswordRequestDto.getOldPassword(), memberChangePasswordRequestDto.getNewPassword());
 
         BaseResponseSuccessDto responseBody = new MemberResponseDto(updateMember);
         return ResponseEntity.ok(responseBody);

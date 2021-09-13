@@ -101,9 +101,6 @@ public class MemberService implements UserDetailsService {
         if(!passwordEncoder.matches(oldPassword, updateMember.getPassword())){
             throw new DoNotMatchPasswordException();
         }
-        if (oldPassword.equals(newPassword)) {
-            throw new DoNotChangePasswordException();
-        }
     }
 
 
