@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -236,8 +237,10 @@ public class MemberController {
     })
     @Operation(summary = "비밀 번호 변경", description = "비밀 번호 변경")
     @PostMapping("/changePassword")
-    public ResponseEntity<?> changePassword(@Valid @RequestBody MemberChangePasswordRequestDto memberChangePasswordRequestDto,
+    public ResponseEntity<?> changePassword(@Valid @RequestBody MemberChangePasswordRequestDto memberChangePasswordRequestDto, BindingResult errors,
                                             Authentication authentication) {
+
+        log.info("{}", errors.getTarget());
         String loginId = authentication.getName();
         RequestUtil.checkNeedValue(
                 memberChangePasswordRequestDto.getOldPassword(),

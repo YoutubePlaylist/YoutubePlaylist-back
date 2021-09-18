@@ -24,18 +24,29 @@ public class MemberChangePasswordRequestDto {
     private final String newPassword;
 
     @AssertFalse(message = "기존 비밀번호와 같습니다.")
-    private boolean isSameTwoPassword() {
+    private boolean isSameTwoPassword()
+    {
         return getOldPassword().equals(getNewPassword());
     }
+//    {
+//        if(this.oldPassword.equals(newPassword)){
+//            throw new DoNotChangePasswordException();
+//        }
+//    }
 
 //    @AssertFalse(message = "기존 비밀번호와 같습니다.")
 //    private boolean isCorrectOldPassword() {
 //    }
 
+
+
+
+
     @Builder
     public MemberChangePasswordRequestDto(String oldPassword, String newPassword) {
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
+        isSameTwoPassword();
     }
 
 }
