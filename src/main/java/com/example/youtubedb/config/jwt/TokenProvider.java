@@ -1,7 +1,7 @@
 package com.example.youtubedb.config.jwt;
 
-import com.example.youtubedb.adapter.DateAdapter;
 import com.example.youtubedb.domain.Token;
+import com.example.youtubedb.exception.NotExistAuthorityException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -22,7 +22,10 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.stream.Collectors;
+
+import static java.sql.Timestamp.valueOf;
 
 @Slf4j
 @Component
@@ -30,11 +33,6 @@ public class TokenProvider {
 
     private final String AUTHORITIES_KEY = "auth";
     private final String BEARER_TYPE = "bearer";
-
-    private static final Duration ACCESS_TOKEN_EXPIRE_TIME = Duration.ofMinutes(30);
-    private static final Period REFRESH_TOKEN_EXPIRE_DATE_APP = Period.ofDays(7);
-    private static final Period REFRESH_TOKEN_EXPIRE_DATE_PC = Period.ofMonths(3);
-
 
     private final Key key;
 
@@ -44,40 +42,32 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public Token generateTokenDto(Authentication authentication, boolean isPc) {
+    public Token generateTokenDto(Authentication authentication, boolean isPC) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         // Access Token 생성
-
-        LocalDateTime accessTokenExpiresIn = LocalDateTime.now().plus(ACCESS_TOKEN_EXPIRE_TIME);
-//                new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())       // payload "sub": "name"
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
-                .setExpiration(DateAdapter.toDate(accessTokenExpiresIn))        // payload "exp": 1516239022 (예시)
+                .setExpiration(DateUtil.getAccessTokenExpiresIn())      // payload "exp": 1516239022 (예시)
                 .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
                 .compact();
 
         // Refresh Token 생성
-        LocalDateTime expireDate = LocalDateTime.now().plus(isPc ? REFRESH_TOKEN_EXPIRE_DATE_PC : REFRESH_TOKEN_EXPIRE_DATE_APP);
-
         String refreshToken = Jwts.builder()
-                .setExpiration(DateAdapter.toDate(expireDate))
+                .setExpiration(DateUtil.getRefreshTokenExpiresIn(isPC))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
-
-//        redisUtils.put("1", "2", expireTime);
-//        redisUtils.put(authentication.getName(), refreshToken, expireTime);
         return Token.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
-                .accessTokenExpiresIn(DateAdapter.toDate(accessTokenExpiresIn))
+                .accessTokenExpiresIn(DateUtil.getAccessTokenExpiresIn())
                 .refreshToken(refreshToken)
-                .refreshTokenExpiresIn(DateAdapter.toDate(expireDate))
+                .refreshTokenExpiresIn(DateUtil.getRefreshTokenExpiresIn(isPC))
                 .build();
     }
 
@@ -85,15 +75,14 @@ public class TokenProvider {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
-        if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
-        }
 
+        if (claims.get(AUTHORITIES_KEY) == null) {
+            throw new NotExistAuthorityException();
+        }
         // 클레임에서 권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+        Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
         UserDetails principal = new User(claims.getSubject(), "", authorities);
@@ -101,36 +90,29 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public boolean validateToken(String token) {
-
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-//            throw new CustomValidationException();
-            log.info("잘못된 JWT 서명입니다.");
-        } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다.");
-        } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 JWT 토큰입니다.");
-        } catch (IllegalArgumentException e) {
-//            throw new CustomValidationException();
-            log.info("JWT 토큰이 잘못되었습니다.");
-        }
-
-        return false;
+    public boolean validateToken(String token) throws Exception {
+        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+        return true;
     }
 
 //    public String parse
 
 
-    private Claims parseClaims(String accessToken) {
-        try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims();
-        }
+    private Claims parseClaims(String accessToken) throws ExpiredJwtException {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
     }
 
+    private static class DateUtil{
+        private static final Duration ACCESS_TOKEN_EXPIRE_TIME = Duration.ofMinutes(30);
+        private static final Period REFRESH_TOKEN_EXPIRE_DATE_APP = Period.ofDays(7);
+        private static final Period REFRESH_TOKEN_EXPIRE_DATE_PC = Period.ofMonths(3);
 
+        private static Date getAccessTokenExpiresIn(){
+            return valueOf(LocalDateTime.now().plus(ACCESS_TOKEN_EXPIRE_TIME));
+        }
+
+        private static Date getRefreshTokenExpiresIn(boolean isPC){
+            return valueOf(LocalDateTime.now().plus(isPC ? REFRESH_TOKEN_EXPIRE_DATE_PC : REFRESH_TOKEN_EXPIRE_DATE_APP));
+        }
+    }
 }

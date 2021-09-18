@@ -5,8 +5,4 @@ public class OverNomMemberMaxListException extends RuntimeException {
     public OverNomMemberMaxListException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }

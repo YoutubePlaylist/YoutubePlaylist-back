@@ -6,8 +6,4 @@ public class NotExistPlaylistException extends RuntimeException {
     public NotExistPlaylistException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }

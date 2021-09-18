@@ -1,7 +1,8 @@
-package com.example.youtubedb.util;
+package com.example.youtubedb.unitTest.util;
 
 import com.example.youtubedb.exception.InvalidAccessException;
 import com.example.youtubedb.exception.NotExistRequestValueException;
+import com.example.youtubedb.util.RequestUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,11 +17,8 @@ class RequestUtilTest {
         Integer param2 = 3;
         String param3 = null;
 
-        // when
-        Exception e = assertThrows(NotExistRequestValueException.class, () -> RequestUtil.checkNeedValue(param1, param2, param3));
-
-        // then
-        assertThat(e.getMessage()).isEqualTo(NotExistRequestValueException.getErrorMessage());
+        // when & then
+        assertThrows(NotExistRequestValueException.class, () -> RequestUtil.checkNeedValue(param1, param2, param3));
     }
 
     @Test
@@ -29,10 +27,7 @@ class RequestUtilTest {
         String loginId = "user";
         String other = "other";
 
-        // when
-        Exception e =  assertThrows(InvalidAccessException.class, () -> RequestUtil.checkOwn(other, loginId));
-
-        // then
-        assertThat(e.getMessage()).isEqualTo(InvalidAccessException.getErrorMessage());
+        // when & then
+        assertThrows(InvalidAccessException.class, () -> RequestUtil.checkOwn(other, loginId));
     }
 }

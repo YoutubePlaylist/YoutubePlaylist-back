@@ -1,7 +1,8 @@
-package com.example.youtubedb.util;
+package com.example.youtubedb.unitTest.util;
 
 import com.example.youtubedb.dto.ResponseDto;
 import com.example.youtubedb.dto.play.PlaySeqDto;
+import com.example.youtubedb.util.ResponseUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 

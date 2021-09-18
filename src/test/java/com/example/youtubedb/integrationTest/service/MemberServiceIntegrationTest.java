@@ -1,12 +1,13 @@
-package com.example.youtubedb.service;
+package com.example.youtubedb.integrationTest.service;
 
 import com.example.youtubedb.domain.Token;
 import com.example.youtubedb.domain.member.Member;
+import com.example.youtubedb.exception.*;
+import com.example.youtubedb.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.youtubedb.exception.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -39,13 +40,10 @@ class MemberServiceIntegrationTest {
     void 가입시_중복() {
         // given
         String deviceId = "device001";
-
-        // when
         memberService.registerNon(deviceId, false);
-        Exception e = assertThrows(DuplicateMemberException.class, () -> memberService.registerNon(deviceId, false));
 
-        // then
-        assertThat(e.getMessage()).isEqualTo(DuplicateMemberException.getErrorMessage());
+        // when & then
+        assertThrows(DuplicateMemberException.class, () -> memberService.registerNon(deviceId, false));
     }
 
     @Test
@@ -69,8 +67,8 @@ class MemberServiceIntegrationTest {
         // given
         String deviceId = "device001";
 
-        // when
-        Exception e = assertThrows(NotExistMemberException.class, () -> memberService.findMemberByLoginId(deviceId));
+        // when & then
+        assertThrows(NotExistMemberException.class, () -> memberService.findMemberByLoginId(deviceId));
     }
 
     @Test
@@ -78,13 +76,10 @@ class MemberServiceIntegrationTest {
         // given
         String deviceId = "device001";
         Member nonMember = memberService.registerNon(deviceId, false);
-
-        // when
         memberService.deleteUserByLoginId(deviceId);
-        Exception e = assertThrows(NotExistMemberException.class, () -> memberService.findMemberByLoginId(deviceId));
 
-        // then
-        assertThat(e.getMessage()).isEqualTo(NotExistMemberException.getErrorMessage());
+        // when & then
+        assertThrows(NotExistMemberException.class, () -> memberService.findMemberByLoginId(deviceId));
     }
 
     @Test
@@ -112,11 +107,8 @@ class MemberServiceIntegrationTest {
         String loginId = "helloMan";
         String password = "he llo";
 
-        // when
-        Exception e = assertThrows(InvalidBlankPasswordException.class, () -> memberService.registerReal(loginId, password, false));
-
-        // then
-        assertThat(e.getMessage()).isEqualTo(InvalidBlankPasswordException.getErrorMessage());
+        // when & then
+        assertThrows(InvalidBlankPasswordException.class, () -> memberService.registerReal(loginId, password, false));
     }
 
     @Test
@@ -125,11 +117,8 @@ class MemberServiceIntegrationTest {
         String loginId = "helloMan";
         String password = "hello";
 
-        // when
-        Exception e = assertThrows(InvalidRegexPasswordException.class, () -> memberService.registerReal(loginId, password, false));
-
-        // then
-        assertThat(e.getMessage()).isEqualTo(InvalidRegexPasswordException.getErrorMessage());
+        // when & then
+        assertThrows(InvalidRegexPasswordException.class, () -> memberService.registerReal(loginId, password, false));
     }
 
     @Test
@@ -155,11 +144,8 @@ class MemberServiceIntegrationTest {
         String otherPassword = "bye123";
         Member member = memberService.registerReal(loginId, password, false);
 
-        // when
-       Exception e = assertThrows(DoNotMatchPasswordException.class, () -> memberService.login(loginId, otherPassword, false));
-
-        // then
-        assertThat(e.getMessage()).isEqualTo(DoNotMatchPasswordException.getErrorMessage());
+        // when & then
+       assertThrows(DoNotMatchPasswordException.class, () -> memberService.login(loginId, otherPassword, false));
     }
 
     @Test
@@ -182,9 +168,7 @@ class MemberServiceIntegrationTest {
         String loginId = "helloMan";
         Member member = memberService.registerNon(loginId, false);
 
-        // when
+        // when & then
         Exception e = assertThrows(NotMemberException.class, () -> memberService.checkMember(member));
-        // then
-        assertThat(e.getMessage()).isEqualTo(NotMemberException.getErrorMessage());
     }
 }

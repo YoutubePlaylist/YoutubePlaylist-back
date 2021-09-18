@@ -6,8 +6,4 @@ public class InvalidBlankPasswordException extends RuntimeException {
     public InvalidBlankPasswordException() {
         super(MESSAGE);
     }
-
-    public static String getErrorMessage() {
-        return MESSAGE;
-    }
 }

@@ -5,11 +5,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @NoArgsConstructor
 public class MemberLoginRequestDto {
     @Schema(description = "장치 ID", example = "device001")
+    @NotBlank
     private String loginId;
+
+    @Schema(description = "장치 비밀번호", example = "password01!")
+    @NotBlank
     private String password;
 
     @Builder

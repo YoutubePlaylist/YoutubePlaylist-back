@@ -101,9 +101,6 @@ public class MemberService implements UserDetailsService {
         if(!passwordEncoder.matches(oldPassword, updateMember.getPassword())){
             throw new DoNotMatchPasswordException();
         }
-        if (oldPassword.equals(newPassword)) {
-            throw new DoNotChangePasswordException();
-        }
     }
 
 
@@ -142,8 +139,6 @@ public class MemberService implements UserDetailsService {
             // 3. 인증 정보를 기반으로 JWT 토큰 생성
             Token token = tokenProvider.generateTokenDto(authentication, isPC);
 
-
-
             long now = (new Date()).getTime();
             if(isPC) {
             stringStringValueOperations.set("PC"+authentication.getName(), token.getRefreshToken(), token.getRefreshTokenExpiresIn().getTime()- now, TimeUnit.MILLISECONDS);
@@ -160,7 +155,7 @@ public class MemberService implements UserDetailsService {
 
 
     @Transactional
-    public Token reissue(String accessToken, String refreshToken, boolean isPC) {
+    public Token reissue(String accessToken, String refreshToken, boolean isPC) throws Exception {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(refreshToken)) {
             throw new RefreshTokenException("Refresh Token 이 유효하지 않습니다.");
