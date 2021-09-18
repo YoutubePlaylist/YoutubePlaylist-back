@@ -17,6 +17,7 @@ import com.example.youtubedb.dto.token.request.TokenReissueRequestDto;
 import com.example.youtubedb.dto.token.resposne.TokenResponseDto;
 import com.example.youtubedb.s3.S3Uploader;
 import com.example.youtubedb.service.MemberService;
+import com.example.youtubedb.service.PasswordValidationService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,14 +48,17 @@ public class MemberController {
     private final MemberService memberService;
     private final PlaylistService playlistService;
     private final S3Uploader s3Uploader;
+    private final PasswordValidationService passwordValidationService;
 
     @Autowired
     public MemberController(MemberService memberService,
                             PlaylistService playlistService,
-                            S3Uploader s3Uploader) {
+                            S3Uploader s3Uploader,
+                            PasswordValidationService passwordValidationService) {
         this.memberService = memberService;
         this.playlistService = playlistService;
         this.s3Uploader = s3Uploader;
+        this.passwordValidationService = passwordValidationService;
     }
 
     @ApiResponses(value = {
@@ -133,8 +137,7 @@ public class MemberController {
                 memberRequestDto.getPassword(),
                 memberRequestDto.getIsPC());
 
-//        log.info("sms test 중, checkpoint:1");
-//        messageService.sendMessage("01086231917","1234");
+        passwordValidationService.checkValidPassword(memberRequestDto.getPassword());
         Member member = memberService.registerReal(memberRequestDto.getLoginId(), memberRequestDto.getPassword(), memberRequestDto.getIsPC());
         playlistService.createPlaylist("default", false, "OTHER", member);
 
@@ -248,7 +251,12 @@ public class MemberController {
                 memberChangePasswordRequestDto.getNewPassword());
 
         Member updateMember = memberService.findMemberByLoginId(loginId);
-        updateMember = memberService.changePassword(updateMember, memberChangePasswordRequestDto.getOldPassword(),memberChangePasswordRequestDto.getNewPassword());
+        passwordValidationService.checkCorrectPassword(
+                updateMember,
+                memberChangePasswordRequestDto.getOldPassword(),
+                memberChangePasswordRequestDto.getNewPassword());
+        passwordValidationService.checkValidPassword(memberChangePasswordRequestDto.getNewPassword());
+        updateMember = memberService.changePassword(updateMember, memberChangePasswordRequestDto.getOldPassword(), memberChangePasswordRequestDto.getNewPassword());
 
         BaseResponseSuccessDto responseBody = new MemberResponseDto(updateMember);
         return ResponseEntity.ok(responseBody);
@@ -318,6 +326,7 @@ public class MemberController {
         log.info(" loginId = {}", authentication.getName());
         String loginId = authentication.getName();
         Member member = memberService.findMemberByLoginId(loginId);
+        passwordValidationService.checkValidPassword(memberLoginRequestDto.getPassword());
         memberService.change(member, memberLoginRequestDto.getLoginId(), memberLoginRequestDto.getPassword());
 
         BaseResponseSuccessDto responseBody = new MemberResponseDto(member);

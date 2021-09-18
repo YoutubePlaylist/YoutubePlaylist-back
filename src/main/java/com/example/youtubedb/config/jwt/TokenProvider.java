@@ -79,7 +79,6 @@ public class TokenProvider {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
-
         if (claims.get(AUTHORITIES_KEY) == null) {
             throw new NotExistAuthorityException();
         }
