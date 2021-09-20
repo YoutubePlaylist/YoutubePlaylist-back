@@ -1,6 +1,5 @@
 package com.example.youtubedb.unitTest.util;
 
-import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.dto.ResponseDto;
 import com.example.youtubedb.dto.play.PlaySeqDto;
 import com.example.youtubedb.util.ResponseUtil;

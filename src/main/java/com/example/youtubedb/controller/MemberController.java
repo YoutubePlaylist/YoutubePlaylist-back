@@ -32,9 +32,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 // TODO actuator 관련 이슈 해결 필요!
@@ -59,6 +61,7 @@ public class MemberController {
         this.playlistService = playlistService;
         this.s3Uploader = s3Uploader;
         this.passwordValidationService = passwordValidationService;
+
     }
 
     @ApiResponses(value = {
@@ -103,7 +106,7 @@ public class MemberController {
     })
     @Operation(summary = "가입", description = "비회원 가입")
     @PostMapping("/signup/non")
-    public ResponseEntity<?> signupNon(@RequestBody NonMemberRequestDto nonMemberRequestDto) {
+    public ResponseEntity<?> signupNon(@Valid @RequestBody NonMemberRequestDto nonMemberRequestDto) {
         RequestUtil.checkNeedValue(
                 nonMemberRequestDto.getDeviceId(),
                 nonMemberRequestDto.getIsPC());
@@ -131,14 +134,9 @@ public class MemberController {
     })
     @Operation(summary = "가입", description = "회원 가입")
     @PostMapping("/signup/real")
-    public ResponseEntity<?> signupReal(@RequestBody MemberRequestDto memberRequestDto) {
-        RequestUtil.checkNeedValue(
-                memberRequestDto.getLoginId(),
-                memberRequestDto.getPassword(),
-                memberRequestDto.getIsPC());
-
-        passwordValidationService.checkValidPassword(memberRequestDto.getPassword());
+    public ResponseEntity<?> signupReal(@Valid @RequestBody MemberRequestDto memberRequestDto) {
         Member member = memberService.registerReal(memberRequestDto.getLoginId(), memberRequestDto.getPassword(), memberRequestDto.getIsPC());
+        log.info("memberLoginId = {}", memberRequestDto.getLoginId());
         playlistService.createPlaylist("default", false, "OTHER", member);
 
         BaseResponseSuccessDto responseBody = new MemberResponseDto(member);
@@ -161,7 +159,7 @@ public class MemberController {
     })
     @Operation(summary = "로그인(회원+비회원)", description = "비회원+회원 로그인")
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody MemberRequestDto memberRequestDto) {
+    public ResponseEntity<?> login(@Valid @RequestBody MemberRequestDto memberRequestDto) {
         RequestUtil.checkNeedValue(
                 memberRequestDto.getLoginId(),
                 memberRequestDto.getIsPC());
@@ -215,7 +213,8 @@ public class MemberController {
     })
     @Operation(summary = "토큰 재발급", description = "access토큰 재발급")
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissue(@RequestBody TokenReissueRequestDto reissueRequestDto) throws Exception {
+
+    public ResponseEntity<?> reissue(@Valid @RequestBody TokenReissueRequestDto reissueRequestDto) throws Exception {
         RequestUtil.checkNeedValue(
                 reissueRequestDto.getAccessToken(),
                 reissueRequestDto.getRefreshToken(),
@@ -243,7 +242,7 @@ public class MemberController {
     })
     @Operation(summary = "비밀 번호 변경", description = "비밀 번호 변경")
     @PostMapping("/changePassword")
-    public ResponseEntity<?> changePassword(@RequestBody MemberChangePasswordRequestDto memberChangePasswordRequestDto,
+    public ResponseEntity<?> changePassword(@Valid @RequestBody MemberChangePasswordRequestDto memberChangePasswordRequestDto,
                                             Authentication authentication) {
         String loginId = authentication.getName();
         RequestUtil.checkNeedValue(
@@ -256,6 +255,7 @@ public class MemberController {
                 memberChangePasswordRequestDto.getOldPassword(),
                 memberChangePasswordRequestDto.getNewPassword());
         passwordValidationService.checkValidPassword(memberChangePasswordRequestDto.getNewPassword());
+
         updateMember = memberService.changePassword(updateMember, memberChangePasswordRequestDto.getOldPassword(), memberChangePasswordRequestDto.getNewPassword());
 
         BaseResponseSuccessDto responseBody = new MemberResponseDto(updateMember);
@@ -321,7 +321,7 @@ public class MemberController {
     @PutMapping("/change")
     @ResponseBody
     public ResponseEntity<?> changeToMember(Authentication authentication,
-                                            @RequestBody MemberLoginRequestDto memberLoginRequestDto) {
+                                            @Valid @RequestBody MemberLoginRequestDto memberLoginRequestDto) {
         RequestUtil.checkNeedValue(memberLoginRequestDto.getLoginId(), memberLoginRequestDto.getPassword());
         log.info(" loginId = {}", authentication.getName());
         String loginId = authentication.getName();

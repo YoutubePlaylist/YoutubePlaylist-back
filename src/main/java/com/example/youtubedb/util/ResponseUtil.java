@@ -1,10 +1,8 @@
 package com.example.youtubedb.util;
 
-import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.dto.ErrorDto;
 import com.example.youtubedb.dto.ResponseDto;
 import com.example.youtubedb.dto.play.PlaySeqDto;
-import com.example.youtubedb.exception.NotExistRequestValueException;
 
 import java.util.HashMap;
 import java.util.List;

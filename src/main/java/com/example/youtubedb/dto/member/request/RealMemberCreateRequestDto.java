@@ -3,14 +3,19 @@ package com.example.youtubedb.dto.member.request;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor
 public class RealMemberCreateRequestDto {
 
+    @NotBlank
     private String loginId;
+    @NotBlank
     private String password;
+    @NotNull
     private Boolean isPc;
 
     @Builder
