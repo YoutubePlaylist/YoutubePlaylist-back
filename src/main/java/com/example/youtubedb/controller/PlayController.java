@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +94,7 @@ public class PlayController {
     })
     @PostMapping("/create")
     @Operation(summary = "생성", description = "영상 생성")
-    public ResponseEntity<?> createPlay(@RequestBody PlayCreateRequestDto playCreateRequestDto,
+    public ResponseEntity<?> createPlay(@Valid  @RequestBody PlayCreateRequestDto playCreateRequestDto,
                                         Authentication authentication) {
         RequestUtil.checkNeedValue(
                 playCreateRequestDto.getPlaylistId(),
@@ -141,7 +142,7 @@ public class PlayController {
     })
     @PutMapping("/edit/time")
     @Operation(summary = "재생 시간 변경", description = "영상 재생시간 변경")
-    public ResponseEntity<?> editPlayTime(@RequestBody PlayEditTimeRequestDto playEditTimeRequestDto,
+    public ResponseEntity<?> editPlayTime(@Valid @RequestBody PlayEditTimeRequestDto playEditTimeRequestDto,
                                           Authentication authentication) {
         RequestUtil.checkNeedValue(
                 playEditTimeRequestDto.getId(),
@@ -183,7 +184,7 @@ public class PlayController {
                     content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
     })
     @Operation(summary = "순서 변경", description = "영상 재생순서 변경")
-    public ResponseEntity<?> editPlaySequence(@RequestBody PlayEditSeqRequestDto playEditSeqRequestDto,
+    public ResponseEntity<?> editPlaySequence(@Valid @RequestBody PlayEditSeqRequestDto playEditSeqRequestDto,
                                               Authentication authentication) {
         RequestUtil.checkNeedValue(
                 playEditSeqRequestDto.getPlaylistId(),

@@ -1,15 +1,17 @@
 package com.example.youtubedb.exception;
 
 import com.example.youtubedb.dto.BaseResponseFailDto;
-import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.NotAcceptableFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class ControllerExceptionHandler {
     @ExceptionHandler(value = {
@@ -60,5 +62,16 @@ public class ControllerExceptionHandler {
                 .build();
 
         return ResponseEntity.internalServerError().body(responseBody);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> validationException(MethodArgumentNotValidException e) {
+        BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(e.getBindingResult().getAllErrors().get(0).getDefaultMessage())
+                .build();
+        System.out.println(e.getMessage().getClass());
+
+        return ResponseEntity.badRequest().body(responseBody);
     }
 }
