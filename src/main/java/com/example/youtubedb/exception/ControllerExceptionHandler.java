@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @Slf4j
 @RestControllerAdvice
@@ -29,7 +30,8 @@ public class ControllerExceptionHandler {
             InvalidRegexPasswordException.class,
             OverNomMemberMaxListException.class,
             NotMemberException.class,
-            DoNotChangePasswordException.class
+            DoNotChangePasswordException.class,
+            MaxUploadSizeExceededException.class
     })
     public ResponseEntity<?> badRequest(Exception e) {
         BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()

@@ -18,8 +18,3 @@ spring:
     host: 127.0.0.1
     port: 6379
     password:
-# multipart 용량 설정
-  servlet:
-    multipart:
-      maxFileSize: 10MB
-      maxRequestSize: 10MB
