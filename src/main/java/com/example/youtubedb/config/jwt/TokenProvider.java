@@ -95,9 +95,8 @@ public class TokenProvider {
         return true;
     }
 
+
 //    public String parse
-
-
     private Claims parseClaims(String accessToken) throws ExpiredJwtException {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
     }

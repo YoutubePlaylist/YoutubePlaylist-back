@@ -74,7 +74,6 @@ public class MemberService implements UserDetailsService {
 
     public Member registerReal(String loginId, String password, Boolean isPC) {
         checkDuplicateMember(loginId);
-        checkValidPassword(password);
         Member realMember = Member.builder()
                 .isMember(true)
                 .loginId(loginId)
@@ -87,9 +86,6 @@ public class MemberService implements UserDetailsService {
     }
 
     public Member changePassword(Member updateMember, String oldPassword, String newPassword) {
-        checkCorrectPassword(updateMember, oldPassword, newPassword);
-        checkValidPassword(newPassword);
-
         updateMember.setPassword(passwordEncoder.encode(newPassword));
         template.delete("PC" + updateMember.getLoginId());
         template.delete("APP" + updateMember.getLoginId());
@@ -97,35 +93,6 @@ public class MemberService implements UserDetailsService {
         return memberRepository.save(updateMember);
     }
 
-    private void checkCorrectPassword(Member updateMember, String oldPassword, String newPassword) {
-        if(!passwordEncoder.matches(oldPassword, updateMember.getPassword())){
-            throw new DoNotMatchPasswordException();
-        }
-    }
-
-
-    private void checkValidPassword(String password) {
-        int min = 8;
-        int max = 20;
-        // 영어, 숫자, 특수문자 포함 min~max글자
-        final String regex = "^((?=.*\\d)(?=.*[a-zA-Z])(?=.*[\\W]).{" + min + "," + max + "})$";
-        // 공백 문자 정규식
-        final String blankRegex = "(\\s)";
-
-        Matcher matcher;
-
-        // 공백 체크
-        matcher = Pattern.compile(blankRegex).matcher(password);
-        if (matcher.find()) {
-            throw new InvalidBlankPasswordException();
-        }
-
-        // 정규식 체크
-        matcher = Pattern.compile(regex).matcher(password);
-        if (!matcher.find()) {
-            throw new InvalidRegexPasswordException();
-        }
-    }
 
     public Token login(String loginID, String password, boolean isPC) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
@@ -237,7 +204,6 @@ public class MemberService implements UserDetailsService {
 
     public void change(Member member, String loginId, String password) {
         checkDuplicateMember(loginId);
-        checkValidPassword(password);
         member.changeToMember(loginId, passwordEncoder.encode(password));
     }
 }

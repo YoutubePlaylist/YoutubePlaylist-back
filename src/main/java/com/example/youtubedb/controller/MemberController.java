@@ -17,7 +17,7 @@ import com.example.youtubedb.dto.token.request.TokenReissueRequestDto;
 import com.example.youtubedb.dto.token.resposne.TokenResponseDto;
 import com.example.youtubedb.s3.S3Uploader;
 import com.example.youtubedb.service.MemberService;
-import com.example.youtubedb.service.MessageService;
+import com.example.youtubedb.service.PasswordValidationService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,14 +50,18 @@ public class MemberController {
     private final MemberService memberService;
     private final PlaylistService playlistService;
     private final S3Uploader s3Uploader;
+    private final PasswordValidationService passwordValidationService;
 
     @Autowired
     public MemberController(MemberService memberService,
                             PlaylistService playlistService,
-                            S3Uploader s3Uploader) {
+                            S3Uploader s3Uploader,
+                            PasswordValidationService passwordValidationService) {
         this.memberService = memberService;
         this.playlistService = playlistService;
         this.s3Uploader = s3Uploader;
+        this.passwordValidationService = passwordValidationService;
+
     }
 
     @ApiResponses(value = {
@@ -208,6 +213,7 @@ public class MemberController {
     })
     @Operation(summary = "토큰 재발급", description = "access토큰 재발급")
     @PostMapping("/reissue")
+
     public ResponseEntity<?> reissue(@Valid @RequestBody TokenReissueRequestDto reissueRequestDto) throws Exception {
         RequestUtil.checkNeedValue(
                 reissueRequestDto.getAccessToken(),
@@ -244,6 +250,12 @@ public class MemberController {
                 memberChangePasswordRequestDto.getNewPassword());
 
         Member updateMember = memberService.findMemberByLoginId(loginId);
+        passwordValidationService.checkCorrectPassword(
+                updateMember,
+                memberChangePasswordRequestDto.getOldPassword(),
+                memberChangePasswordRequestDto.getNewPassword());
+        passwordValidationService.checkValidPassword(memberChangePasswordRequestDto.getNewPassword());
+
         updateMember = memberService.changePassword(updateMember, memberChangePasswordRequestDto.getOldPassword(), memberChangePasswordRequestDto.getNewPassword());
 
         BaseResponseSuccessDto responseBody = new MemberResponseDto(updateMember);
@@ -314,6 +326,7 @@ public class MemberController {
         log.info(" loginId = {}", authentication.getName());
         String loginId = authentication.getName();
         Member member = memberService.findMemberByLoginId(loginId);
+        passwordValidationService.checkValidPassword(memberLoginRequestDto.getPassword());
         memberService.change(member, memberLoginRequestDto.getLoginId(), memberLoginRequestDto.getPassword());
 
         BaseResponseSuccessDto responseBody = new MemberResponseDto(member);
