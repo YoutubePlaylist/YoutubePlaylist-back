@@ -41,6 +41,7 @@ public class PlayCreateRequestDto {
     @Schema(description = "채널 이름" , example = "채널이름1")
     private final String channelTitle;
 
+
     @Builder
     public PlayCreateRequestDto(
             Long playlistId,
