@@ -46,7 +46,6 @@ import java.io.IOException;
 @RequestMapping("/api/member")
 @Slf4j
 public class MemberController {
-
     private final MemberService memberService;
     private final PlaylistService playlistService;
     private final S3Uploader s3Uploader;
@@ -61,7 +60,6 @@ public class MemberController {
         this.playlistService = playlistService;
         this.s3Uploader = s3Uploader;
         this.passwordValidationService = passwordValidationService;
-
     }
 
     @ApiResponses(value = {
@@ -213,7 +211,6 @@ public class MemberController {
     })
     @Operation(summary = "토큰 재발급", description = "access토큰 재발급")
     @PostMapping("/reissue")
-
     public ResponseEntity<?> reissue(@Valid @RequestBody TokenReissueRequestDto reissueRequestDto) throws Exception {
         RequestUtil.checkNeedValue(
                 reissueRequestDto.getAccessToken(),
@@ -255,7 +252,6 @@ public class MemberController {
                 memberChangePasswordRequestDto.getOldPassword(),
                 memberChangePasswordRequestDto.getNewPassword());
         passwordValidationService.checkValidPassword(memberChangePasswordRequestDto.getNewPassword());
-
         updateMember = memberService.changePassword(updateMember, memberChangePasswordRequestDto.getOldPassword(), memberChangePasswordRequestDto.getNewPassword());
 
         BaseResponseSuccessDto responseBody = new MemberResponseDto(updateMember);

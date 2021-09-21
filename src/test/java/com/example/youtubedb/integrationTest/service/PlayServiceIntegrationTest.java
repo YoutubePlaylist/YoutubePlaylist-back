@@ -18,31 +18,11 @@ import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.vo.PlayVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-import com.example.youtubedb.exception.DuplicateSeqException;
-import com.example.youtubedb.exception.InvalidSeqException;
-import com.example.youtubedb.exception.NotExistPlayException;
-import com.example.youtubedb.exception.StartAndEndTimeException;
-import com.example.youtubedb.exception.DuplicateSeqException;
-import com.example.youtubedb.exception.InvalidSeqException;
-import com.example.youtubedb.exception.NotExistPlayException;
-import com.example.youtubedb.exception.StartAndEndTimeException;
-import com.example.youtubedb.repository.PlayRepository;
-import com.example.youtubedb.service.MemberService;
-import com.example.youtubedb.service.PlayService;
-import com.example.youtubedb.service.PlaylistService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +31,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
-
-@SpringBootTest
-@Transactional
-//@SpringBootTest(classes = MemberService.class)
 @ExtendWith(MockitoExtension.class)
 class PlayServiceIntegrationTest {
     @Mock

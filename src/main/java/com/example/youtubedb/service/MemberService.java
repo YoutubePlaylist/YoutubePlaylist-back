@@ -28,8 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -92,7 +90,6 @@ public class MemberService implements UserDetailsService {
 
         return memberRepository.save(updateMember);
     }
-
 
     public Token login(String loginID, String password, boolean isPC) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성

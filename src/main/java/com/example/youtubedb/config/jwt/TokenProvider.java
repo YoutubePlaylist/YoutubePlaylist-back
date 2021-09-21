@@ -2,7 +2,10 @@ package com.example.youtubedb.config.jwt;
 
 import com.example.youtubedb.domain.Token;
 import com.example.youtubedb.exception.NotExistAuthorityException;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -94,7 +97,6 @@ public class TokenProvider {
         Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
         return true;
     }
-
 
 //    public String parse
     private Claims parseClaims(String accessToken) throws ExpiredJwtException {
