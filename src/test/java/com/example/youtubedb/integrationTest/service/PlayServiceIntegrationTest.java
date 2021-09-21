@@ -6,7 +6,6 @@ import com.example.youtubedb.domain.member.Authority;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.Category;
 import com.example.youtubedb.dto.play.PlaySeqDto;
-<<<<<<< HEAD:src/test/java/com/example/youtubedb/service/PlayServiceIntegrationTest.java
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import com.example.youtubedb.exception.DuplicateSeqException;
 import com.example.youtubedb.exception.InvalidSeqException;
 import com.example.youtubedb.exception.NotExistPlayException;
 import com.example.youtubedb.exception.StartAndEndTimeException;
-=======
 import com.example.youtubedb.exception.DuplicateSeqException;
 import com.example.youtubedb.exception.InvalidSeqException;
 import com.example.youtubedb.exception.NotExistPlayException;
@@ -32,7 +30,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
->>>>>>> 15ae0ea1db0e73bd9df12cae71f22f4036df85e0:src/test/java/com/example/youtubedb/integrationTest/service/PlayServiceIntegrationTest.java
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,17 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-<<<<<<< HEAD:src/test/java/com/example/youtubedb/service/PlayServiceIntegrationTest.java
-<<<<<<< Updated upstream:src/test/java/com/example/youtubedb/service/PlayServiceIntegrationTest.java
-@SpringBootTest
-@Transactional
-=======
-//@SpringBootTest(classes = MemberService.class)
 @ExtendWith(MockitoExtension.class)
->>>>>>> Stashed changes:src/test/java/com/example/youtubedb/integrationTest/service/PlayServiceIntegrationTest.java
-=======
-@ExtendWith(MockitoExtension.class)
->>>>>>> 15ae0ea1db0e73bd9df12cae71f22f4036df85e0:src/test/java/com/example/youtubedb/integrationTest/service/PlayServiceIntegrationTest.java
 class PlayServiceIntegrationTest {
     @Mock
     private MemberService memberService;

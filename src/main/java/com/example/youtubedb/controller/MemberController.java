@@ -1,6 +1,7 @@
 package com.example.youtubedb.controller;
 
 import com.example.youtubedb.domain.Token;
+import com.example.youtubedb.domain.member.LoginUser;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
 import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
@@ -33,6 +34,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -237,11 +239,11 @@ public class MemberController {
     })
     @Operation(summary = "비밀 번호 변경", description = "비밀 번호 변경")
     @PostMapping("/changePassword")
-    public ResponseEntity<?> changePassword(@Valid @RequestBody MemberChangePasswordRequestDto memberChangePasswordRequestDto, BindingResult errors,
-                                            Authentication authentication) {
-
-        log.info("{}", errors.getTarget());
-        String loginId = authentication.getName();
+    public ResponseEntity<?> changePassword(@Valid @RequestBody MemberChangePasswordRequestDto memberChangePasswordRequestDto,
+    /*TODO: 1안                   */          BindingResult bindingResult,
+                                            @LoginUser String loginId) {
+//        String loginId = authentication.getName();
+        log.info("loginId = {} ", loginId);
         RequestUtil.checkNeedValue(
                 memberChangePasswordRequestDto.getOldPassword(),
                 memberChangePasswordRequestDto.getNewPassword());

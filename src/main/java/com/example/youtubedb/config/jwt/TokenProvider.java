@@ -52,22 +52,22 @@ public class TokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())       // payload "sub": "name"
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
-                .setExpiration(DateUtil.getAccessTokenExpiresIn())      // payload "exp": 1516239022 (예시)
+                .setExpiration(DateSetter.getAccessTokenExpiresIn())      // payload "exp": 1516239022 (예시)
                 .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
                 .compact();
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(DateUtil.getRefreshTokenExpiresIn(isPC))
+                .setExpiration(DateSetter.getRefreshTokenExpiresIn(isPC))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
         return Token.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
-                .accessTokenExpiresIn(DateUtil.getAccessTokenExpiresIn())
+                .accessTokenExpiresIn(DateSetter.getAccessTokenExpiresIn())
                 .refreshToken(refreshToken)
-                .refreshTokenExpiresIn(DateUtil.getRefreshTokenExpiresIn(isPC))
+                .refreshTokenExpiresIn(DateSetter.getRefreshTokenExpiresIn(isPC))
                 .build();
     }
 
@@ -98,11 +98,11 @@ public class TokenProvider {
 //    public String parse
 
 
-    private Claims parseClaims(String accessToken) throws ExpiredJwtException {
+    public Claims parseClaims(String accessToken) throws ExpiredJwtException {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
     }
 
-    private static class DateUtil{
+    private static class DateSetter {
         private static final Duration ACCESS_TOKEN_EXPIRE_TIME = Duration.ofMinutes(30);
         private static final Period REFRESH_TOKEN_EXPIRE_DATE_APP = Period.ofDays(7);
         private static final Period REFRESH_TOKEN_EXPIRE_DATE_PC = Period.ofMonths(3);
