@@ -1,27 +1,27 @@
 package com.example.youtubedb.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
-import javax.persistence.*;
-import java.time.LocalDate;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 @Getter
-@NoArgsConstructor
-public class Play {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Play extends BaseEntity {
     private String videoId;
     private long start;
     private long end;
     private String thumbnail;
     private String title;
+    @Setter
     private int sequence;
-    private LocalDate publishedAt;
+    private String channelAvatar;
+    private String channelTitle;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "playlist_id")
     private Playlist playlist;
 
@@ -32,14 +32,16 @@ public class Play {
                 String thumbnail,
                 String title,
                 int sequence,
-                Playlist playlist) {
+                String channelAvatar,
+                String channelTitle) {
         this.videoId = videoId;
         this.start = start;
         this.end = end;
         this.thumbnail = thumbnail;
         this.title = title;
         this.sequence = sequence;
-        this.playlist = playlist;
+        this.channelAvatar = channelAvatar;
+        this.channelTitle = channelTitle;
     }
 
     public void setPlaylist(Playlist playlist) {
@@ -48,5 +50,10 @@ public class Play {
         }
         this.playlist = playlist;
         playlist.getPlays().add(this);
+    }
+
+    public void setTime(long start, long end) {
+        this.start = start;
+        this.end = end;
     }
 }
