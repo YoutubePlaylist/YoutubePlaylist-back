@@ -2,25 +2,19 @@ package com.example.youtubedb.domain;
 
 import static com.example.youtubedb.Contracts.requires;
 
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import javax.crypto.SecretKey;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
 @Value
 @Accessors(fluent = true)
-public class Token2 {
-  String secretKey;
+public class AccessToken {
   String loginId;
   LocalDateTime expirationAt;
   SignatureAlgorithm signatureAlgorithm;
 
-  public Token2(
+  public AccessToken(
     String secretKey,
     String loginId,
     LocalDateTime expirationAt,
@@ -31,12 +25,8 @@ public class Token2 {
     requires(expirationAt.isAfter(LocalDateTime.now()));
     requires(signatureAlgorithm != SignatureAlgorithm.NONE);
 
-    this.secretKey = secretKey;
     this.loginId = loginId;
     this.expirationAt = expirationAt;
     this.signatureAlgorithm = signatureAlgorithm;
   }
-
-
-  // 의존성 방향
 }

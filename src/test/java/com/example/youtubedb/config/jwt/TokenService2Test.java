@@ -4,7 +4,7 @@ import static com.example.youtubedb.config.jwt.TimeMatchers.isAfter30MinutesFrom
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import com.example.youtubedb.domain.Token2;
+import com.example.youtubedb.domain.AccessToken;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -26,7 +26,7 @@ class TokenService2Test {
     final JwtFixture jwtFixture = fixtureAt(LocalDateTime.now());
 
     // when
-    final Token2 token = fixture().subject().create("id-123");
+    final AccessToken token = fixture().subject().create("id-123");
 
     // then
     assertThat(token.loginId(), is("id-123"));
@@ -41,7 +41,7 @@ class TokenService2Test {
     final TokenService2 tokenProvider = new TokenService2(fakeTimeServer, jwtConfig, secretKey);
     final LocalDateTime plus = fakeTimeServer.currentTime().plus(Duration.ofMinutes(30));
 
-    final Token2 token = tokenProvider.create(anyString());
+    final AccessToken token = tokenProvider.create(anyString());
 
     assertThat(token.expirationAt(), is(plus));
     assertThat(token.expirationAt(), is(plus));
@@ -52,7 +52,7 @@ class TokenService2Test {
   @Test
   void 잘_파싱하니() {
     final JwtFixture jwtFixture = fixture();
-    final Token2 token = jwtFixture.subject().parseToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJpZC00NTYiLCJleHAiOjE2MzIyOTI0OTR9.r79sTygbR_kGYIqglkD4A2i3nwVD5L1PoORKpq-bGTUPT5IPZZOo4dDP0fffaP7c93M48JWOAEP0VsXnF8Ze4g");
+    final AccessToken token = jwtFixture.subject().parseToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJpZC00NTYiLCJleHAiOjE2MzIyOTI0OTR9.r79sTygbR_kGYIqglkD4A2i3nwVD5L1PoORKpq-bGTUPT5IPZZOo4dDP0fffaP7c93M48JWOAEP0VsXnF8Ze4g");
 
     assertThat(token.loginId(), is("id-456"));
     assertThat(token.expirationAt(), is(jwtFixture.expirationTime()));
@@ -90,7 +90,7 @@ class TokenService2Test {
     final LocalDateTime expirationTime = LocalDateTime.of(2021, 9, 22, 15, 34, 54);
     final ConstantTime fakeTimeServer = new ConstantTime(expirationTime);
     final TokenService2 tokenProvider = new TokenService2(fakeTimeServer, jwtConfig, secretKey);
-    final Token2 token = tokenProvider.parseToken(tokenProvider.create("id-456").asJwtToken());
+    final AccessToken token = tokenProvider.parseToken(tokenProvider.create("id-456").asJwtToken());
 
     assertThat(token.loginId(), is("id-456"));
     assertThat(token.expirationAt(), isAfter30MinutesFrom(expirationTime));

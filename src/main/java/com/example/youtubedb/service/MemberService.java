@@ -4,6 +4,7 @@ import com.example.youtubedb.config.jwt.TokenProvider;
 import com.example.youtubedb.domain.Token;
 import com.example.youtubedb.domain.member.Authority;
 import com.example.youtubedb.domain.member.Member;
+import com.example.youtubedb.dto.member.request.ChangingPasswordRequest;
 import com.example.youtubedb.exception.*;
 import com.example.youtubedb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,6 @@ public class MemberService implements UserDetailsService {
     private final TokenProvider tokenProvider;
     private final StringRedisTemplate template;
     private final ValueOperations<String, String> stringStringValueOperations;
-
 
 
 
@@ -89,13 +89,6 @@ public class MemberService implements UserDetailsService {
         return memberRepository.save(realMember);
     }
 
-    public Member changePassword(Member updateMember, String oldPassword, String newPassword) {
-        updateMember.setPassword(passwordEncoder.encode(newPassword));
-        template.delete("PC" + updateMember.getLoginId());
-        template.delete("APP" + updateMember.getLoginId());
-
-        return memberRepository.save(updateMember);
-    }
 
     public Token login(String loginID, String password, boolean isPC) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
