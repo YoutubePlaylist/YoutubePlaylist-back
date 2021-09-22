@@ -29,7 +29,6 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         boolean isLoginUserAnnotation = parameter.getParameterAnnotation(LoginUser.class) != null;
         boolean isString = String.class.equals(parameter.getParameterType());
 
-        log.info("resolver");
         return isLoginUserAnnotation && isString;
     }
 
@@ -37,10 +36,12 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String authorizationHeader = webRequest.getHeader("Authorization");
 
+
         if (authorizationHeader == null) {
             throw new DoNotChangePasswordException();
         }
 
+        //TODO : bearer 타입 아닐 때 생각!
         //앞에 Bearer 떼기
         String jwtToken = authorizationHeader.substring(7);
 

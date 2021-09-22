@@ -166,11 +166,7 @@ public class MemberService implements UserDetailsService {
 
         //3. Redis에서 파일 불러옴
         String redisRefreshToken;
-        if(isPC) {
-           redisRefreshToken = stringStringValueOperations.get("PC"+authentication.getName());
-        }else {
-           redisRefreshToken = stringStringValueOperations.get("APP"+authentication.getName());
-        }
+        redisRefreshToken = getRefreshToken(isPC, authentication);
 
         if(redisRefreshToken == null) {
             throw new RefreshTokenException("다시 로그인이 필요합니다.");
@@ -187,6 +183,16 @@ public class MemberService implements UserDetailsService {
 
         // 토큰 발급
         return tokenDto;
+    }
+
+    private String getRefreshToken(boolean isPC, Authentication authentication) {
+        String redisRefreshToken;
+        if(isPC) {
+           redisRefreshToken = stringStringValueOperations.get("PC"+ authentication.getName());
+        }else {
+           redisRefreshToken = stringStringValueOperations.get("APP"+ authentication.getName());
+        }
+        return redisRefreshToken;
     }
 
     public Member findMemberByLoginId(String loginId) {
