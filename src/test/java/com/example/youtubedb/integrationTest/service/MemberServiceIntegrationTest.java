@@ -21,6 +21,9 @@ class MemberServiceIntegrationTest {
     @Autowired
     MemberService memberService;
 
+
+    // HTTP call json -> json json assert
+
     @Test
     void 비회원_등록() {
         // given

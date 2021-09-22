@@ -70,6 +70,7 @@ public class MemberChangePasswordRequestProvider {
   @RequiredArgsConstructor
   class Success implements Result {
     private final ChangingPasswordRequest request;
+
     @Override
     public boolean isSuccess() {
       return true;

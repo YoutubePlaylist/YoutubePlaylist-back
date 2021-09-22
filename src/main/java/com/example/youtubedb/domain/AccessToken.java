@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
+enum Type {
+  PC, APP
+}
 @Value
 @Accessors(fluent = true)
 public class AccessToken {

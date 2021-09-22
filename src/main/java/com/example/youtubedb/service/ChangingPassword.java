@@ -66,6 +66,9 @@ public interface ChangingPassword {
       try {
         delegate.changePassword(request);
 
+
+        // observser.dispatch(event-password changed)
+
         cacheClient.delete("PC" + request.memberId());
         cacheClient.delete("APP" + request.memberId());
       } catch (Exception e) {
