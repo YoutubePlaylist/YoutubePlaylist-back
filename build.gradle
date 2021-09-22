@@ -55,6 +55,7 @@ dependencies {
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
 
     // MapStruct
     implementation 'org.mapstruct:mapstruct:1.4.1.Final'

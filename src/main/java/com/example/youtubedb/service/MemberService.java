@@ -42,6 +42,10 @@ public class MemberService implements UserDetailsService {
     private final StringRedisTemplate template;
     private final ValueOperations<String, String> stringStringValueOperations;
 
+
+
+
+
     @Autowired
     public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder,
                          MemberRepository memberRepository,
@@ -55,6 +59,8 @@ public class MemberService implements UserDetailsService {
         this.template = template;
         this.stringStringValueOperations = template.opsForValue();
     }
+
+
 
     public Member registerNon(String deviceId, Boolean isPC) {
         checkDuplicateMember(deviceId);
