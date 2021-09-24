@@ -6,11 +6,11 @@ import java.util.Date;
 
 public class JwtToken extends Token {
 	@Builder
-	public JwtToken(String accessToken, String refreshToken, Date accessTokenExpiresIn, Date refreshTokenExpiresIn) {
+	public JwtToken(AccessToken accessToken, String refreshToken, Date refreshTokenExpiresIn) {
+		super(accessToken, refreshToken, refreshTokenExpiresIn);
 		this.grantType = GrantType.BEARER;
 		this.accessToken = accessToken;
 		this.refreshToken = refreshToken;
-		this.accessTokenExpiresIn = accessTokenExpiresIn;
 		this.refreshTokenExpiresIn = refreshTokenExpiresIn;
 	}
 }
