@@ -15,65 +15,66 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 @Slf4j
 @RestControllerAdvice
 public class ControllerExceptionHandler {
-    @ExceptionHandler(value = {
-            NotExistRequestValueException.class,
-            DuplicateMemberException.class,
-            NotExistMemberException.class,
-            NotExistPlaylistException.class,
-            StartAndEndTimeException.class,
-            NotExistPlayException.class,
-            DuplicateSeqException.class,
-            InvalidSeqException.class,
-            DoNotMatchPasswordException.class,
-            RefreshTokenException.class,
-            InvalidBlankPasswordException.class,
-            InvalidRegexPasswordException.class,
-            OverNomMemberMaxListException.class,
-            NotMemberException.class,
-            DoNotChangePasswordException.class,
-            MaxUploadSizeExceededException.class
-    })
-    public ResponseEntity<?> badRequest(Exception e) {
-        BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message(e.getMessage())
-                .build();
+	@ExceptionHandler(value = {
+		NotExistRequestValueException.class,
+		DuplicateMemberException.class,
+		NotExistMemberException.class,
+		NotExistPlaylistException.class,
+		StartAndEndTimeException.class,
+		NotExistPlayException.class,
+		DuplicateSeqException.class,
+		InvalidSeqException.class,
+		DoNotMatchPasswordException.class,
+		RefreshTokenException.class,
+		InvalidBlankPasswordException.class,
+		InvalidRegexPasswordException.class,
+		OverNomMemberMaxListException.class,
+		NotMemberException.class,
+		DoNotChangePasswordException.class,
+		MaxUploadSizeExceededException.class,
+		ContractViolationException.class
+	})
+	public ResponseEntity<?> badRequest(Exception e) {
+		BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()
+			.status(HttpStatus.BAD_REQUEST.value())
+			.message(e.getMessage())
+			.build();
 
-        return ResponseEntity.badRequest().body(responseBody);
-    }
+		return ResponseEntity.badRequest().body(responseBody);
+	}
 
-    @ExceptionHandler({
-            InvalidAccessException.class
-    })
-    public ResponseEntity<?> notAcceptable(Exception e) {
-        BaseResponseFailDto responseBody = NotAcceptableFailResponseDto.builder()
-                .status(HttpStatus.NOT_ACCEPTABLE.value())
-                .message(e.getMessage())
-                .build();
+	@ExceptionHandler({
+		InvalidAccessException.class
+	})
+	public ResponseEntity<?> notAcceptable(Exception e) {
+		BaseResponseFailDto responseBody = NotAcceptableFailResponseDto.builder()
+			.status(HttpStatus.NOT_ACCEPTABLE.value())
+			.message(e.getMessage())
+			.build();
 
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(responseBody);
-    }
+		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(responseBody);
+	}
 
-    @ExceptionHandler({
-            RuntimeException.class
-    })
-    public ResponseEntity<?> serverError(Exception e) {
-        BaseResponseFailDto responseBody = ServerErrorFailResponseDto.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message(e.getMessage())
-                .build();
+	@ExceptionHandler({
+		RuntimeException.class
+	})
+	public ResponseEntity<?> serverError(Exception e) {
+		BaseResponseFailDto responseBody = ServerErrorFailResponseDto.builder()
+			.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+			.message(e.getMessage())
+			.build();
 
-        return ResponseEntity.internalServerError().body(responseBody);
-    }
+		return ResponseEntity.internalServerError().body(responseBody);
+	}
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> validationException(MethodArgumentNotValidException e) {
-        BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message(e.getBindingResult().getAllErrors().get(0).getDefaultMessage())
-                .build();
-        System.out.println(e.getMessage().getClass());
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<?> validationException(MethodArgumentNotValidException e) {
+		BaseResponseFailDto responseBody = BadRequestFailResponseDto.builder()
+			.status(HttpStatus.BAD_REQUEST.value())
+			.message(e.getBindingResult().getAllErrors().get(0).getDefaultMessage())
+			.build();
+		System.out.println(e.getMessage().getClass());
 
-        return ResponseEntity.badRequest().body(responseBody);
-    }
+		return ResponseEntity.badRequest().body(responseBody);
+	}
 }
