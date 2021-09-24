@@ -1,6 +1,6 @@
 package com.example.youtubedb.controller;
 
-import com.example.youtubedb.domain.Token;
+import com.example.youtubedb.domain.token.Token;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
 import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

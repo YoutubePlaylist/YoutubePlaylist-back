@@ -1,7 +1,7 @@
 package com.example.youtubedb.unitTest.jwt;
 
 import com.example.youtubedb.config.jwt.TokenProvider;
-import com.example.youtubedb.domain.Token;
+import com.example.youtubedb.domain.token.Token;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Spy;

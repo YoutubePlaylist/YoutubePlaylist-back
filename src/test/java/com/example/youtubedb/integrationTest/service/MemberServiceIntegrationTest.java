@@ -1,6 +1,6 @@
 package com.example.youtubedb.integrationTest.service;
 
-import com.example.youtubedb.domain.Token;
+import com.example.youtubedb.domain.token.Token;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.exception.*;
 import com.example.youtubedb.service.MemberService;

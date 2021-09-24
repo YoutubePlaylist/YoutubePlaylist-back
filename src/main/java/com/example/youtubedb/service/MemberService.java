@@ -1,7 +1,7 @@
 package com.example.youtubedb.service;
 
 import com.example.youtubedb.config.jwt.TokenProvider;
-import com.example.youtubedb.domain.Token;
+import com.example.youtubedb.domain.token.Token;
 import com.example.youtubedb.domain.member.Authority;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.exception.*;
@@ -105,9 +105,9 @@ public class MemberService implements UserDetailsService {
 
             long now = (new Date()).getTime();
             if(isPC) {
-            stringStringValueOperations.set("PC"+authentication.getName(), token.getRefreshToken(), token.getRefreshTokenExpiresIn().getTime()- now, TimeUnit.MILLISECONDS);
+            stringStringValueOperations.set("PC"+authentication.getName(), token.getRefreshToken(), token.getRefreshTokenExpiresIn().getTime() - now, TimeUnit.MILLISECONDS);
             }else {
-            stringStringValueOperations.set("APP"+authentication.getName(), token.getRefreshToken(), token.getRefreshTokenExpiresIn().getTime() -now, TimeUnit.MILLISECONDS);
+            stringStringValueOperations.set("APP"+authentication.getName(), token.getRefreshToken(), token.getRefreshTokenExpiresIn().getTime() - now, TimeUnit.MILLISECONDS);
             }
 
             // 4. 토큰 발급
