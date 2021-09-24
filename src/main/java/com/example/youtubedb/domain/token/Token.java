@@ -1,8 +1,6 @@
 package com.example.youtubedb.domain.token;
 
-import lombok.*;
-
-import java.util.Date;
+import lombok.Getter;
 
 import static com.example.youtubedb.util.ContractUtil.requires;
 
@@ -10,17 +8,13 @@ import static com.example.youtubedb.util.ContractUtil.requires;
 public class Token {
 	protected GrantType grantType;
 	protected AccessToken accessToken;
-	@Setter
-	protected String refreshToken;
-	protected Date refreshTokenExpiresIn;
+	protected RefreshToken refreshToken;
 
-	public Token(AccessToken accessToken, String refreshToken, Date refreshTokenExpiresIn) {
+	public Token(AccessToken accessToken, RefreshToken refreshToken) {
 		requires(accessToken != null);
-		requires(!refreshToken.isEmpty() && refreshToken!=null);
-		requires(refreshTokenExpiresIn != null);
+		requires(refreshToken != null);
 
 		this.accessToken = accessToken;
 		this.refreshToken = refreshToken;
-		this.refreshTokenExpiresIn = refreshTokenExpiresIn;
 	}
 }

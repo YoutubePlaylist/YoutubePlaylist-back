@@ -2,12 +2,12 @@ package com.example.youtubedb.config.jwt;
 
 import com.example.youtubedb.domain.token.AccessToken;
 import com.example.youtubedb.domain.token.JwtToken;
+import com.example.youtubedb.domain.token.RefreshToken;
 import com.example.youtubedb.domain.token.Token;
 import com.example.youtubedb.exception.NotExistAuthorityException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -53,24 +53,14 @@ public class TokenProvider {
 			.collect(Collectors.joining(","));
 
 		// Access Token 생성
-//		String accessToken = Jwts.builder()
-//			.setSubject(authentication.getName())       // payload "sub": "name"
-//			.claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
-//			.setExpiration(DateUtil.getAccessTokenExpiresIn())      // payload "exp": 1516239022 (예시)
-//			.signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
-//			.compact();
-		AccessToken accessToken = new AccessToken(authentication.getName(), DateUtil.getAccessTokenExpiresIn().toInstant(), SignatureAlgorithm.HS512);
+		AccessToken accessToken = new AccessToken(authentication.getName(), DateUtil.getAccessTokenExpiresIn().toInstant());
 
 		// Refresh Token 생성
-		String refreshToken = Jwts.builder()
-			.setExpiration(DateUtil.getRefreshTokenExpiresIn(isPC))
-			.signWith(key, SignatureAlgorithm.HS512)
-			.compact();
+		RefreshToken refreshToken = new RefreshToken(DateUtil.getRefreshTokenExpiresIn(isPC).toInstant());
 
 		return JwtToken.builder()
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
-			.refreshTokenExpiresIn(DateUtil.getRefreshTokenExpiresIn(isPC))
 			.build();
 	}
 
