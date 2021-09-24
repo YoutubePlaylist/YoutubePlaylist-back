@@ -47,11 +47,6 @@ public class TokenProvider {
 	}
 
 	public Token generateTokenDto(Authentication authentication, boolean isPC) {
-		// 권한들 가져오기
-		String authorities = authentication.getAuthorities().stream()
-			.map(GrantedAuthority::getAuthority)
-			.collect(Collectors.joining(","));
-
 		// Access Token 생성
 		AccessToken accessToken = new AccessToken(authentication.getName(), DateUtil.getAccessTokenExpiresIn().toInstant());
 
