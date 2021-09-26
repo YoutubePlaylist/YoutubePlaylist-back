@@ -8,12 +8,13 @@ import java.time.Duration;
 
 @RequiredArgsConstructor
 public class AccessTokenProvider {
+	private final Duration ACCESS_TOKEN_EXPIRE_TIME = Duration.ofMinutes(30);
 	private final CurrentTimeServer currentTimeServer;
 
 	public AccessToken create(String loginId) {
 		return new AccessToken(
 			loginId,
-			currentTimeServer.now().plus(Duration.ofMinutes(30))
+			currentTimeServer.now().plus(ACCESS_TOKEN_EXPIRE_TIME)
 		);
 	}
 }

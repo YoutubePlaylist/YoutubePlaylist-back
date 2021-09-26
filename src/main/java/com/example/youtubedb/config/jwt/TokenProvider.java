@@ -37,7 +37,6 @@ import static java.sql.Timestamp.valueOf;
 public class TokenProvider {
 
 	private final String AUTHORITIES_KEY = "auth";
-
 	private final Key key;
 
 	@Autowired
