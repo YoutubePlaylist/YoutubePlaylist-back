@@ -11,11 +11,9 @@ import javax.crypto.SecretKey;
 import java.sql.Timestamp;
 
 public final class JwtFormatter {
-	private final JwtSetConfig jwtSetConfig;
 	private final SecretKey key;
 
 	public JwtFormatter(JwtSetConfig jwtSetConfig) {
-		this.jwtSetConfig = jwtSetConfig;
 		this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSetConfig.secretKey()));
 	}
 
