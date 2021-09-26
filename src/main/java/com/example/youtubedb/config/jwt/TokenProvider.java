@@ -38,19 +38,25 @@ public class TokenProvider {
 
 	private final String AUTHORITIES_KEY = "auth";
 	private final Key key;
+	private final AccessTokenProvider accessTokenProvider;
+	private final RefreshTokenProvider refreshTokenProvider;
 
 	@Autowired
-	public TokenProvider(@Value("${jwt.secret}") String secretKey) {
+	public TokenProvider(@Value("${jwt.secret}") String secretKey,
+	                     AccessTokenProvider accessTokenProvider,
+	                     RefreshTokenProvider refreshTokenProvider) {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
+		this.accessTokenProvider = accessTokenProvider;
+		this.refreshTokenProvider = refreshTokenProvider;
 	}
 
 	public Token generateTokenDto(Authentication authentication, boolean isPC) {
 		// Access Token 생성
-		AccessToken accessToken = new AccessToken(authentication.getName(), DateUtil.getAccessTokenExpiresIn().toInstant());
+		AccessToken accessToken = accessTokenProvider.create(authentication.getName());
 
 		// Refresh Token 생성
-		RefreshToken refreshToken = new RefreshToken(DateUtil.getRefreshTokenExpiresIn(isPC).toInstant());
+		RefreshToken refreshToken = refreshTokenProvider.create(isPC);
 
 		return JwtToken.builder()
 			.accessToken(accessToken)

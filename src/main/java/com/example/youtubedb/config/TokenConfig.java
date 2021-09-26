@@ -1,6 +1,7 @@
 package com.example.youtubedb.config;
 
 import com.example.youtubedb.config.jwt.AccessTokenProvider;
+import com.example.youtubedb.config.jwt.RefreshTokenProvider;
 import com.example.youtubedb.config.jwt.time.RealTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,5 +14,10 @@ public class TokenConfig {
 	@Bean
 	public AccessTokenProvider accessTokenProvider() {
 		return new AccessTokenProvider(new RealTime());
+	}
+
+	@Bean
+	public RefreshTokenProvider refreshTokenProvider() {
+		return new RefreshTokenProvider(new RealTime());
 	}
 }

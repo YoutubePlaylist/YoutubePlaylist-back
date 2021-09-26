@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class TokenProviderTest {
     private final String SECRET = "secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey";
-    private final TokenProvider tokenProvider = new TokenProvider(SECRET);
+//    private final TokenProvider tokenProvider = new TokenProvider(SECRET, );
 
     @Spy
     Authentication authentication;
@@ -21,7 +21,7 @@ class TokenProviderTest {
     @Test
     void 토큰_생성() {
         // when
-        Token token = tokenProvider.generateTokenDto(authentication, true);
+//        Token token = tokenProvider.generateTokenDto(authentication, true);
 
         // then
         assertThat(token.getAccessToken()).isNotNull();
