@@ -1,8 +1,6 @@
 package com.example.youtubedb.config;
 
-import com.example.youtubedb.config.jwt.AccessTokenProvider;
-import com.example.youtubedb.config.jwt.JwtFormatter;
-import com.example.youtubedb.config.jwt.RefreshTokenProvider;
+import com.example.youtubedb.config.jwt.*;
 import com.example.youtubedb.config.jwt.time.RealTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,5 +24,15 @@ public class TokenConfig {
 	@Bean
 	public JwtFormatter jwtFormatter() {
 		return new JwtFormatter(jwtSetConfigYamlAdapter.toJwtSetConfig());
+	}
+
+	@Bean
+	public AccessTokenParser accessTokenParser() {
+		return new AccessTokenParser(jwtSetConfigYamlAdapter.toJwtSetConfig());
+	}
+
+	@Bean
+	public RefreshTokenParser refreshTokenParser() {
+		return new RefreshTokenParser(jwtSetConfigYamlAdapter.toJwtSetConfig());
 	}
 }

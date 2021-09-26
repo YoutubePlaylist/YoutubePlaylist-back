@@ -55,6 +55,7 @@ dependencies {
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
 
     // MapStruct
     implementation 'org.mapstruct:mapstruct:1.4.1.Final'
@@ -65,6 +66,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
 }
 
 test {

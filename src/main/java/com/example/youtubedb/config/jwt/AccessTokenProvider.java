@@ -5,6 +5,7 @@ import com.example.youtubedb.domain.token.AccessToken;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 @RequiredArgsConstructor
 public class AccessTokenProvider {
@@ -14,7 +15,7 @@ public class AccessTokenProvider {
 	public AccessToken create(String loginId) {
 		return new AccessToken(
 			loginId,
-			currentTimeServer.now().plus(ACCESS_TOKEN_EXPIRE_TIME)
+			currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(ACCESS_TOKEN_EXPIRE_TIME)
 		);
 	}
 }

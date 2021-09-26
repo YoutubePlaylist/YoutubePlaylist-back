@@ -8,6 +8,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
+import java.sql.Date;
 import java.sql.Timestamp;
 
 public final class JwtFormatter {
@@ -20,14 +21,14 @@ public final class JwtFormatter {
 	public String toJwtFromAccessToken(AccessToken accessToken) {
 		return Jwts.builder()
 			.setSubject(accessToken.loginId())
-			.setExpiration(Timestamp.valueOf(accessToken.expirationAt().toString()))
+			.setExpiration(Date.from(accessToken.expirationAt()))
 			.signWith(key)
 			.compact();
 	}
 
 	public String toJwtFromRefreshToken(RefreshToken refreshToken) {
 		return Jwts.builder()
-			.setExpiration(Timestamp.valueOf(refreshToken.expirationAt().toString()))
+			.setExpiration(Date.from(refreshToken.expirationAt()))
 			.signWith(key)
 			.compact();
 	}
