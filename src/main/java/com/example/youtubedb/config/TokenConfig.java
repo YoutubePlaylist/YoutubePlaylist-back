@@ -35,4 +35,9 @@ public class TokenConfig {
 	public RefreshTokenParser refreshTokenParser() {
 		return new RefreshTokenParser(jwtSetConfigYamlAdapter.toJwtSetConfig());
 	}
+
+	@Bean
+	public JwtResolver jwtResolver() {
+		return new JwtResolver(jwtSetConfigYamlAdapter.toJwtSetConfig());
+	}
 }

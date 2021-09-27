@@ -1,5 +1,6 @@
 package com.example.youtubedb.service;
 
+import com.example.youtubedb.config.jwt.JwtResolver;
 import com.example.youtubedb.config.jwt.TokenProvider;
 import com.example.youtubedb.domain.token.Token;
 import com.example.youtubedb.domain.member.Authority;
@@ -27,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +39,7 @@ public class MemberService implements UserDetailsService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final TokenProvider tokenProvider;
+	private final JwtResolver jwtResolver;
 	private final StringRedisTemplate template;
 	private final ValueOperations<String, String> stringStringValueOperations;
 
@@ -47,12 +48,14 @@ public class MemberService implements UserDetailsService {
 	                     MemberRepository memberRepository,
 	                     PasswordEncoder passwordEncoder,
 	                     TokenProvider tokenProvider,
+	                     JwtResolver jwtResolver,
 	                     StringRedisTemplate template) {
 		this.authenticationManagerBuilder = authenticationManagerBuilder;
 		this.memberRepository = memberRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.tokenProvider = tokenProvider;
 		this.template = template;
+		this.jwtResolver = jwtResolver;
 		this.stringStringValueOperations = template.opsForValue();
 	}
 
@@ -101,7 +104,7 @@ public class MemberService implements UserDetailsService {
 			Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 			System.out.println("authentication = " + authentication.getName());
 			// 3. 인증 정보를 기반으로 JWT 토큰 생성
-			Token token = tokenProvider.generateTokenDto(authentication, isPC);
+			Token token = tokenProvider.create(authentication, isPC);
 
 			long now = (new Date()).getTime();
 			if (isPC) {
@@ -121,12 +124,12 @@ public class MemberService implements UserDetailsService {
 	@Transactional
 	public Token reissue(String accessToken, String refreshToken, boolean isPC) throws Exception {
 		// 1. Refresh Token 검증
-		if (!tokenProvider.validateToken(refreshToken)) {
+		if (!jwtResolver.validateToken(refreshToken)) {
 			throw new RefreshTokenException("Refresh Token 이 유효하지 않습니다.");
 		}
 
 		// 2. Access Token 에서 Member ID(pk) 가져오기
-		Authentication authentication = tokenProvider.getAuthentication(accessToken);
+		Authentication authentication = jwtResolver.getAuthentication(accessToken);
 
 		//3. Redis에서 파일 불러옴
 		String redisRefreshToken;
@@ -146,7 +149,7 @@ public class MemberService implements UserDetailsService {
 		}
 
 		// 5. 새로운 토큰 생성
-		Token tokenDto = tokenProvider.generateTokenDto(authentication, isPC);
+		Token tokenDto = tokenProvider.create(authentication, isPC);
 //		tokenDto.setRefreshToken(redisRefreshToken);
 
 		// 토큰 발급

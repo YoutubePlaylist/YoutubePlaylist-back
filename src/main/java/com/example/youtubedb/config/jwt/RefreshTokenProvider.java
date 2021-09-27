@@ -14,7 +14,7 @@ public class RefreshTokenProvider {
 	private final Period REFRESH_TOKEN_EXPIRE_DATE_PC = Period.ofDays(60);
 	private final CurrentTimeServer currentTimeServer;
 
-	public RefreshToken create(boolean isPC) {
+	protected RefreshToken create(boolean isPC) {
 		return new RefreshToken(
 			currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(getPeriodForDevice(isPC))
 		);

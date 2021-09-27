@@ -12,7 +12,7 @@ public class AccessTokenProvider {
 	private final Duration ACCESS_TOKEN_EXPIRE_TIME = Duration.ofMinutes(30);
 	private final CurrentTimeServer currentTimeServer;
 
-	public AccessToken create(String loginId) {
+	protected AccessToken create(String loginId) {
 		return new AccessToken(
 			loginId,
 			currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(ACCESS_TOKEN_EXPIRE_TIME)
