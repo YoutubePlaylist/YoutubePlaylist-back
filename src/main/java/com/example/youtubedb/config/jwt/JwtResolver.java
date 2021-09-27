@@ -10,11 +10,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
+import javax.servlet.http.HttpServletRequest;
 
 public class JwtResolver {
 	private final SecretKey key;
+	private static final String AUTHORIZATION_HEADER = "Authorization";
+	private static final String BEARER_PREFIX = "Bearer ";
 
 	public JwtResolver(JwtSetConfig jwtSetConfig) {
 		this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSetConfig.secretKey()));
@@ -31,6 +35,14 @@ public class JwtResolver {
 	public boolean validateToken(String token) throws Exception {
 		Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 		return true;
+	}
+
+	public String resolveRequest(HttpServletRequest request) {
+		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+			return bearerToken.substring(BEARER_PREFIX.length());
+		}
+		return null;
 	}
 
 	private Claims parseClaims(String accessToken) throws ExpiredJwtException {

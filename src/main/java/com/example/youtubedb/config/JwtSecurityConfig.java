@@ -1,7 +1,6 @@
 package com.example.youtubedb.config;
 
 import com.example.youtubedb.config.jwt.JwtResolver;
-import com.example.youtubedb.config.jwt.TokenProvider;
 import com.example.youtubedb.config.jwt.filter.ExceptionHandlerFilter;
 import com.example.youtubedb.config.jwt.filter.JwtFilter;
 import lombok.RequiredArgsConstructor;
