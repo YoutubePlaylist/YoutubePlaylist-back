@@ -22,7 +22,6 @@ public class RefreshTokenParser implements TokenParser<RefreshToken> {
 	public RefreshToken parse(String tokenString) {
 		final Jws<Claims> claimsJws = parser.parseClaimsJws(tokenString);
 		final Claims claims = claimsJws.getBody();
-		final String loginId = claims.getSubject();
 		final Instant expiration = claims
 			.getExpiration()
 			.toInstant();

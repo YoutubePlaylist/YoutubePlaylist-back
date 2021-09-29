@@ -2,14 +2,14 @@ package com.example.youtubedb.config;
 
 import com.example.youtubedb.config.jwt.*;
 import com.example.youtubedb.config.jwt.time.RealTime;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class TokenConfig {
-	@Autowired
-	private JwtSetConfigYamlAdapter jwtSetConfigYamlAdapter;
+	private final JwtSetConfigYamlAdapter jwtSetConfigYamlAdapter;
 
 	@Bean
 	public AccessTokenProvider accessTokenProvider() {
