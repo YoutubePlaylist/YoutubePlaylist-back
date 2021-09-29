@@ -1,5 +1,6 @@
 package com.example.youtubedb.controller;
 
+import com.example.youtubedb.domain.Auth;
 import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
@@ -24,7 +25,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -64,11 +64,9 @@ public class PlayController {
     @GetMapping("/list/{playlistId}")
     @Operation(summary = "조회", description = "영상 목록 조회")
     public ResponseEntity<?> getPlays(@Parameter @PathVariable("playlistId") Long playlistId,
-                                      Authentication authentication) {
+                                      @Auth String loginId) {
 
         RequestUtil.checkNeedValue(playlistId);
-        log.info(" loginId = {}", authentication.getName());
-        String loginId = authentication.getName();
 
         Playlist playlist = playlistService.getPlaylistById(playlistId);
         List<Play> plays = playService.getPlaysInPlaylist(playlist, loginId);
@@ -95,7 +93,7 @@ public class PlayController {
     @PostMapping("/create")
     @Operation(summary = "생성", description = "영상 생성")
     public ResponseEntity<?> createPlay(@Valid  @RequestBody PlayCreateRequestDto playCreateRequestDto,
-                                        Authentication authentication) {
+                                        @Auth String loginId) {
         RequestUtil.checkNeedValue(
                 playCreateRequestDto.getPlaylistId(),
                 playCreateRequestDto.getVideoId(),
@@ -105,9 +103,6 @@ public class PlayController {
                 playCreateRequestDto.getTitle(),
                 playCreateRequestDto.getChannelAvatar(),
                 playCreateRequestDto.getChannelTitle());
-
-        log.info(" loginId = {}", authentication.getName());
-        String loginId = authentication.getName();
 
         Playlist playlist = playlistService.getPlaylistById(playCreateRequestDto.getPlaylistId());
         Play play = playService.addPlayToPlaylist(
@@ -143,14 +138,11 @@ public class PlayController {
     @PutMapping("/edit/time")
     @Operation(summary = "재생 시간 변경", description = "영상 재생시간 변경")
     public ResponseEntity<?> editPlayTime(@Valid @RequestBody PlayEditTimeRequestDto playEditTimeRequestDto,
-                                          Authentication authentication) {
+                                          @Auth String loginId) {
         RequestUtil.checkNeedValue(
                 playEditTimeRequestDto.getId(),
                 playEditTimeRequestDto.getStart(),
                 playEditTimeRequestDto.getEnd());
-
-        log.info(" loginId = {}", authentication.getName());
-        String loginId = authentication.getName();
 
         Play play = playService.getPlayById(playEditTimeRequestDto.getId());
         playService.editTime(
@@ -185,14 +177,10 @@ public class PlayController {
     })
     @Operation(summary = "순서 변경", description = "영상 재생순서 변경")
     public ResponseEntity<?> editPlaySequence(@Valid @RequestBody PlayEditSeqRequestDto playEditSeqRequestDto,
-                                              Authentication authentication) {
+                                              @Auth String loginId) {
         RequestUtil.checkNeedValue(
                 playEditSeqRequestDto.getPlaylistId(),
                 playEditSeqRequestDto.getSeqList());
-
-        log.info(" loginId = {}", authentication.getName());
-        String loginId = authentication.getName();
-
 
         playService.editSeq(loginId, playEditSeqRequestDto.getPlaylistId(), playEditSeqRequestDto.getSeqList());
         List<Map<String, Object>> result = ResponseUtil.getEditPlaysResponse(playEditSeqRequestDto.getSeqList());
@@ -218,10 +206,8 @@ public class PlayController {
     })
     @Operation(summary = "삭제", description = "영상 삭제")
     public ResponseEntity<?> deletePlay(@Parameter @PathVariable("id") Long id,
-                                        Authentication authentication) {
+                                        @Auth String loginId) {
         RequestUtil.checkNeedValue(id);
-        log.info(" loginId = {}", authentication.getName());
-        String loginId = authentication.getName();
 
         Play play = playService.getPlayById(id);
         playService.deletePlayById(play, loginId);

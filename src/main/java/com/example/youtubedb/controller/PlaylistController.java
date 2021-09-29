@@ -1,5 +1,6 @@
 package com.example.youtubedb.controller;
 
+import com.example.youtubedb.domain.Auth;
 import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
@@ -61,9 +62,7 @@ public class PlaylistController {
     })
     @Operation(summary = "조회", description = "플레이 리스트들 조회")
     @GetMapping
-    public ResponseEntity<?> getPlaylist(Authentication authentication) {
-        log.info(" loginId = {}", authentication.getName());
-        String loginId = authentication.getName();
+    public ResponseEntity<?> getPlaylist(@Auth String loginId) {
         Member member = memberService.findMemberByLoginId(loginId);
         List<Playlist> playlists = member.getPlaylists();
         playlistService.addThumbnail(playlists);
@@ -90,13 +89,12 @@ public class PlaylistController {
     @PostMapping("/create")
     @Operation(summary = "생성", description = "플레이 리스트 생성")
     public ResponseEntity<?> createPlaylist(@Valid  @RequestBody PlaylistCreateRequestDto playlistCreateRequestDto,
-                                            Authentication authentication) {
+                                            @Auth String loginId) {
         RequestUtil.checkNeedValue(
                 playlistCreateRequestDto.getTitle(),
                 playlistCreateRequestDto.getIsPublic(),
                 playlistCreateRequestDto.getCategory());
 
-        String loginId = authentication.getName();
         Member member = memberService.findMemberByLoginId(loginId);
         List<Playlist> playlists = member.getPlaylists();
 
