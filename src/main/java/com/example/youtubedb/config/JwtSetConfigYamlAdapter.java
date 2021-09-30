@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtSetConfigYamlAdapter {
-	@Value("${spring.jwt.secretKey}")
+	@Value("${jwt.secretKey}")
 	String secretKey;
-	@Value("${spring.jwt.algorithm}")
+	@Value("${jwt.algorithm}")
 	SignatureAlgorithm signatureAlgorithm;
 
 	public JwtSetConfig toJwtSetConfig() {

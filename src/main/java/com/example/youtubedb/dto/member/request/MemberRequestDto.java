@@ -16,7 +16,7 @@ public class MemberRequestDto {
     private final String loginId;
 
     @Schema(description = "로그인 PASSWORD", example = "password123")
-    @NotBlank
+//    @NotBlank
     private final String password;
 
     @NotNull
