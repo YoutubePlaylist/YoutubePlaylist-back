@@ -81,7 +81,7 @@ public class MemberService implements UserDetailsService {
 
   public Member changePassword(Member updateMember, String oldPassword, String newPassword) {
     updateMember.setPassword(passwordEncoder.encode(newPassword));
-    refreshTokenServiceImpl.deleteTokenInRedis(updateMember.getLoginId());
+    refreshTokenServiceImpl.deleteRefreshToken(updateMember.getLoginId());
 
     return memberRepository.save(updateMember);
   }
@@ -98,7 +98,7 @@ public class MemberService implements UserDetailsService {
       // 3. 인증 정보를 기반으로 JWT 토큰 생성
       Token token = tokenProvider.create(authentication, isPC);
 
-      refreshTokenServiceImpl.updateTokenInRedis(isPC, authentication.getName(), token.getRefreshToken());
+      refreshTokenServiceImpl.updateRefreshToken(isPC, authentication.getName(), token.getRefreshToken());
 
       // 4. 토큰 발급
       return token;
@@ -132,7 +132,6 @@ public class MemberService implements UserDetailsService {
 
     // 5. 새로운 토큰 생성
     Token tokenDto = tokenProvider.create(authentication, isPC);
-//		tokenDto.setRefreshToken(redisRefreshToken);
 
     // 토큰 발급
     return tokenDto;

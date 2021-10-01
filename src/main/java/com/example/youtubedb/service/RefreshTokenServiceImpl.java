@@ -16,13 +16,13 @@ public class RefreshTokenServiceImpl extends RefreshTokenService<String, String>
     this.attach(refreshTokenObserver);
   }
 
-  public void updateTokenInRedis(boolean isPC, String loginId, RefreshToken refreshToken) {
+  public void updateRefreshToken(boolean isPC, String loginId, RefreshToken refreshToken) {
     String key = getTypeName(isPC) + loginId;
     String value = formatter.toJwtFromRefreshToken(refreshToken);
     notifyObserversForUpdate(key, value);
   }
 
-  public void deleteTokenInRedis(String loginId) {
+  public void deleteRefreshToken(String loginId) {
     String APPKey = Type.APP.name() + loginId;
     String PCKey = Type.PC.name() + loginId;
     notifyObserversForDelete(APPKey);

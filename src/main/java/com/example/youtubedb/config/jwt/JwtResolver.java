@@ -8,12 +8,16 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class JwtResolver {
 	private final SecretKey key;
@@ -26,10 +30,11 @@ public class JwtResolver {
 
 	public Authentication getAuthentication(String accessToken) {
 		Claims claims = parseClaims(accessToken);
+		Collection<? extends GrantedAuthority> authorities = Collections.emptyList();
 
-		UserDetails principal = new User(claims.getSubject(), "", null);
+		UserDetails principal = new User(claims.getSubject(), "",  authorities);
 
-		return new UsernamePasswordAuthenticationToken(principal, "", null);
+		return new UsernamePasswordAuthenticationToken(principal, "", authorities);
 	}
 
 	public boolean validateToken(String token) throws Exception {

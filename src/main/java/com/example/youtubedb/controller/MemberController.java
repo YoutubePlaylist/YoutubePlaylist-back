@@ -16,6 +16,7 @@ import com.example.youtubedb.dto.member.response.MemberResponseDto;
 import com.example.youtubedb.dto.member.response.NonMemberResponseDto;
 import com.example.youtubedb.dto.token.request.TokenReissueRequestDto;
 import com.example.youtubedb.dto.token.resposne.TokenResponseDto;
+import com.example.youtubedb.mapper.TokenMapper;
 import com.example.youtubedb.s3.S3Uploader;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PasswordValidationService;
@@ -49,16 +50,19 @@ public class MemberController {
   private final PlaylistService playlistService;
   private final S3Uploader s3Uploader;
   private final PasswordValidationService passwordValidationService;
+  private final TokenMapper tokenMapper;
 
   @Autowired
   public MemberController(MemberService memberService,
                           PlaylistService playlistService,
                           S3Uploader s3Uploader,
-                          PasswordValidationService passwordValidationService) {
+                          PasswordValidationService passwordValidationService,
+                          TokenMapper tokenMapper) {
     this.memberService = memberService;
     this.playlistService = playlistService;
     this.s3Uploader = s3Uploader;
     this.passwordValidationService = passwordValidationService;
+    this.tokenMapper = tokenMapper;
   }
 
   @ApiResponses(value = {
@@ -164,7 +168,7 @@ public class MemberController {
     String password = member.isMember() ? memberRequestDto.getPassword() : member.getLoginId();
     Token token = memberService.login(memberRequestDto.getLoginId(), password, memberRequestDto.getIsPC());
 
-    BaseResponseSuccessDto responseBody = new TokenResponseDto(token);
+    BaseResponseSuccessDto responseBody = new TokenResponseDto(tokenMapper.toTokenVO(token));
     return ResponseEntity.ok(responseBody);
   }
 
@@ -214,7 +218,7 @@ public class MemberController {
       reissueRequestDto.getIsPC());
     Token token = memberService.reissue(reissueRequestDto.getAccessToken(), reissueRequestDto.getRefreshToken(), reissueRequestDto.getIsPC());
 
-    BaseResponseSuccessDto responseBody = new TokenResponseDto(token);
+    BaseResponseSuccessDto responseBody = new TokenResponseDto(tokenMapper.toTokenVO(token));
     return ResponseEntity.ok(responseBody);
   }
 
