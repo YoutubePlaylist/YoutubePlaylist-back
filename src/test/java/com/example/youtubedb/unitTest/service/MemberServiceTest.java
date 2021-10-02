@@ -4,7 +4,7 @@ import com.example.youtubedb.config.jwt.TokenProvider;
 import com.example.youtubedb.exception.InvalidBlankPasswordException;
 import com.example.youtubedb.exception.InvalidRegexPasswordException;
 import com.example.youtubedb.repository.interfaces.MemberRepository;
-import com.example.youtubedb.service.MemberService;
+import com.example.youtubedb.service.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

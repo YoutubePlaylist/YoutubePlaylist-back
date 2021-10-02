@@ -3,7 +3,7 @@ package com.example.youtubedb.integrationTest.service;
 import com.example.youtubedb.domain.Token;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.exception.*;
-import com.example.youtubedb.service.MemberService;
+import com.example.youtubedb.service.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -13,7 +13,7 @@ import com.example.youtubedb.exception.InvalidSeqException;
 import com.example.youtubedb.exception.NotExistPlayException;
 import com.example.youtubedb.exception.StartAndEndTimeException;
 import com.example.youtubedb.repository.interfaces.PlayRepository;
-import com.example.youtubedb.service.MemberService;
+import com.example.youtubedb.service.member.MemberService;
 import com.example.youtubedb.service.PlayService;
 import com.example.youtubedb.service.PlaylistService;
 import org.junit.jupiter.api.extension.ExtendWith;

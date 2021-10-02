@@ -11,7 +11,7 @@ import com.example.youtubedb.dto.playlist.response.PlaylistCreateResponseDto;
 import com.example.youtubedb.dto.playlist.response.PlaylistDeleteResponseDto;
 import com.example.youtubedb.dto.playlist.response.PlaylistEditTitleResponseDto;
 import com.example.youtubedb.dto.playlist.response.PlaylistGetResponseDto;
-import com.example.youtubedb.service.MemberService;
+import com.example.youtubedb.service.member.MemberService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.util.RequestUtil;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,4 +1,4 @@
-package com.example.youtubedb.service;
+package com.example.youtubedb.service.member;
 
 import com.example.youtubedb.config.jwt.TokenProvider;
 import com.example.youtubedb.domain.Token;

@@ -6,7 +6,7 @@ import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.Category;
 import com.example.youtubedb.exception.NotExistPlaylistException;
 import com.example.youtubedb.exception.NotExistRequestValueException;
-import com.example.youtubedb.service.MemberService;
+import com.example.youtubedb.service.member.MemberService;
 import com.example.youtubedb.service.PlayService;
 import com.example.youtubedb.service.PlaylistService;
 import org.junit.jupiter.api.Test;
