@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit;
 
 @RequiredArgsConstructor
 public class AccessTokenProvider {
-	private final Duration ACCESS_TOKEN_EXPIRE_TIME = Duration.ofMinutes(1);
+	private final Duration ACCESS_TOKEN_EXPIRE_TIME = Duration.ofMinutes(30);
 	private final CurrentTimeServer currentTimeServer;
 
 	protected AccessToken create(String loginId) {

@@ -11,7 +11,7 @@ import java.time.temporal.TemporalAmount;
 
 @RequiredArgsConstructor
 public class RefreshTokenProvider {
-	private final Duration REFRESH_TOKEN_EXPIRE_DATE_APP = Duration.ofMinutes(5);
+	private final Period REFRESH_TOKEN_EXPIRE_DATE_APP = Period.ofDays(7);
 	private final Period REFRESH_TOKEN_EXPIRE_DATE_PC = Period.ofDays(30);
 	private final CurrentTimeServer currentTimeServer;
 

@@ -232,14 +232,14 @@ public class MemberController {
       content = @Content(schema = @Schema(implementation = ServerErrorFailResponseDto.class)))
   })
   @Operation(summary = "비밀 번호 변경", description = "비밀 번호 변경")
-  @PostMapping("/changePassword")
+  @PostMapping("/change/password")
   public ResponseEntity<?> changePassword(@Valid @RequestBody MemberChangePasswordRequestDto memberChangePasswordRequestDto,
                                           @Auth String loginId) {
     final Result<ChangingPasswordRequest> result = memberChangePasswordRequestProvider.create(loginId, memberChangePasswordRequestDto);
 
     if(result.isSuccess()) {
       changingPassword.changePassword(result.request());
-      return ResponseEntity.ok().build();
+      return ResponseEntity.ok().body("성공이래");
     }
 
     return getResponseEntity(memberChangePasswordRequestDto, result);
@@ -248,7 +248,7 @@ public class MemberController {
   private ResponseEntity<?> getResponseEntity(MemberChangePasswordRequestDto dto, Result result) {
     final Set<FailedReason> reasons = result.failedReason();
     if (reasons.contains(NOT_MATCHED_OLD_PASSWORD)) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증이 안됬데");
     }
 
     final String translated = FailedReasonTranslator.create(dto).translate(reasons);

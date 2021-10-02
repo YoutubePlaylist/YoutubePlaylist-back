@@ -23,7 +23,7 @@ public interface ChangingPassword {
         .findByLoginId(request.getMemberId())
         .orElseThrow(RuntimeException::new);
 
-      member.setPassword(request.getNewPassword().toString());
+      member.setPassword(request.getNewPassword().getPassword());
       memberRepository.save(member);
     }
   }

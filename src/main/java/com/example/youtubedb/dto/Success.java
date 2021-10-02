@@ -10,7 +10,7 @@ public class Success<T> implements Result<T> {
 
   @Override
   public boolean isSuccess() {
-    return false;
+    return true;
   }
 
   @Override

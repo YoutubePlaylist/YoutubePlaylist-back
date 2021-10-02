@@ -36,7 +36,7 @@ public class MemberChangePasswordRequestProvider {
     final boolean isEqualOldPassword = memberRepository
       .findByLoginId(loginId)
       .map(Member::getPassword)
-      .map(realPassword -> realPassword.equals(oldPassword))
+      .map(realPassword -> passwordEncoder.matches(oldPassword, realPassword))
       .orElse(false);
     final boolean isNew = !newPassword.equals(oldPassword);
 

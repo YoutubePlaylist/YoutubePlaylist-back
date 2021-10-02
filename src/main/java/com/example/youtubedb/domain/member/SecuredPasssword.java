@@ -1,10 +1,12 @@
 package com.example.youtubedb.domain.member;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.example.youtubedb.util.ContractUtil.requires;
 
+@Getter
 public class SecuredPasssword {
   String password;
 
