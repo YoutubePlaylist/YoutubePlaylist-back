@@ -1,13 +1,12 @@
 package com.example.youtubedb.dto.member.request;
 
-import com.example.youtubedb.repository.MemberRepository;
+import com.example.youtubedb.repository.interfaces.MemberRepository;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 import javax.validation.constraints.AssertFalse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.util.Objects;
 
 @Getter
 //@Component

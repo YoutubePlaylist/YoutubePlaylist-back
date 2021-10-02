@@ -7,7 +7,7 @@ import com.example.youtubedb.dto.Category;
 import com.example.youtubedb.exception.NotExistPlaylistException;
 import com.example.youtubedb.exception.NotExistRequestValueException;
 import com.example.youtubedb.exception.OverNomMemberMaxListException;
-import com.example.youtubedb.repository.PlaylistRepository;
+import com.example.youtubedb.repository.interfaces.PlaylistRepository;
 import com.example.youtubedb.util.RequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,7 +5,7 @@ import com.example.youtubedb.domain.Token;
 import com.example.youtubedb.domain.member.Authority;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.exception.*;
-import com.example.youtubedb.repository.MemberRepository;
+import com.example.youtubedb.repository.interfaces.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

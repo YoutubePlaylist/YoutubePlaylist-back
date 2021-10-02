@@ -1,4 +1,4 @@
-package com.example.youtubedb.repository;
+package com.example.youtubedb.repository.interfaces;
 
 import com.example.youtubedb.domain.Play;
 

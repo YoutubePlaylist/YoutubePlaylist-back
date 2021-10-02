@@ -3,7 +3,7 @@ package com.example.youtubedb.service;
 import com.example.youtubedb.domain.Play;
 import com.example.youtubedb.domain.Playlist;
 import com.example.youtubedb.dto.play.PlaySeqDto;
-import com.example.youtubedb.repository.PlayRepository;
+import com.example.youtubedb.repository.interfaces.PlayRepository;
 import com.example.youtubedb.util.RequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
