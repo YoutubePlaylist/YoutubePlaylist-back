@@ -1,5 +1,11 @@
 package com.example.youtubedb.config;
 
+import com.example.youtubedb.repository.MemberRepository;
+import com.example.youtubedb.service.ChangingPassword;
+import com.example.youtubedb.service.ChangingPassword.*;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.Cache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

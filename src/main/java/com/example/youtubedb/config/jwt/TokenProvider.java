@@ -4,27 +4,10 @@ import com.example.youtubedb.domain.token.AccessToken;
 import com.example.youtubedb.domain.token.Jwt;
 import com.example.youtubedb.domain.token.RefreshToken;
 import com.example.youtubedb.domain.token.Token;
-import com.example.youtubedb.exception.NotExistAuthorityException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 import static java.sql.Timestamp.valueOf;
 
@@ -33,21 +16,33 @@ import static java.sql.Timestamp.valueOf;
 public class TokenProvider {
 	private final AccessTokenProvider accessTokenProvider;
 	private final RefreshTokenProvider refreshTokenProvider;
+	private final RefreshTokenParser refreshTokenParser;
 
 	@Autowired
 	public TokenProvider(AccessTokenProvider accessTokenProvider,
-	                     RefreshTokenProvider refreshTokenProvider) {
+	                     RefreshTokenProvider refreshTokenProvider,
+											 RefreshTokenParser refreshTokenParser) {
 		this.accessTokenProvider = accessTokenProvider;
 		this.refreshTokenProvider = refreshTokenProvider;
+		this.refreshTokenParser = refreshTokenParser;
 	}
 
-	public Token create(Authentication authentication, boolean isPC) {
+	public Token create(String loginId, boolean isPC) {
 		// Access Token 생성
-		AccessToken accessToken = accessTokenProvider.create(authentication.getName());
+		AccessToken accessToken = accessTokenProvider.create(loginId);
 
 		// Refresh Token 생성
 		RefreshToken refreshToken = refreshTokenProvider.create(isPC);
 
+		return Jwt.builder()
+			.accessToken(accessToken)
+			.refreshToken(refreshToken)
+			.build();
+	}
+
+	public Token reissue(String loginId, String refreshTokenValue) {
+		AccessToken accessToken = accessTokenProvider.create(loginId);
+		RefreshToken refreshToken = refreshTokenParser.parse(refreshTokenValue);
 		return Jwt.builder()
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)

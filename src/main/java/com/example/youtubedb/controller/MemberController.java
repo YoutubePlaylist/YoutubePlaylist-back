@@ -4,13 +4,12 @@ import com.example.youtubedb.domain.Auth;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.domain.token.Token;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
+import com.example.youtubedb.dto.FailedReason;
+import com.example.youtubedb.dto.Result;
 import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
-import com.example.youtubedb.dto.member.request.MemberChangePasswordRequestDto;
-import com.example.youtubedb.dto.member.request.MemberLoginRequestDto;
-import com.example.youtubedb.dto.member.request.MemberRequestDto;
-import com.example.youtubedb.dto.member.request.NonMemberRequestDto;
+import com.example.youtubedb.dto.member.request.*;
 import com.example.youtubedb.dto.member.response.MemberDeleteResponseDto;
 import com.example.youtubedb.dto.member.response.MemberResponseDto;
 import com.example.youtubedb.dto.member.response.NonMemberResponseDto;
@@ -18,6 +17,7 @@ import com.example.youtubedb.dto.token.request.TokenReissueRequestDto;
 import com.example.youtubedb.dto.token.resposne.TokenResponseDto;
 import com.example.youtubedb.mapper.TokenMapper;
 import com.example.youtubedb.s3.S3Uploader;
+import com.example.youtubedb.service.ChangingPassword;
 import com.example.youtubedb.service.MemberService;
 import com.example.youtubedb.service.PasswordValidationService;
 import com.example.youtubedb.service.PlaylistService;
@@ -29,8 +29,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Set;
+
+import static com.example.youtubedb.dto.FailedReason.NOT_MATCHED_OLD_PASSWORD;
 
 // TODO actuator 관련 이슈 해결 필요!
 
@@ -45,25 +49,15 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/member")
 @Slf4j
+@RequiredArgsConstructor
 public class MemberController {
   private final MemberService memberService;
   private final PlaylistService playlistService;
   private final S3Uploader s3Uploader;
   private final PasswordValidationService passwordValidationService;
   private final TokenMapper tokenMapper;
-
-  @Autowired
-  public MemberController(MemberService memberService,
-                          PlaylistService playlistService,
-                          S3Uploader s3Uploader,
-                          PasswordValidationService passwordValidationService,
-                          TokenMapper tokenMapper) {
-    this.memberService = memberService;
-    this.playlistService = playlistService;
-    this.s3Uploader = s3Uploader;
-    this.passwordValidationService = passwordValidationService;
-    this.tokenMapper = tokenMapper;
-  }
+  private final MemberChangePasswordRequestProvider memberChangePasswordRequestProvider;
+  private final ChangingPassword changingPassword;
 
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200",
@@ -216,9 +210,9 @@ public class MemberController {
       reissueRequestDto.getAccessToken(),
       reissueRequestDto.getRefreshToken(),
       reissueRequestDto.getIsPC());
-    Token token = memberService.reissue(reissueRequestDto.getAccessToken(), reissueRequestDto.getRefreshToken(), reissueRequestDto.getIsPC());
+    Token reissuedToken = memberService.reissue(reissueRequestDto.getAccessToken(), reissueRequestDto.getRefreshToken(), reissueRequestDto.getIsPC());
 
-    BaseResponseSuccessDto responseBody = new TokenResponseDto(tokenMapper.toTokenVO(token));
+    BaseResponseSuccessDto responseBody = new TokenResponseDto(tokenMapper.toTokenVO(reissuedToken));
     return ResponseEntity.ok(responseBody);
   }
 
@@ -241,20 +235,24 @@ public class MemberController {
   @PostMapping("/changePassword")
   public ResponseEntity<?> changePassword(@Valid @RequestBody MemberChangePasswordRequestDto memberChangePasswordRequestDto,
                                           @Auth String loginId) {
-    RequestUtil.checkNeedValue(
-      memberChangePasswordRequestDto.getOldPassword(),
-      memberChangePasswordRequestDto.getNewPassword());
+    final Result<ChangingPasswordRequest> result = memberChangePasswordRequestProvider.create(loginId, memberChangePasswordRequestDto);
 
-    Member updateMember = memberService.findMemberByLoginId(loginId);
-    passwordValidationService.checkCorrectPassword(
-      updateMember,
-      memberChangePasswordRequestDto.getOldPassword(),
-      memberChangePasswordRequestDto.getNewPassword());
-    passwordValidationService.checkValidPassword(memberChangePasswordRequestDto.getNewPassword());
-    updateMember = memberService.changePassword(updateMember, memberChangePasswordRequestDto.getOldPassword(), memberChangePasswordRequestDto.getNewPassword());
+    if(result.isSuccess()) {
+      changingPassword.changePassword(result.request());
+      return ResponseEntity.ok().build();
+    }
 
-    BaseResponseSuccessDto responseBody = new MemberResponseDto(updateMember);
-    return ResponseEntity.ok(responseBody);
+    return getResponseEntity(memberChangePasswordRequestDto, result);
+  }
+
+  private ResponseEntity<?> getResponseEntity(MemberChangePasswordRequestDto dto, Result result) {
+    final Set<FailedReason> reasons = result.failedReason();
+    if (reasons.contains(NOT_MATCHED_OLD_PASSWORD)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    final String translated = FailedReasonTranslator.create(dto).translate(reasons);
+    return ResponseEntity.badRequest().body(translated);
   }
 
   @ApiResponses(value = {

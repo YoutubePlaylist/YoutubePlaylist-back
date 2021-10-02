@@ -1,6 +1,7 @@
 package com.example.youtubedb.mapper;
 
 import com.example.youtubedb.config.jwt.JwtFormatter;
+import com.example.youtubedb.domain.token.AccessToken;
 import com.example.youtubedb.domain.token.Token;
 import com.example.youtubedb.vo.TokenVO;
 import lombok.RequiredArgsConstructor;

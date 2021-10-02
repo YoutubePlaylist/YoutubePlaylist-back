@@ -90,15 +90,10 @@ public class MemberService implements UserDetailsService {
     // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
     UsernamePasswordAuthenticationToken authenticationToken = toAuthentication(loginID, password);
 
-    // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-    //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
     try {
-      Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-      System.out.println("authentication = " + authentication.getName());
-      // 3. 인증 정보를 기반으로 JWT 토큰 생성
-      Token token = tokenProvider.create(authentication, isPC);
+      Token token = tokenProvider.create(loginID, isPC);
 
-      refreshTokenServiceImpl.updateRefreshToken(isPC, authentication.getName(), token.getRefreshToken());
+      refreshTokenServiceImpl.updateRefreshToken(isPC, loginID, token.getRefreshToken());
 
       // 4. 토큰 발급
       return token;
@@ -109,17 +104,12 @@ public class MemberService implements UserDetailsService {
 
 
   @Transactional
-  public Token reissue(String accessToken, String refreshToken, boolean isPC) throws Exception {
-    // 1. Refresh Token 검증
+  public Token reissue(String loginId, String refreshToken, boolean isPC) throws Exception {
     if (!jwtResolver.validateToken(refreshToken)) {
       throw new RefreshTokenException("Refresh Token 이 유효하지 않습니다.");
     }
 
-    // 2. Access Token 에서 Member ID(pk) 가져오기
-    Authentication authentication = jwtResolver.getAuthentication(accessToken);
-
-    //3. Redis에서 파일 불러옴
-    String redisRefreshToken = refreshTokenServiceImpl.getValueByKey(isPC, authentication.getName());
+    String redisRefreshToken = refreshTokenServiceImpl.getValueByKey(isPC, loginId);
 
     if (redisRefreshToken == null) {
       throw new RefreshTokenException("다시 로그인이 필요합니다.");
@@ -130,11 +120,8 @@ public class MemberService implements UserDetailsService {
       throw new RefreshTokenException("토큰의 유저 정보가 일치하지 않습니다.");
     }
 
-    // 5. 새로운 토큰 생성
-    Token tokenDto = tokenProvider.create(authentication, isPC);
-
-    // 토큰 발급
-    return tokenDto;
+    // 재발행 토큰 발급
+    return tokenProvider.reissue(loginId, refreshToken);
   }
 
   public Member findMemberByLoginId(String loginId) {
