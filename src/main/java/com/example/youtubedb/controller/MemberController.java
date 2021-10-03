@@ -8,8 +8,8 @@ import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
 import com.example.youtubedb.dto.member.request.MemberChangePasswordRequestDto;
+import com.example.youtubedb.dto.member.request.MemberChangingUserDto;
 import com.example.youtubedb.dto.member.request.MemberLoginRequestDto;
-import com.example.youtubedb.dto.member.request.MemberRequestDto;
 import com.example.youtubedb.dto.member.request.NonMemberRequestDto;
 import com.example.youtubedb.dto.member.response.MemberDeleteResponseDto;
 import com.example.youtubedb.dto.member.response.MemberResponseDto;
@@ -17,6 +17,7 @@ import com.example.youtubedb.dto.member.response.NonMemberResponseDto;
 import com.example.youtubedb.dto.token.request.TokenReissueRequestDto;
 import com.example.youtubedb.dto.token.resposne.TokenResponseDto;
 import com.example.youtubedb.s3.S3Uploader;
+import com.example.youtubedb.service.member.MemberLogin;
 import com.example.youtubedb.service.member.MemberService;
 import com.example.youtubedb.service.PlaylistService;
 import com.example.youtubedb.service.member.NonMemberRegister;
@@ -30,7 +31,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -55,6 +55,7 @@ public class MemberController {
   private final S3Uploader s3Uploader;
 
   private final NonMemberRegister nonMemberRegister;
+  private final MemberLogin memberLogin;
 
 
   @ApiResponses(value = {
@@ -122,7 +123,7 @@ public class MemberController {
   })
   @Operation(summary = "가입", description = "회원 가입")
   @PostMapping("/signup/real")
-  public ResponseEntity<?> signupReal(@Valid @RequestBody MemberRequestDto memberRequestDto) {
+  public ResponseEntity<?> signupReal(@Valid @RequestBody MemberLoginRequestDto memberRequestDto) {
     Member member = memberService.registerReal(memberRequestDto.getLoginId(), memberRequestDto.getPassword(), memberRequestDto.getIsPC());
     log.info("memberLoginId = {}", memberRequestDto.getLoginId());
     playlistService.createPlaylist("default", false, "OTHER", member);
@@ -147,15 +148,12 @@ public class MemberController {
   })
   @Operation(summary = "로그인(회원+비회원)", description = "비회원+회원 로그인")
   @PostMapping("/login")
-  public ResponseEntity<?> login(@Valid @RequestBody MemberRequestDto memberRequestDto) {
+  public ResponseEntity<?> login(@Valid @RequestBody MemberLoginRequestDto memberLoginRequestDto) {
     RequestUtil.checkNeedValue(
-      memberRequestDto.getLoginId(),
-      memberRequestDto.getIsPC());
+      memberLoginRequestDto.getLoginId(),
+      memberLoginRequestDto.getIsPC());
 
-    Member member = memberService.findMemberByLoginId(memberRequestDto.getLoginId());
-    String password = member.isMember() ? memberRequestDto.getPassword() : member.getLoginId();
-    Token token = memberService.login(memberRequestDto.getLoginId(), password, memberRequestDto.getIsPC());
-
+    Token token = memberLogin.login(memberLoginRequestDto);
     BaseResponseSuccessDto responseBody = new TokenResponseDto(token);
     return ResponseEntity.ok(responseBody);
   }
@@ -304,12 +302,12 @@ public class MemberController {
   @PutMapping("/change")
   @ResponseBody
   public ResponseEntity<?> changeToMember(Authentication authentication,
-                                          @Valid @RequestBody MemberLoginRequestDto memberLoginRequestDto) {
-    RequestUtil.checkNeedValue(memberLoginRequestDto.getLoginId(), memberLoginRequestDto.getPassword());
+                                          @Valid @RequestBody MemberChangingUserDto memberChangingUserDto) {
+    RequestUtil.checkNeedValue(memberChangingUserDto.getLoginId(), memberChangingUserDto.getPassword());
     log.info(" loginId = {}", authentication.getName());
     String loginId = authentication.getName();
     Member member = memberService.findMemberByLoginId(loginId);
-    memberService.change(member, memberLoginRequestDto.getLoginId(), memberLoginRequestDto.getPassword());
+    memberService.change(member, memberChangingUserDto.getLoginId(), memberChangingUserDto.getPassword());
 
     BaseResponseSuccessDto responseBody = new MemberResponseDto(member);
     return ResponseEntity.ok(responseBody);
