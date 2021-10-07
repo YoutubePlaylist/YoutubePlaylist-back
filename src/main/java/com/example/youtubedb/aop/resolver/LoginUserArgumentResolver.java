@@ -24,6 +24,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     private final ObjectMapper objectMapper;
     private final TokenProvider tokenProvider;
 
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean isLoginUserAnnotation = parameter.getParameterAnnotation(LoginUser.class) != null;
