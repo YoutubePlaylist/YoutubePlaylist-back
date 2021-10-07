@@ -6,7 +6,6 @@ import com.example.youtubedb.dto.member.request.MemberChangePasswordRequestDto;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.example.youtubedb.dto.FailedReason.*;
 import static com.example.youtubedb.util.ContractUtil.requires;

@@ -41,7 +41,7 @@ public class MemberChangePasswordRequestProvider {
     final boolean isNew = !newPassword.equals(oldPassword);
 
     if(isPresentedMember && isEqualOldPassword && isNew) {
-      return new Success<ChangingPasswordRequest>(new ChangingPasswordRequest(loginId, securedPasswordProvider.create(newPassword)));
+      return new Success<>(new ChangingPasswordRequest(loginId, securedPasswordProvider.create(newPassword)));
     }
 
     Set<FailedReason> reasons = new HashSet<>();
@@ -54,6 +54,6 @@ public class MemberChangePasswordRequestProvider {
     if(!isNew) {
       reasons.add(UNEXPECTED_NEW_PASSWORD);
     }
-    return new Failed<ChangingPasswordRequest>(reasons);
+    return new Failed<>(reasons);
   }
 }
