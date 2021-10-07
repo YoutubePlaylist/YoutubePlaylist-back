@@ -39,8 +39,6 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
             throw new DoNotChangePasswordException();
         }
 
-        //TODO : bearer 타입 아닐 때 생각!
-        //앞에 Bearer 떼기
         String jwtToken = authorizationHeader.substring(jwtConfig.getBearerType().length()+1);
 
         Authentication authentication = tokenProvider.getAuthentication(jwtToken);
