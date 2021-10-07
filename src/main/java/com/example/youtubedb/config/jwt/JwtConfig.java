@@ -7,6 +7,8 @@ import lombok.Value;
 public class JwtConfig {
   String secretKey;
   SignatureAlgorithm signatureAlgorithm;
+  String authoritiesKey = "auth";
+  String bearerType = "bearer";
 
   public JwtConfig(String secretKey) {
     this.secretKey = secretKey;

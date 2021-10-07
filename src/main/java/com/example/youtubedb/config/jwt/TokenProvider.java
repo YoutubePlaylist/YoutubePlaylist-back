@@ -29,19 +29,17 @@ import java.util.stream.Collectors;
 import static java.sql.Timestamp.valueOf;
 
 @Slf4j
-@Component
 public class TokenProvider {
 
-    private final String AUTHORITIES_KEY = "auth";
-    private final String BEARER_TYPE = "bearer";
 
     private Key key;
-    private final JwtConfigYamlAdapter jwtConfig;
+    private final String AUTHORITIES_KEY;
+    private final String BEARER_TYPE;
 
-    @Autowired
-    public TokenProvider(JwtConfigYamlAdapter jwtConfig){
-      this.jwtConfig = jwtConfig;
-      this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.toJwtConfig().getSecretKey()));
+    public TokenProvider(JwtConfig jwtConfig){
+      this.AUTHORITIES_KEY = jwtConfig.getAuthoritiesKey();
+      this.BEARER_TYPE = jwtConfig.getBearerType();
+      this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.getSecretKey()));
     }
 
     public Token generateTokenDto(Authentication authentication, boolean isPC) {
