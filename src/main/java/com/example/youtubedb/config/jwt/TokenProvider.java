@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -34,12 +35,13 @@ public class TokenProvider {
     private final String AUTHORITIES_KEY = "auth";
     private final String BEARER_TYPE = "bearer";
 
-    private final Key key;
+    private Key key;
+    private final JwtConfigYamlAdapter jwtConfig;
 
     @Autowired
-    public TokenProvider(@Value("${jwt.secret}") String secretKey) {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
+    public TokenProvider(JwtConfigYamlAdapter jwtConfig){
+      this.jwtConfig = jwtConfig;
+      this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.toJwtConfig().getSecretKey()));
     }
 
     public Token generateTokenDto(Authentication authentication, boolean isPC) {
