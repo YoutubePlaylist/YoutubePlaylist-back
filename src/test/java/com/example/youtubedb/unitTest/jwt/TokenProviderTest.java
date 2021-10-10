@@ -1,5 +1,6 @@
 package com.example.youtubedb.unitTest.jwt;
 
+import com.example.youtubedb.config.jwt.JwtConfig;
 import com.example.youtubedb.config.jwt.TokenProvider;
 import com.example.youtubedb.domain.Token;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,8 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class TokenProviderTest {
     private final String SECRET = "secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey";
-    private final TokenProvider tokenProvider = new TokenProvider(SECRET);
+    JwtConfig jwtConfig = new JwtConfig(SECRET);
+    private final TokenProvider tokenProvider = new TokenProvider(jwtConfig);
 
     @Spy
     Authentication authentication;
