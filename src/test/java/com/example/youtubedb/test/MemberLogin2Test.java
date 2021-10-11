@@ -62,18 +62,7 @@ class MemberLogin2Test {
 
     //then
     assertThat(repository.find(member.loginId()), is(loginCorrectPassword));
-  }
-
-  @Test
-  @DisplayName("비밀번호는 잘 비교하니 - 틀린 경우")
-  void isCorrectPassword2() {
-    //given
-    Member2 member = new Member2("loginId", "password");
-    repository.save(member);
-    repository.save(new Member2("loginId1", "password1"));
-    repository.save(new Member2("loginId2", "password2"));
-
-    //then
     assertThrows(DoNotMatchPasswordException.class, () -> memberLogin2.login("loginId", "password2"));
   }
+
 }
