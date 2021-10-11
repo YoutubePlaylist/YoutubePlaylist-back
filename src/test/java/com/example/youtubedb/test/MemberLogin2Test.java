@@ -10,14 +10,20 @@ import static org.hamcrest.Matchers.is;
 class MemberLogin2Test {
 
   MemberRepository2 repository = new MemberRepository2();
+  MemberLogin2 memberLogin2 = new MemberLogin2(repository);
 
   @Test()
-  @DisplayName("비밀번호를_맞게_입력해야니")
-  void isThePasswordCorrect() {
-    Member2 member = new Member2("loginId", "password");
-    repository.save(member);
+  @DisplayName("login ID를 통해 올바른 Member를 가져오니")
+  void isTheCorrectMember() {
+    //given
+    Member2 member = new Member2("loginId", "password";
+    repository.save(new Member2("loginId", "password"));
 
-    assertThat(repository.find(member.loginId()), is(member));
-    assertThat(repository.find(member.loginId()).password(), is(member.password()));
+    //when
+    Member2 loginMember = memberLogin2.login("loginId", "password");
+
+    //then
+    assertThat(repository.find(member.loginId()), is(loginMember));
+    assertThat(repository.find(member.loginId()).password(), is(loginMember.password()));
   }
 }
