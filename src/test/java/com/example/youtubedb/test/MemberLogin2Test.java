@@ -16,7 +16,7 @@ class MemberLogin2Test {
   @DisplayName("login ID를 통해 올바른 Member를 가져오니")
   void isTheCorrectMember() {
     //given
-    Member2 member = new Member2("loginId", "password";
+    Member2 member = new Member2("loginId", "password");
     repository.save(new Member2("loginId", "password"));
 
     //when
