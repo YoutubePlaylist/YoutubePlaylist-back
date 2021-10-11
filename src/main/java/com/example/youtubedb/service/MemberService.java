@@ -4,22 +4,21 @@ import com.example.youtubedb.config.jwt.JwtResolver;
 import com.example.youtubedb.config.jwt.TokenProvider;
 import com.example.youtubedb.domain.member.Authority;
 import com.example.youtubedb.domain.member.Member;
+import com.example.youtubedb.domain.member.SecuredPassword;
 import com.example.youtubedb.domain.token.Token;
 import com.example.youtubedb.exception.*;
 import com.example.youtubedb.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,29 +27,15 @@ import java.util.Collections;
 @Service
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class MemberService implements UserDetailsService {
 
   private final AuthenticationManagerBuilder authenticationManagerBuilder;
   private final MemberRepository memberRepository;
-  private final PasswordEncoder passwordEncoder;
   private final TokenProvider tokenProvider;
   private final JwtResolver jwtResolver;
   private final RefreshTokenServiceImpl refreshTokenServiceImpl;
-
-  @Autowired
-  public MemberService(AuthenticationManagerBuilder authenticationManagerBuilder,
-                       MemberRepository memberRepository,
-                       PasswordEncoder passwordEncoder,
-                       TokenProvider tokenProvider,
-                       JwtResolver jwtResolver,
-                       RefreshTokenServiceImpl refreshTokenServiceImpl) {
-    this.authenticationManagerBuilder = authenticationManagerBuilder;
-    this.memberRepository = memberRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.tokenProvider = tokenProvider;
-    this.jwtResolver = jwtResolver;
-    this.refreshTokenServiceImpl = refreshTokenServiceImpl;
-  }
+  private final SecuredPassword.Provider securedPasswordProvider;
 
   public Member registerNon(String deviceId, Boolean isPC) {
     checkDuplicateMember(deviceId);
@@ -59,7 +44,7 @@ public class MemberService implements UserDetailsService {
       .isMember(false)
       .loginId(deviceId)
       .authority(Authority.ROLE_USER)
-      .password(passwordEncoder.encode(deviceId))
+      .password(securedPasswordProvider.create(deviceId))
       .isPC(isPC)
       .build();
 
@@ -72,7 +57,7 @@ public class MemberService implements UserDetailsService {
       .isMember(true)
       .loginId(loginId)
       .authority(Authority.ROLE_USER)
-      .password(passwordEncoder.encode(password))
+      .password(securedPasswordProvider.create(password))
       .isPC(isPC)
       .build();
 
@@ -80,7 +65,7 @@ public class MemberService implements UserDetailsService {
   }
 
   public Member changePassword(Member updateMember, String oldPassword, String newPassword) {
-    updateMember.setPassword(passwordEncoder.encode(newPassword));
+    updateMember.setPassword(securedPasswordProvider.create(newPassword));
     refreshTokenServiceImpl.deleteRefreshToken(updateMember.getLoginId());
 
     return memberRepository.save(updateMember);
@@ -156,7 +141,7 @@ public class MemberService implements UserDetailsService {
 
     return new User(
       String.valueOf(member.getLoginId()),
-      member.getPassword(),
+      member.getPassword().getPassword(),
       Collections.singleton(grantedAuthority)
     );
   }
@@ -173,6 +158,6 @@ public class MemberService implements UserDetailsService {
 
   public void change(Member member, String loginId, String password) {
     checkDuplicateMember(loginId);
-    member.changeToMember(loginId, passwordEncoder.encode(password));
+    member.changeToMember(loginId, securedPasswordProvider.create(password));
   }
 }

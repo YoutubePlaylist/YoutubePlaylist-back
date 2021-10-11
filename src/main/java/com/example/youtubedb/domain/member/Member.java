@@ -16,7 +16,8 @@ public class Member extends BaseEntity {
     private String loginId;
 
     @JsonIgnore
-    private String password;
+    @Embedded
+    private SecuredPassword password;
     private boolean isMember;
     @Setter
     private String profileImg = null;
@@ -33,7 +34,7 @@ public class Member extends BaseEntity {
     private List<Playlist> playlists = new ArrayList<>();
 
     @Builder
-    public Member(String loginId, String password, boolean isMember, Authority authority, boolean isPC){
+    public Member(String loginId, SecuredPassword password, boolean isMember, Authority authority, boolean isPC){
         this.loginId = loginId;
         this.password = password;
         this.isMember = isMember;
@@ -41,10 +42,10 @@ public class Member extends BaseEntity {
         this.isPC = isPC;
     }
 
-    public void setPassword(String password){
+    public void setPassword(SecuredPassword password){
         this.password = password;
     }
-    public void changeToMember(String loginId, String password) {
+    public void changeToMember(String loginId, SecuredPassword password) {
         this.loginId = loginId;
         this.password = password;
         this.isMember = true;

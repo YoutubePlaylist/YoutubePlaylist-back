@@ -18,7 +18,7 @@ public class PasswordValidationService {
     private final PasswordEncoder passwordEncoder;
 
     public void checkCorrectPassword(Member updateMember, String oldPassword, String newPassword) {
-        if(!passwordEncoder.matches(oldPassword, updateMember.getPassword())){
+        if(!passwordEncoder.matches(oldPassword, updateMember.getPassword().getPassword())){
             throw new DoNotMatchPasswordException();
         }
         if (oldPassword.equals(newPassword)) {

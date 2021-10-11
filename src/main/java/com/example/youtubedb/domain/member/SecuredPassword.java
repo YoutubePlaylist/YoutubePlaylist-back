@@ -1,16 +1,22 @@
 package com.example.youtubedb.domain.member;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.persistence.Embeddable;
 
 import static com.example.youtubedb.util.ContractUtil.requires;
 
 @Getter
-public class SecuredPasssword {
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class SecuredPassword {
   String password;
 
-  private SecuredPasssword(String password) {
+  private SecuredPassword(String password) {
     requires(password.length() >= 8);
     this.password = password;
   }
@@ -19,8 +25,8 @@ public class SecuredPasssword {
   public static class Provider {
     private final PasswordEncoder passwordEncoder;
 
-    public SecuredPasssword create(String raw) {
-      return new SecuredPasssword(passwordEncoder.encode(raw));
+    public SecuredPassword create(String raw) {
+      return new SecuredPassword(passwordEncoder.encode(raw));
     }
   }
 }
