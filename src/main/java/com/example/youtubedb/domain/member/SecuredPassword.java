@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;
 
@@ -22,6 +23,7 @@ public class SecuredPassword {
   }
 
   @RequiredArgsConstructor
+  @Component
   public static class Provider {
     private final PasswordEncoder passwordEncoder;
 

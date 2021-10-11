@@ -6,7 +6,10 @@ import com.example.youtubedb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import javax.transaction.Transactional;
+
 public interface ChangingPassword {
+  @Transactional
   void changePassword(ChangingPasswordRequest request);
 
   interface CacheClient {

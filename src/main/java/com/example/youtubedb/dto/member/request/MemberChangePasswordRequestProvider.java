@@ -7,6 +7,8 @@ import com.example.youtubedb.dto.FailedReason;
 import com.example.youtubedb.dto.Result;
 import com.example.youtubedb.dto.Success;
 import com.example.youtubedb.repository.MemberRepository;
+import com.example.youtubedb.service.PasswordValidationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -16,16 +18,11 @@ import java.util.Set;
 import static com.example.youtubedb.dto.FailedReason.*;
 
 @Component
+@RequiredArgsConstructor
 public class MemberChangePasswordRequestProvider {
   private final MemberRepository memberRepository;
-  private final PasswordEncoder passwordEncoder;
   private final SecuredPassword.Provider securedPasswordProvider;
-
-  public MemberChangePasswordRequestProvider(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
-    this.memberRepository = memberRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.securedPasswordProvider = new SecuredPassword.Provider(passwordEncoder);
-  }
+  private final PasswordValidationService passwordValidationService;
 
   public Result<ChangingPasswordRequest> create(String loginId, MemberChangePasswordRequestDto dto) {
     final String oldPassword = dto.getOldPassword();
@@ -35,7 +32,7 @@ public class MemberChangePasswordRequestProvider {
     final boolean isEqualOldPassword = memberRepository
       .findByLoginId(loginId)
       .map(Member::getPassword)
-      .map(realPassword -> passwordEncoder.matches(oldPassword, realPassword.getPassword()))
+      .map(realPassword -> passwordValidationService.checkCorrectPassword(oldPassword, realPassword.getPassword()))
       .orElse(false);
     final boolean isNew = !newPassword.equals(oldPassword);
 

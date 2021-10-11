@@ -10,23 +10,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ResponseUtil {
-    public static ResponseDto getSuccessResponse(Object data) {
-        return ResponseDto.builder()
-                .success(true)
-                .response(data)
-                .error(null)
-                .build();
-    }
-
-    public static ResponseDto getFailResponse(String message, int status) {
-        ErrorDto error = getErrorDto(message, status);
-
-        return ResponseDto.builder()
-                .success(false)
-                .response(null)
-                .error(error)
-                .build();
-    }
 
     private static ErrorDto getErrorDto(String message, int status) {
         return ErrorDto.builder()

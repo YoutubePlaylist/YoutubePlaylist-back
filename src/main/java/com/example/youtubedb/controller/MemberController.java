@@ -5,6 +5,7 @@ import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.domain.token.Token;
 import com.example.youtubedb.dto.BaseResponseSuccessDto;
 import com.example.youtubedb.dto.FailedReason;
+import com.example.youtubedb.dto.ResponseDto;
 import com.example.youtubedb.dto.Result;
 import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
@@ -42,6 +43,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import static com.example.youtubedb.dto.FailedReason.NOT_MATCHED_OLD_PASSWORD;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 // TODO actuator 관련 이슈 해결 필요!
 
@@ -129,6 +131,7 @@ public class MemberController {
   @Operation(summary = "가입", description = "회원 가입")
   @PostMapping("/signup/real")
   public ResponseEntity<?> signupReal(@Valid @RequestBody MemberRequestDto memberRequestDto) {
+    passwordValidationService.checkValidPassword(memberRequestDto.getPassword());
     Member member = memberService.registerReal(memberRequestDto.getLoginId(), memberRequestDto.getPassword(), memberRequestDto.getIsPC());
     log.info("memberLoginId = {}", memberRequestDto.getLoginId());
     playlistService.createPlaylist("default", false, "OTHER", member);
@@ -160,6 +163,10 @@ public class MemberController {
 
     Member member = memberService.findMemberByLoginId(memberRequestDto.getLoginId());
     String password = member.isMember() ? memberRequestDto.getPassword() : member.getLoginId();
+    if(!passwordValidationService.checkCorrectPassword(password, member.getPassword().getPassword())) {
+      ResponseDto<Object> responseBody = new ResponseDto<>(BAD_REQUEST.value(), "비밀번호가 틀렸습니다.", null);
+      return ResponseEntity.badRequest().body(responseBody);
+    }
     Token token = memberService.login(memberRequestDto.getLoginId(), password, memberRequestDto.getIsPC());
 
     BaseResponseSuccessDto responseBody = new TokenResponseDto(tokenMapper.toTokenVO(token));
@@ -216,7 +223,6 @@ public class MemberController {
     return ResponseEntity.ok(responseBody);
   }
 
-  // TODO: 비밀번호 변경
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200",
       description = "비밀 번호 변경 성공",
@@ -248,7 +254,7 @@ public class MemberController {
   private ResponseEntity<?> getResponseEntity(MemberChangePasswordRequestDto dto, Result result) {
     final Set<FailedReason> reasons = result.failedReason();
     if (reasons.contains(NOT_MATCHED_OLD_PASSWORD)) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증이 안됬데");
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증이 안됐대");
     }
 
     final String translated = FailedReasonTranslator.create(dto).translate(reasons);

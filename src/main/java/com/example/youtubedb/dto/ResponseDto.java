@@ -2,11 +2,12 @@ package com.example.youtubedb.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Builder
 @Getter
-public class ResponseDto {
-    private final boolean success;
-    private final Object response;
-    private final ErrorDto error;
+@RequiredArgsConstructor
+public class ResponseDto<T> {
+    final int status;
+    final String message;
+    final T response;
 }

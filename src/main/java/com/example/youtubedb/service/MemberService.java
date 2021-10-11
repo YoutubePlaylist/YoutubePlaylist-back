@@ -72,9 +72,6 @@ public class MemberService implements UserDetailsService {
   }
 
   public Token login(String loginID, String password, boolean isPC) {
-    // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-    UsernamePasswordAuthenticationToken authenticationToken = toAuthentication(loginID, password);
-
     try {
       Token token = tokenProvider.create(loginID, isPC);
 

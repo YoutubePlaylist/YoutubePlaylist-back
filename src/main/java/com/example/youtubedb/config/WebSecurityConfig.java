@@ -5,6 +5,7 @@ import com.example.youtubedb.config.jwt.handler.JwtAccessDeniedHandler;
 import com.example.youtubedb.config.jwt.handler.JwtAuthenticationEntryPoint;
 import com.example.youtubedb.config.jwt.TokenProvider;
 import com.example.youtubedb.domain.member.Authority;
+import com.example.youtubedb.domain.member.SecuredPassword;
 import com.example.youtubedb.repository.MemberRepository;
 import com.example.youtubedb.service.ChangingPassword;
 import com.example.youtubedb.service.ChangingPassword.*;

@@ -1,8 +1,5 @@
 package com.example.youtubedb.service;
 
-import com.example.youtubedb.domain.member.Member;
-import com.example.youtubedb.exception.DoNotChangePasswordException;
-import com.example.youtubedb.exception.DoNotMatchPasswordException;
 import com.example.youtubedb.exception.InvalidBlankPasswordException;
 import com.example.youtubedb.exception.InvalidRegexPasswordException;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +14,8 @@ import java.util.regex.Pattern;
 public class PasswordValidationService {
     private final PasswordEncoder passwordEncoder;
 
-    public void checkCorrectPassword(Member updateMember, String oldPassword, String newPassword) {
-        if(!passwordEncoder.matches(oldPassword, updateMember.getPassword().getPassword())){
-            throw new DoNotMatchPasswordException();
-        }
-        if (oldPassword.equals(newPassword)) {
-            throw new DoNotChangePasswordException();
-        }
+    public boolean checkCorrectPassword(String raw, String encodedPassword) {
+        return passwordEncoder.matches(raw, encodedPassword);
     }
 
     public void checkValidPassword(String password) {
