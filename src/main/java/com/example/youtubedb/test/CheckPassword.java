@@ -1,4 +1,9 @@
 package com.example.youtubedb.test;
 
-public class CheckPassword {
+class CheckPassword {
+
+  protected Boolean check(Member2 member, String password) {
+    return member.password().equals(password);
+  }
+
 }
