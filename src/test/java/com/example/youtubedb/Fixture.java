@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 public class Fixture {
-  public static CurrentTimeServer oldTime() {
+  public static CurrentTimeServer constTime() {
     return new ConstantTime(LocalDateTime.of(1998, 2, 25, 12, 12).toInstant(ZoneOffset.UTC));
   }
 

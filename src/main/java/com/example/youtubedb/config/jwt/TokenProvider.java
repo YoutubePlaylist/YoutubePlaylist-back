@@ -15,12 +15,12 @@ import static java.sql.Timestamp.valueOf;
 @Component
 public class TokenProvider {
 	private final AccessTokenProvider accessTokenProvider;
-	private final RefreshTokenProvider refreshTokenProvider;
+	private final RefreshToken.Provider refreshTokenProvider;
 	private final RefreshTokenParser refreshTokenParser;
 
 	@Autowired
 	public TokenProvider(AccessTokenProvider accessTokenProvider,
-	                     RefreshTokenProvider refreshTokenProvider,
+											 RefreshToken.Provider refreshTokenProvider,
 											 RefreshTokenParser refreshTokenParser) {
 		this.accessTokenProvider = accessTokenProvider;
 		this.refreshTokenProvider = refreshTokenProvider;

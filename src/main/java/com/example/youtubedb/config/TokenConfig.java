@@ -2,6 +2,7 @@ package com.example.youtubedb.config;
 
 import com.example.youtubedb.config.jwt.*;
 import com.example.youtubedb.config.jwt.time.RealTime;
+import com.example.youtubedb.domain.token.RefreshToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,16 +11,17 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class TokenConfig {
 	private final JwtSetConfigYamlAdapter jwtSetConfigYamlAdapter;
+	private final RefreshToken.Provider refreshTokenProvider;
 
 	@Bean
 	public AccessTokenProvider accessTokenProvider() {
 		return new AccessTokenProvider(new RealTime());
 	}
 
-	@Bean
-	public RefreshTokenProvider refreshTokenProvider() {
-		return new RefreshTokenProvider(new RealTime());
-	}
+//	@Bean
+//	public RefreshTokenProvider refreshTokenProvider() {
+//		return new RefreshTokenProvider(new RealTime());
+//	}
 
 	@Bean
 	public JwtFormatter jwtFormatter() {
@@ -33,7 +35,7 @@ public class TokenConfig {
 
 	@Bean
 	public RefreshTokenParser refreshTokenParser() {
-		return new RefreshTokenParser(jwtSetConfigYamlAdapter.toJwtSetConfig());
+		return new RefreshTokenParser(jwtSetConfigYamlAdapter.toJwtSetConfig(), refreshTokenProvider);
 	}
 
 	@Bean
