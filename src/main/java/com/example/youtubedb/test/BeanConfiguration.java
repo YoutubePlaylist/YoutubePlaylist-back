@@ -23,6 +23,6 @@ public class BeanConfiguration {
 
   @Bean
   MemberLogin2 memberLogin2() {
-    return new MemberLogin2(memberRepository2());
+    return new MemberLogin2(memberRepository2(), myEncoder());
   }
 }
