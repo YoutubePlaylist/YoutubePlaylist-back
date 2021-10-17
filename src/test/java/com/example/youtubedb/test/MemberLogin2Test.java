@@ -4,7 +4,6 @@ package com.example.youtubedb.test;
 import com.example.youtubedb.exception.DoNotMatchPasswordException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MemberLogin2Test {
 
-  MemberRepository2 repository = new MemberRepository2();
+  MemberMap repository = new MemberMap();
   MemberLogin2 memberLogin2 = new MemberLogin2(repository);
 
   @Test
