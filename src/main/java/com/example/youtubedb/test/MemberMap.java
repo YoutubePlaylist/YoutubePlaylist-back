@@ -3,7 +3,7 @@ package com.example.youtubedb.test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemberRepository2 {
+public class MemberRepository2123 {
   Map<String, Member2> testRepository = new HashMap<>();
 
   public void save(Member2 member2){
