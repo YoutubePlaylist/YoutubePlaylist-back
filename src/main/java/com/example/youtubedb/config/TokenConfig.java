@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class TokenConfig {
 	private final JwtSetConfigYamlAdapter jwtSetConfigYamlAdapter;
-	private final RefreshToken.Provider refreshTokenProvider;
 
 	@Bean
 	public AccessTokenProvider accessTokenProvider() {
@@ -36,11 +35,16 @@ public class TokenConfig {
 
 	@Bean
 	public RefreshTokenParser refreshTokenParser() {
-		return new RefreshTokenParser(jwtSetConfigYamlAdapter.toJwtSetConfig(), refreshTokenProvider);
+		return new RefreshTokenParser(jwtSetConfigYamlAdapter.toJwtSetConfig(), refreshTokenProvider); // TODO: 해결 필요
 	}
 
 	@Bean
 	public JwtResolver jwtResolver() {
 		return new JwtResolver(jwtSetConfigYamlAdapter.toJwtSetConfig());
+	}
+
+	@Bean
+	public RefreshToken.Mapping mapping() {
+		return new RefreshToken.Mapping(new RefreshToken.Pc(new RealTime()), new RefreshToken.App(new RealTime()));
 	}
 }

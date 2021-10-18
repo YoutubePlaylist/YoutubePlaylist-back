@@ -12,24 +12,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.Instant;
 
 public class RefreshTokenParser implements TokenParser<RefreshToken> {
-	private final JwtParser parser;
-	private final RefreshToken.Provider provider;
+  private final JwtParser parser;
+  private final RefreshToken.Provider provider;
 
-	public RefreshTokenParser(JwtSetConfig jwtSetConfig, RefreshToken.Provider provider) {
-		this.parser = Jwts.parserBuilder()
-			.setSigningKey(jwtSetConfig.secretKey())
-			.build();
-		this.provider = provider;
-	}
+  public RefreshTokenParser(JwtSetConfig jwtSetConfig, RefreshToken.Provider provider) {
+    this.parser = Jwts.parserBuilder()
+      .setSigningKey(jwtSetConfig.secretKey())
+      .build();
+    this.provider = provider;
+  }
 
-	@Override
-	public RefreshToken parse(String tokenString) {
-		final Jws<Claims> claimsJws = parser.parseClaimsJws(tokenString);
-		final Claims claims = claimsJws.getBody();
-		final Instant expiration = claims
-			.getExpiration()
-			.toInstant();
+  @Override
+  public RefreshToken parse(String tokenString) {
+    final Jws<Claims> claimsJws = parser.parseClaimsJws(tokenString);
+    final Claims claims = claimsJws.getBody();
+    final Instant expiration = claims
+      .getExpiration()
+      .toInstant();
 
-		return provider.create(expiration);
-	}
+    return provider.create(expiration);
+  }
 }

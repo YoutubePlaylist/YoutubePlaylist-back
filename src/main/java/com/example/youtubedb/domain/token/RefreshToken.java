@@ -16,35 +16,51 @@ import static com.example.youtubedb.util.ContractUtil.requires;
 @Value
 @Accessors(fluent = true)
 public class RefreshToken {
-	Instant expirationAt;
+  Instant expirationAt;
 
-	RefreshToken(Instant expirationAt) {
-		requires(expirationAt.isAfter(Instant.now()));
-		this.expirationAt = expirationAt;
-	}
+  private RefreshToken(Instant expirationAt) {
+    requires(expirationAt.isAfter(Instant.now()));
+    this.expirationAt = expirationAt;
+  }
 
-	@RequiredArgsConstructor
-	@Component
-	static public class Provider {
-		private final Period REFRESH_TOKEN_EXPIRE_DATE_APP = Period.ofDays(7);
-		private final Period REFRESH_TOKEN_EXPIRE_DATE_PC = Period.ofDays(30);
-		private final CurrentTimeServer currentTimeServer;
+  @RequiredArgsConstructor
+  public static class Mapping {
+    private final Provider pc;
+    private final Provider app;
 
-		public RefreshToken create(boolean isPC) {
-			return new RefreshToken(
-				currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(getPeriodForDevice(isPC))
-			);
-		}
+    public Provider provider(boolean isPC) {
+      if (isPC) {
+        return pc;
+      }
+      return app;
+    }
+  }
 
-		public RefreshToken create(Instant expiration) {
-			return new RefreshToken(expiration);
-		}
+  public interface Provider {
+    RefreshToken create();
+  }
 
-		private TemporalAmount getPeriodForDevice(boolean isPC) {
-			if(isPC) {
-				return REFRESH_TOKEN_EXPIRE_DATE_PC;
-			}
-			return REFRESH_TOKEN_EXPIRE_DATE_APP;
-		}
-	}
+  @RequiredArgsConstructor
+  public static class Pc implements Provider {
+    private final Period REFRESH_TOKEN_EXPIRE_DATE_PC = Period.ofDays(30);
+    private final CurrentTimeServer currentTimeServer;
+
+    @Override
+    public RefreshToken create() {
+      return new RefreshToken(
+        currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(REFRESH_TOKEN_EXPIRE_DATE_PC));
+    }
+  }
+
+  @RequiredArgsConstructor
+  public static class App implements Provider {
+    private final Period REFRESH_TOKEN_EXPIRE_DATE_APP = Period.ofDays(7);
+    private final CurrentTimeServer currentTimeServer;
+
+    @Override
+    public RefreshToken create() {
+      return new RefreshToken(
+        currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(REFRESH_TOKEN_EXPIRE_DATE_APP));
+    }
+  }
 }
