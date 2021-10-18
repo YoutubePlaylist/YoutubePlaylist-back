@@ -6,6 +6,7 @@ import com.example.youtubedb.domain.member.Authority;
 import com.example.youtubedb.domain.member.Member;
 import com.example.youtubedb.domain.member.SecuredPassword;
 import com.example.youtubedb.domain.token.Token;
+import com.example.youtubedb.dto.member.MemberForTokenDto;
 import com.example.youtubedb.exception.*;
 import com.example.youtubedb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -71,11 +72,11 @@ public class MemberService implements UserDetailsService {
     return memberRepository.save(updateMember);
   }
 
-  public Token login(String loginID, String password, boolean isPC) {
+  public Token login(MemberForTokenDto memberForTokenDto, String password) {
     try {
-      Token token = tokenProvider.create(loginID, isPC);
+      Token token = tokenProvider.create(memberForTokenDto);
 
-      refreshTokenServiceImpl.updateRefreshToken(isPC, loginID, token.getRefreshToken());
+      refreshTokenServiceImpl.updateRefreshToken(memberForTokenDto, token.getRefreshToken());
 
       // 4. 토큰 발급
       return token;

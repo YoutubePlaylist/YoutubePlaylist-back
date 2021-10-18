@@ -10,6 +10,7 @@ import com.example.youtubedb.dto.Result;
 import com.example.youtubedb.dto.error.AuthenticationEntryPointFailResponseDto;
 import com.example.youtubedb.dto.error.BadRequestFailResponseDto;
 import com.example.youtubedb.dto.error.ServerErrorFailResponseDto;
+import com.example.youtubedb.dto.member.MemberForTokenDto;
 import com.example.youtubedb.dto.member.request.*;
 import com.example.youtubedb.dto.member.response.MemberDeleteResponseDto;
 import com.example.youtubedb.dto.member.response.MemberResponseDto;
@@ -163,11 +164,12 @@ public class MemberController {
 
     Member member = memberService.findMemberByLoginId(memberRequestDto.getLoginId());
     String password = member.isMember() ? memberRequestDto.getPassword() : member.getLoginId();
-    if(!passwordValidationService.checkCorrectPassword(password, member.getPassword().getPassword())) {
+    if (!passwordValidationService.checkCorrectPassword(password, member.getPassword().getPassword())) {
       ResponseDto<Object> responseBody = new ResponseDto<>(BAD_REQUEST.value(), "비밀번호가 틀렸습니다.", null);
       return ResponseEntity.badRequest().body(responseBody);
     }
-    Token token = memberService.login(memberRequestDto.getLoginId(), password, memberRequestDto.getIsPC());
+    MemberForTokenDto memberForTokenDto = new MemberForTokenDto(memberRequestDto.getIsPC(), memberRequestDto.getLoginId());
+    Token token = memberService.login(memberForTokenDto, password);
 
     BaseResponseSuccessDto responseBody = new TokenResponseDto(tokenMapper.toTokenVO(token));
     return ResponseEntity.ok(responseBody);
@@ -243,7 +245,7 @@ public class MemberController {
                                           @Auth String loginId) {
     final Result<ChangingPasswordRequest> result = memberChangePasswordRequestProvider.create(loginId, memberChangePasswordRequestDto);
 
-    if(result.isSuccess()) {
+    if (result.isSuccess()) {
       changingPassword.changePassword(result.request());
       return ResponseEntity.ok().body("성공이래");
     }
