@@ -3,6 +3,7 @@ package com.example.youtubedb.service;
 import com.example.youtubedb.config.jwt.JwtFormatter;
 import com.example.youtubedb.domain.token.RefreshToken;
 import com.example.youtubedb.domain.token.Type;
+import com.example.youtubedb.dto.member.MemberForTokenDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,8 @@ public class RefreshTokenServiceImpl extends RefreshTokenService<String, String>
     this.attach(refreshTokenObserver);
   }
 
-  public void updateRefreshToken(boolean isPC, String loginId, RefreshToken refreshToken) {
-    String key = getTypeName(isPC) + loginId;
+  public void updateRefreshToken(MemberForTokenDto memberForTokenDto, RefreshToken refreshToken) {
+    String key = getTypeName(memberForTokenDto.isPc()) + memberForTokenDto.getLoginId();
     String value = formatter.toJwtFromRefreshToken(refreshToken);
     notifyObserversForUpdate(key, value);
   }
