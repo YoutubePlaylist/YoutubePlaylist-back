@@ -4,12 +4,10 @@ import com.example.youtubedb.config.jwt.time.CurrentTimeServer;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Accessors;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
 
 import static com.example.youtubedb.util.ContractUtil.requires;
 
@@ -36,6 +34,10 @@ public class RefreshToken {
     }
   }
 
+  public interface Parsing {
+    RefreshToken parse(Instant instant);
+  }
+
   public interface Provider {
     RefreshToken create();
   }
@@ -47,8 +49,10 @@ public class RefreshToken {
 
     @Override
     public RefreshToken create() {
-      return new RefreshToken(
-        currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(REFRESH_TOKEN_EXPIRE_DATE_PC));
+      Instant expirationAt = currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(REFRESH_TOKEN_EXPIRE_DATE_PC);
+      requires(expirationAt.isAfter(currentTimeServer.now()));
+
+      return new RefreshToken(expirationAt);
     }
   }
 
@@ -59,8 +63,21 @@ public class RefreshToken {
 
     @Override
     public RefreshToken create() {
-      return new RefreshToken(
-        currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(REFRESH_TOKEN_EXPIRE_DATE_APP));
+      Instant expirationAt = currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(REFRESH_TOKEN_EXPIRE_DATE_APP);
+      requires(expirationAt.isAfter(currentTimeServer.now()));
+
+      return new RefreshToken(expirationAt);
+    }
+  }
+
+  @RequiredArgsConstructor
+  public static class Parser implements Parsing {
+    private final CurrentTimeServer currentTimeServer;
+
+    @Override
+    public RefreshToken parse(Instant expirationAt) {
+      requires(expirationAt.isAfter(currentTimeServer.now()));
+      return new RefreshToken(expirationAt);
     }
   }
 }

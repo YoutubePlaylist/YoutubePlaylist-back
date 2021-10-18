@@ -13,13 +13,13 @@ import java.time.Instant;
 
 public class RefreshTokenParser implements TokenParser<RefreshToken> {
   private final JwtParser parser;
-  private final RefreshToken.Provider provider;
+  private final RefreshToken.Parsing tokeParser;
 
-  public RefreshTokenParser(JwtSetConfig jwtSetConfig, RefreshToken.Provider provider) {
+  public RefreshTokenParser(JwtSetConfig jwtSetConfig, RefreshToken.Parsing tokeParser) {
     this.parser = Jwts.parserBuilder()
       .setSigningKey(jwtSetConfig.secretKey())
       .build();
-    this.provider = provider;
+    this.tokeParser = tokeParser;
   }
 
   @Override
@@ -30,6 +30,6 @@ public class RefreshTokenParser implements TokenParser<RefreshToken> {
       .getExpiration()
       .toInstant();
 
-    return provider.create(expiration);
+    return tokeParser.parse(expiration);
   }
 }

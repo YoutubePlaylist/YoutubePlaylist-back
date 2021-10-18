@@ -5,6 +5,10 @@ import com.example.youtubedb.domain.token.RefreshToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
+
 import static com.example.youtubedb.Fixture.curTime;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -12,20 +16,19 @@ import static org.hamcrest.Matchers.is;
 class RefreshTokenParserTest {
   String secretKey = "Dfdf23DSA23nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd32QtdHV0b3JpYWwK";
   JwtSetConfig jwtSetConfig = new JwtSetConfig(secretKey);
-  RefreshToken.Provider refreshTokenProvider;
+  RefreshToken.Parsing tokenParser;
   RefreshTokenParser refreshTokenParser;
 
   @BeforeEach
   void setUp() {
-    refreshTokenProvider = new RefreshToken.Provider(curTime());
-    refreshTokenParser = new RefreshTokenParser(jwtSetConfig, refreshTokenProvider);
+    tokenParser = new RefreshToken.Parser(curTime());
+    refreshTokenParser = new RefreshTokenParser(jwtSetConfig, tokenParser);
   }
 
   @Test
   void RefreshToken_파싱_테스트() {
     // given
-    boolean isPC = true;
-    RefreshToken refreshToken = refreshTokenProvider.create(isPC);
+    RefreshToken refreshToken = tokenParser.parse(curTime().now().truncatedTo(ChronoUnit.SECONDS).plus(Period.ofDays(7)));
     JwtFormatter jwtFormatter = new JwtFormatter(jwtSetConfig);
 
     // when

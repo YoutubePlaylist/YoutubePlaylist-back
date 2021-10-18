@@ -35,7 +35,7 @@ public class TokenConfig {
 
 	@Bean
 	public RefreshTokenParser refreshTokenParser() {
-		return new RefreshTokenParser(jwtSetConfigYamlAdapter.toJwtSetConfig(), refreshTokenProvider); // TODO: 해결 필요
+		return new RefreshTokenParser(jwtSetConfigYamlAdapter.toJwtSetConfig(), new RefreshToken.Parser(new RealTime())); // TODO: 해결 필요
 	}
 
 	@Bean
