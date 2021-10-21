@@ -13,9 +13,9 @@ import java.time.Instant;
 
 public class RefreshTokenParser implements TokenParser<RefreshToken> {
   private final JwtParser parser;
-  private final RefreshToken.Parsing tokeParser;
+  private final RefreshToken.Parser tokeParser;
 
-  public RefreshTokenParser(JwtSetConfig jwtSetConfig, RefreshToken.Parsing tokeParser) {
+  public RefreshTokenParser(JwtSetConfig jwtSetConfig, RefreshToken.Parser tokeParser) {
     this.parser = Jwts.parserBuilder()
       .setSigningKey(jwtSetConfig.secretKey())
       .build();

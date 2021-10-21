@@ -34,10 +34,6 @@ public class RefreshToken {
     }
   }
 
-  public interface Parsing {
-    RefreshToken parse(Instant instant);
-  }
-
   public interface Provider {
     RefreshToken create();
   }
@@ -71,10 +67,9 @@ public class RefreshToken {
   }
 
   @RequiredArgsConstructor
-  public static class Parser implements Parsing {
+  public static class Parser {
     private final CurrentTimeServer currentTimeServer;
 
-    @Override
     public RefreshToken parse(Instant expirationAt) {
       requires(expirationAt.isAfter(currentTimeServer.now()));
       return new RefreshToken(expirationAt);

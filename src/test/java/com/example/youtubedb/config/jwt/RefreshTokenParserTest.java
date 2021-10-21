@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.is;
 class RefreshTokenParserTest {
   String secretKey = "Dfdf23DSA23nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd32QtdHV0b3JpYWwK";
   JwtSetConfig jwtSetConfig = new JwtSetConfig(secretKey);
-  RefreshToken.Parsing tokenParser;
+  RefreshToken.Parser tokenParser;
   RefreshTokenParser refreshTokenParser;
 
   @BeforeEach

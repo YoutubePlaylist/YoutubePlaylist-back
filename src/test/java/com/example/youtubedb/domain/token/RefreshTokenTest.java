@@ -44,7 +44,7 @@ class RefreshTokenTest {
 
   @Test
   void RefreshToken의_만료시간은_과거X() {
-    RefreshToken.Parsing tokenParser = new RefreshToken.Parser(curTime());
+    RefreshToken.Parser tokenParser = new RefreshToken.Parser(curTime());
     assertThrows(ContractViolationException.class, () -> tokenParser.parse(curTime().now().minus(Period.ofDays(1))));
   }
 }
