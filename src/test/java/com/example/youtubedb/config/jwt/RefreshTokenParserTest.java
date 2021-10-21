@@ -5,7 +5,6 @@ import com.example.youtubedb.domain.token.RefreshToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 
@@ -16,19 +15,19 @@ import static org.hamcrest.Matchers.is;
 class RefreshTokenParserTest {
   String secretKey = "Dfdf23DSA23nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd32QtdHV0b3JpYWwK";
   JwtSetConfig jwtSetConfig = new JwtSetConfig(secretKey);
-  RefreshToken.Parser tokenParser;
+  RefreshToken.Provider tokenParser;
   RefreshTokenParser refreshTokenParser;
 
   @BeforeEach
   void setUp() {
-    tokenParser = new RefreshToken.Parser(curTime());
+    tokenParser = new RefreshToken.Provider(curTime());
     refreshTokenParser = new RefreshTokenParser(jwtSetConfig, tokenParser);
   }
 
   @Test
   void RefreshToken_파싱_테스트() {
     // given
-    RefreshToken refreshToken = tokenParser.parse(curTime().now().truncatedTo(ChronoUnit.SECONDS).plus(Period.ofDays(7)));
+    RefreshToken refreshToken = tokenParser.create(curTime().now().truncatedTo(ChronoUnit.SECONDS).plus(Period.ofDays(7)));
     JwtFormatter jwtFormatter = new JwtFormatter(jwtSetConfig);
 
     // when

@@ -23,10 +23,10 @@ public class RefreshToken {
 
   @RequiredArgsConstructor
   public static class Mapping {
-    private final Provider pc;
-    private final Provider app;
+    private final Device pc;
+    private final Device app;
 
-    public Provider provider(boolean isPC) {
+    public Device device(boolean isPC) {
       if (isPC) {
         return pc;
       }
@@ -34,12 +34,12 @@ public class RefreshToken {
     }
   }
 
-  public interface Provider {
+  public interface Device {
     RefreshToken create();
   }
 
   @RequiredArgsConstructor
-  public static class Pc implements Provider {
+  public static class Pc implements Device {
     private final Period REFRESH_TOKEN_EXPIRE_DATE_PC = Period.ofDays(30);
     private final CurrentTimeServer currentTimeServer;
 
@@ -52,7 +52,7 @@ public class RefreshToken {
   }
 
   @RequiredArgsConstructor
-  public static class App implements Provider {
+  public static class App implements Device {
     private final Period REFRESH_TOKEN_EXPIRE_DATE_APP = Period.ofDays(7);
     private final CurrentTimeServer currentTimeServer;
 
@@ -65,10 +65,10 @@ public class RefreshToken {
   }
 
   @RequiredArgsConstructor
-  public static class Parser {
+  public static class Provider {
     private final CurrentTimeServer currentTimeServer;
 
-    public RefreshToken parse(Instant expirationAt) {
+    public RefreshToken create(Instant expirationAt) {
       requires(expirationAt.isAfter(currentTimeServer.now()));
 
       return new RefreshToken(expirationAt);

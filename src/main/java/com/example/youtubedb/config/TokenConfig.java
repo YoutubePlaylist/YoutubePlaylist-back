@@ -1,7 +1,6 @@
 package com.example.youtubedb.config;
 
 import com.example.youtubedb.config.jwt.*;
-import com.example.youtubedb.config.jwt.time.CurrentTimeServer;
 import com.example.youtubedb.config.jwt.time.RealTime;
 import com.example.youtubedb.domain.token.AccessToken;
 import com.example.youtubedb.domain.token.RefreshToken;
@@ -26,7 +25,7 @@ public class TokenConfig {
 
 	@Bean
 	public RefreshTokenParser refreshTokenParser() {
-		return new RefreshTokenParser(jwtSetConfigYamlAdapter.toJwtSetConfig(), new RefreshToken.Parser(new RealTime())); // TODO: 해결 필요
+		return new RefreshTokenParser(jwtSetConfigYamlAdapter.toJwtSetConfig(), new RefreshToken.Provider(new RealTime())); // TODO: 해결 필요
 	}
 
 	@Bean

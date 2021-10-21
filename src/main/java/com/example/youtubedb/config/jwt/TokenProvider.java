@@ -7,8 +7,6 @@ import com.example.youtubedb.domain.token.Token;
 import com.example.youtubedb.dto.member.MemberForTokenDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import static java.sql.Timestamp.valueOf;
@@ -27,7 +25,7 @@ public class TokenProvider {
     AccessToken accessToken = accessTokenProvider.create(memberForTokenDto.getLoginId());
 
     // Refresh Token 생성
-    RefreshToken refreshToken = refreshTokenMapper.provider(memberForTokenDto.isPc()).create();
+    RefreshToken refreshToken = refreshTokenMapper.device(memberForTokenDto.isPc()).create();
 
     return Jwt.builder()
       .accessToken(accessToken)

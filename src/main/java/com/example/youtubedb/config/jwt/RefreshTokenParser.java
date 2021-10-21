@@ -6,20 +6,18 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Instant;
 
 public class RefreshTokenParser implements TokenParser<RefreshToken> {
   private final JwtParser parser;
-  private final RefreshToken.Parser tokeParser;
+  private final RefreshToken.Provider provider;
 
-  public RefreshTokenParser(JwtSetConfig jwtSetConfig, RefreshToken.Parser tokeParser) {
+  public RefreshTokenParser(JwtSetConfig jwtSetConfig, RefreshToken.Provider tokeParser) {
     this.parser = Jwts.parserBuilder()
       .setSigningKey(jwtSetConfig.secretKey())
       .build();
-    this.tokeParser = tokeParser;
+    this.provider = tokeParser;
   }
 
   @Override
@@ -30,6 +28,6 @@ public class RefreshTokenParser implements TokenParser<RefreshToken> {
       .getExpiration()
       .toInstant();
 
-    return tokeParser.parse(expiration);
+    return provider.create(expiration);
   }
 }
