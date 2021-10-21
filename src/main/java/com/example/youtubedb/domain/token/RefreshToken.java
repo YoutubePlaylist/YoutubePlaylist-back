@@ -46,7 +46,6 @@ public class RefreshToken {
     @Override
     public RefreshToken create() {
       Instant expirationAt = currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(REFRESH_TOKEN_EXPIRE_DATE_PC);
-      requires(expirationAt.isAfter(currentTimeServer.now()));
 
       return new RefreshToken(expirationAt);
     }
@@ -60,7 +59,6 @@ public class RefreshToken {
     @Override
     public RefreshToken create() {
       Instant expirationAt = currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(REFRESH_TOKEN_EXPIRE_DATE_APP);
-      requires(expirationAt.isAfter(currentTimeServer.now()));
 
       return new RefreshToken(expirationAt);
     }
@@ -72,6 +70,7 @@ public class RefreshToken {
 
     public RefreshToken parse(Instant expirationAt) {
       requires(expirationAt.isAfter(currentTimeServer.now()));
+
       return new RefreshToken(expirationAt);
     }
   }

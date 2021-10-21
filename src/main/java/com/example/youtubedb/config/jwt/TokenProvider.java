@@ -17,7 +17,7 @@ import static java.sql.Timestamp.valueOf;
 @Component
 @RequiredArgsConstructor
 public class TokenProvider {
-  private final AccessTokenProvider accessTokenProvider;
+  private final AccessToken.Provider accessTokenProvider;
   private final RefreshToken.Mapping refreshTokenMapper;
   private final RefreshTokenParser refreshTokenParser;
 

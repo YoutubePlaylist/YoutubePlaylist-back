@@ -6,16 +6,20 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 
+@RequiredArgsConstructor
 public class AccessTokenParser implements TokenParser<AccessToken> {
 	private final JwtParser parser;
+	private final AccessToken.Provider provider;
 
-	public AccessTokenParser(JwtSetConfig jwtSetConfig) {
+	public AccessTokenParser(JwtSetConfig jwtSetConfig, AccessToken.Provider provider) {
 		this.parser = Jwts.parserBuilder()
 			.setSigningKey(jwtSetConfig.secretKey())
 			.build();
+		this.provider = provider;
 	}
 
 	@Override
@@ -27,6 +31,6 @@ public class AccessTokenParser implements TokenParser<AccessToken> {
 			.getExpiration()
 			.toInstant();
 
-		return new AccessToken(loginId, expiration);
+		return provider.create(loginId, expiration);
 	}
 }
