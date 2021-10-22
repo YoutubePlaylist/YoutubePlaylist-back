@@ -4,6 +4,7 @@ import com.example.youtubedb.config.jwt.time.CurrentTimeServer;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Accessors;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.Period;
@@ -64,6 +65,7 @@ public class RefreshToken {
     }
   }
 
+  @Component
   @RequiredArgsConstructor
   public static class Provider {
     private final CurrentTimeServer currentTimeServer;

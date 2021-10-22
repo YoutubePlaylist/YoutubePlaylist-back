@@ -4,6 +4,7 @@ import com.example.youtubedb.config.jwt.time.CurrentTimeServer;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Accessors;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -25,6 +26,7 @@ public class AccessToken {
     this.expirationAt = expirationAt;
   }
 
+  @Component
   @RequiredArgsConstructor
   public static class Provider {
     private final Duration ACCESS_TOKEN_EXPIRE_TIME = Duration.ofMinutes(30);
