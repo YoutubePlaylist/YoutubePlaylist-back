@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MemberLogin2Test {
 
   MemberMap repository = new MemberMap();
-  MemberLogin2 memberLogin2 = new MemberLogin2(repository);
+  CheckPassword checkPassword = new CheckPassword(new TestEncoder());
+  MemberLogin2 memberLogin2 = new MemberLogin2(repository, checkPassword);
 
   @Test
   @DisplayName("login ID를 통해 올바른 Member를 가져오니")
