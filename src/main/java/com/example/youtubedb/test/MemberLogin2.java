@@ -18,13 +18,6 @@ public class MemberLogin2 {
     checkPassword.check(member, loginRequest.rawPassword());
     return member;
   }
-
 }
 
-@AllArgsConstructor
-@Getter
-@Accessors(fluent = true)
-class LoginRequest {
-  private String loginId;
-  private final String rawPassword;
-}
+

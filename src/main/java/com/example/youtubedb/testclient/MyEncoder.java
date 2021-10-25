@@ -1,4 +1,4 @@
-package com.example.youtubedb.test1;
+package com.example.youtubedb.testclient;
 
 class MyEncoder {
   String encode(String rawPassword){

@@ -1,7 +1,4 @@
-package com.example.youtubedb.test1;
-
-import com.example.youtubedb.test.Member2;
-import lombok.RequiredArgsConstructor;
+package com.example.youtubedb.testclient;
 
 class CheckPassword {
 
