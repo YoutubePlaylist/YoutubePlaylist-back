@@ -27,7 +27,7 @@ class MemberLogin2Test {
     repository.save(member);
 
     //when
-    Member2 loginMember = memberLogin2.login("loginId", "password");
+    Member2 loginMember = memberLogin2.login(new LoginRequest("loginId", "password"));
 
     //then
     assertThat(repository.find(member.loginId()), is(loginMember));
@@ -43,7 +43,7 @@ class MemberLogin2Test {
     repository.save(new Member2("loginId2", "password2"));
 
     //when
-    Member2 loginMember = memberLogin2.login("loginId", "password");
+    Member2 loginMember = memberLogin2.login(new LoginRequest("loginId", "password"));
 
     //then
     assertThat(repository.find(member.loginId()), is(loginMember));
@@ -60,11 +60,12 @@ class MemberLogin2Test {
     repository.save(new Member2("loginId2", "password2"));
 
     //when
-    Member2 loginCorrectPassword = memberLogin2.login("loginId", "password");
+    Member2 loginCorrectPassword = memberLogin2.login(new LoginRequest("loginId", "password"));
 
     //then
     assertThat(repository.find(member.loginId()), is(loginCorrectPassword));
-    assertThrows(DoNotMatchPasswordException.class, () -> memberLogin2.login("loginId", "password2"));
+    assertThrows(DoNotMatchPasswordException.class, () -> memberLogin2.login(new LoginRequest(
+      "loginId", "password")));
   }
 
   PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -79,7 +80,7 @@ class MemberLogin2Test {
     repository.save(new Member2("loginId2", passwordEncoder.encode("password2")));
 
     //when
-    Member2 loginMember = memberLogin2.login("loginId", "password");
+    Member2 loginMember = memberLogin2.login(new LoginRequest("loginId", "password"));
 
     //then
     assertThat(repository.find(member.loginId()), is(loginMember));
