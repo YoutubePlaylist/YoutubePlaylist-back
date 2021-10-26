@@ -1,4 +1,7 @@
-package com.example.youtubedb.test;
+package com.example.youtubedb.member.login.spring;
+
+import com.example.youtubedb.member.Member2;
+import com.example.youtubedb.member.login.core.MemberRepository2;
 
 import java.util.HashMap;
 import java.util.Map;

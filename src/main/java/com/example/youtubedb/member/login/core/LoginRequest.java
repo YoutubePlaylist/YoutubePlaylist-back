@@ -1,4 +1,4 @@
-package com.example.youtubedb.test;
+package com.example.youtubedb.member.login.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

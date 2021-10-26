@@ -1,7 +1,9 @@
-package com.example.youtubedb.test;
+package com.example.youtubedb.member.login.core;
 
 
 import com.example.youtubedb.exception.DoNotMatchPasswordException;
+import com.example.youtubedb.member.Member2;
+import com.example.youtubedb.member.login.spring.MemberMap;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;

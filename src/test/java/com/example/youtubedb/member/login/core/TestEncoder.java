@@ -1,6 +1,7 @@
-package com.example.youtubedb.test;
+package com.example.youtubedb.member.login.core;
 
-public class TestEncoder implements MyEncoder{
+
+public class TestEncoder implements MyEncoder {
   @Override
   public String encode(String rawPassword) {
     return rawPassword;

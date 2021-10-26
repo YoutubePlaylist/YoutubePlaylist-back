@@ -1,5 +1,6 @@
-package com.example.youtubedb.test;
+package com.example.youtubedb.member.login.spring;
 
+import com.example.youtubedb.member.login.core.MyEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

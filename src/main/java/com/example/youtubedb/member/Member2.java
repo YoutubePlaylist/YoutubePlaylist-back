@@ -1,4 +1,4 @@
-package com.example.youtubedb.test;
+package com.example.youtubedb.member;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;

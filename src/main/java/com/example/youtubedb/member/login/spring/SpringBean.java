@@ -1,34 +1,25 @@
-package com.example.youtubedb.test;
+package com.example.youtubedb.member.login.spring;
 
-import lombok.RequiredArgsConstructor;
+import com.example.youtubedb.member.login.core.MemberRepository2;
+import com.example.youtubedb.member.login.core.MyEncoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@RequiredArgsConstructor
-public class BeanConfiguration {
-
+public class SpringBean {
   private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
   @Bean
   public MyEncoder myEncoder() {
     return new SpringEncoder(passwordEncoder);
   }
-
-  @Bean
-  public CheckPassword checkPassword() {
-    return new CheckPassword(myEncoder());
-  }
-
   @Bean
   MemberRepository2 memberRepository2() {
     return new MemberMap();
-  }
-
-  @Bean
-  MemberLogin2 memberLogin2() {
-    return new MemberLogin2(memberRepository2(), checkPassword());
+    /*
+    return JpaMember2Repository2();
+     */
   }
 }

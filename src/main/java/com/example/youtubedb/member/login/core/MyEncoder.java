@@ -1,6 +1,6 @@
-package com.example.youtubedb.test;
+package com.example.youtubedb.member.login.core;
 
-interface MyEncoder {
+public interface MyEncoder {
   String encode(String rawPassword);
   boolean matches(String rawPassword, String encodedPassword);
 }

@@ -1,10 +1,9 @@
 package com.example.youtubedb.testclient;
 
 import com.example.youtubedb.dto.member.request.MemberLoginRequestDto;
-import com.example.youtubedb.test.LoginRequest;
-import com.example.youtubedb.test.Member2;
-import com.example.youtubedb.test.MemberLogin2;
-import lombok.AllArgsConstructor;
+import com.example.youtubedb.member.login.core.LoginRequest;
+import com.example.youtubedb.member.Member2;
+import com.example.youtubedb.member.login.core.MemberLogin2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
