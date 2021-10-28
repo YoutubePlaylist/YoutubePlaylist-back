@@ -8,6 +8,7 @@ import static com.example.youtubedb.util.Contracts.requires;
 
 @Getter
 @Accessors(fluent = true)
+@Value
 public class LoginRequest {
   private final LoginId loginId;
   private final RawPassword rawPassword;
