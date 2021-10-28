@@ -1,4 +1,4 @@
-package com.example.youtubedb.domain.token;
+package com.example.youtubedb.domain.token.refreshToken;
 
 import com.example.youtubedb.config.jwt.time.ConstantTime;
 import com.example.youtubedb.config.jwt.time.CurrentTimeServer;
@@ -22,29 +22,44 @@ class RefreshTokenTest {
   Device device;
   CurrentTimeServer time;
 
-  @BeforeEach
-  void setUp() {
-    time = new ConstantTime(Instant.now().truncatedTo(ChronoUnit.SECONDS));
-  }
-
   @Test
   void RefreshToken_PC() {
+    // given
+    time = new ConstantTime(Instant.now().truncatedTo(ChronoUnit.SECONDS));
     device = new PC(time);
+    RefreshToken target = new RefreshToken(
+      time.now().truncatedTo(ChronoUnit.SECONDS).plus(REFRESH_TOKEN_EXPIRE_DATE_PC),
+      time);
+
+    // when
     RefreshToken refreshToken = device.create();
-    assertThat(refreshToken.expirationAt(), is(time.now().plus(REFRESH_TOKEN_EXPIRE_DATE_PC)));
+
+    // then
+    assertThat(refreshToken, is(target));
   }
 
   @Test
   void RefreshToken_APP() {
+    // given
+    time = new ConstantTime(Instant.now().truncatedTo(ChronoUnit.SECONDS));
     device = new App(time);
+    RefreshToken target = new RefreshToken(
+      time.now().truncatedTo(ChronoUnit.SECONDS).plus(REFRESH_TOKEN_EXPIRE_DATE_APP),
+      time);
 
+    // when
     RefreshToken refreshToken = device.create();
-    assertThat(refreshToken.expirationAt(), is(time.now().plus(REFRESH_TOKEN_EXPIRE_DATE_APP)));
+
+    // then
+    assertThat(refreshToken, is(target));
   }
 
   @Test
   void RefreshToken의_만료시간은_과거X() {
+    // given
     RefreshTokenProvider tokenProvider = new RefreshTokenProvider(curTime());
+
+    // when & then
     assertThrows(ContractViolationException.class, () -> tokenProvider.create(curTime().now().minus(Period.ofDays(1))));
   }
 }
