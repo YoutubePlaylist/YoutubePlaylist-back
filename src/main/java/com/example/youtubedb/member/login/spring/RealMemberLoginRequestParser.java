@@ -1,6 +1,5 @@
 package com.example.youtubedb.member.login.spring;
 
-import com.example.youtubedb.dto.member.request.MemberLoginRequestDto;
 import com.example.youtubedb.member.login.core.LoginRequest;
 import com.example.youtubedb.member.login.spring.request.JsonRealMemberLoginRequest;
 
