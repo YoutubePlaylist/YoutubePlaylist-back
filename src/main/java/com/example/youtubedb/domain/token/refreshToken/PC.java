@@ -2,6 +2,7 @@ package com.example.youtubedb.domain.token.refreshToken;
 
 import com.example.youtubedb.config.jwt.time.CurrentTimeServer;
 import lombok.RequiredArgsConstructor;
+
 import java.time.Instant;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
@@ -14,6 +15,6 @@ public class PC implements Device {
   public RefreshToken create() {
     Instant expirationAt = currentTimeServer.now().truncatedTo(ChronoUnit.SECONDS).plus(Period.ofDays(30));
 
-    return new RefreshToken(expirationAt);
+    return new RefreshToken(expirationAt, currentTimeServer);
   }
 }
