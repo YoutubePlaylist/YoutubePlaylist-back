@@ -10,9 +10,9 @@ public class MemberLogin2 {
   private final CheckPassword checkPassword;
 
   public Member2 login(LoginRequest loginRequest) {
-    Member2 member = repository.find(loginRequest.loginId());
+    Member2 member = repository.find(loginRequest.loginId().id());
 
-    checkPassword.check(member, loginRequest.rawPassword());
+    checkPassword.check(member, loginRequest.rawPassword().password());
     return member;
   }
 }
