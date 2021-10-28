@@ -2,8 +2,10 @@ package com.example.youtubedb.config;
 
 import com.example.youtubedb.config.jwt.*;
 import com.example.youtubedb.config.jwt.time.RealTime;
-import com.example.youtubedb.domain.token.AccessToken;
-import com.example.youtubedb.domain.token.RefreshToken;
+import com.example.youtubedb.domain.token.accessToken.AccessToken;
+import com.example.youtubedb.domain.token.accessToken.AccessTokenProvider;
+import com.example.youtubedb.domain.token.refreshToken.RefreshToken;
+import com.example.youtubedb.domain.token.refreshToken.RefreshTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class TokenConfig {
 	private final JwtSetConfigYamlAdapter jwtSetConfigYamlAdapter;
-	private final AccessToken.Provider accessTokenProvider;
-	private final RefreshToken.Provider refreshTokenProvider;
+	private final AccessTokenProvider accessTokenProvider;
+	private final RefreshTokenProvider refreshTokenProvider;
 
 	@Bean
 	public JwtFormatter jwtFormatter() {
@@ -33,10 +35,5 @@ public class TokenConfig {
 	@Bean
 	public JwtResolver jwtResolver() {
 		return new JwtResolver(jwtSetConfigYamlAdapter.toJwtSetConfig());
-	}
-
-	@Bean
-	public RefreshToken.Mapping mapping() {
-		return new RefreshToken.Mapping(new RefreshToken.Pc(new RealTime()), new RefreshToken.App(new RealTime()));
 	}
 }

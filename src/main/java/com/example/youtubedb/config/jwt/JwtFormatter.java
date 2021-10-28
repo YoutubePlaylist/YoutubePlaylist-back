@@ -1,15 +1,14 @@
 package com.example.youtubedb.config.jwt;
 
 import com.example.youtubedb.config.JwtSetConfig;
-import com.example.youtubedb.domain.token.AccessToken;
-import com.example.youtubedb.domain.token.RefreshToken;
+import com.example.youtubedb.domain.token.accessToken.AccessToken;
+import com.example.youtubedb.domain.token.refreshToken.RefreshToken;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
 import java.sql.Date;
-import java.sql.Timestamp;
 
 public final class JwtFormatter {
 	private final SecretKey key;

@@ -1,8 +1,10 @@
 package com.example.youtubedb.config.jwt;
 
-import com.example.youtubedb.domain.token.AccessToken;
+import com.example.youtubedb.domain.token.accessToken.AccessToken;
 import com.example.youtubedb.domain.token.Jwt;
-import com.example.youtubedb.domain.token.RefreshToken;
+import com.example.youtubedb.domain.token.accessToken.AccessTokenProvider;
+import com.example.youtubedb.domain.token.refreshToken.Mapping;
+import com.example.youtubedb.domain.token.refreshToken.RefreshToken;
 import com.example.youtubedb.domain.token.Token;
 import com.example.youtubedb.dto.member.MemberForTokenDto;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +17,8 @@ import static java.sql.Timestamp.valueOf;
 @Component
 @RequiredArgsConstructor
 public class TokenProvider {
-  private final AccessToken.Provider accessTokenProvider;
-  private final RefreshToken.Mapping refreshTokenMapper;
+  private final AccessTokenProvider accessTokenProvider;
+  private final Mapping refreshTokenMapper;
   private final RefreshTokenParser refreshTokenParser;
 
 

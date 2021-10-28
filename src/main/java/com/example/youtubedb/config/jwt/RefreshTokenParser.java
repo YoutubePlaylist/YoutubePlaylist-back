@@ -1,7 +1,8 @@
 package com.example.youtubedb.config.jwt;
 
 import com.example.youtubedb.config.JwtSetConfig;
-import com.example.youtubedb.domain.token.RefreshToken;
+import com.example.youtubedb.domain.token.refreshToken.RefreshToken;
+import com.example.youtubedb.domain.token.refreshToken.RefreshTokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
@@ -11,9 +12,9 @@ import java.time.Instant;
 
 public class RefreshTokenParser implements TokenParser<RefreshToken> {
   private final JwtParser parser;
-  private final RefreshToken.Provider provider;
+  private final RefreshTokenProvider provider;
 
-  public RefreshTokenParser(JwtSetConfig jwtSetConfig, RefreshToken.Provider tokeParser) {
+  public RefreshTokenParser(JwtSetConfig jwtSetConfig, RefreshTokenProvider tokeParser) {
     this.parser = Jwts.parserBuilder()
       .setSigningKey(jwtSetConfig.secretKey())
       .build();

@@ -2,6 +2,8 @@ package com.example.youtubedb.domain.token;
 
 import com.example.youtubedb.config.jwt.time.ConstantTime;
 import com.example.youtubedb.config.jwt.time.CurrentTimeServer;
+import com.example.youtubedb.domain.token.accessToken.AccessToken;
+import com.example.youtubedb.domain.token.accessToken.AccessTokenProvider;
 import com.example.youtubedb.exception.ContractViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AccessTokenTest {
   private final Duration ACCESS_TOKEN_EXPIRE_TIME = Duration.ofMinutes(30);
-  AccessToken.Provider provider;
+  AccessTokenProvider provider;
   CurrentTimeServer time;
 
   @BeforeEach
   void setUp() {
     time = new ConstantTime(Instant.now().truncatedTo(ChronoUnit.SECONDS));
-    provider = new AccessToken.Provider(time);
+    provider = new AccessTokenProvider(time);
   }
 
   @Test

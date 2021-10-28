@@ -1,7 +1,7 @@
 package com.example.youtubedb.service;
 
 import com.example.youtubedb.config.jwt.JwtFormatter;
-import com.example.youtubedb.domain.token.RefreshToken;
+import com.example.youtubedb.domain.token.refreshToken.RefreshToken;
 import com.example.youtubedb.domain.token.Type;
 import com.example.youtubedb.dto.member.MemberForTokenDto;
 import org.springframework.beans.factory.annotation.Autowired;
