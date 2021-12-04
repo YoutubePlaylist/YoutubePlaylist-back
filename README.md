@@ -13,7 +13,7 @@
 ## 🧱 Server Architecture
 <img width="650px" alt="Architecture" src="https://user-images.githubusercontent.com/33858991/144643056-37dc835a-20ce-4e90-9ece-946e8a2b18a8.png">
 
-## 사용 기술
+## ⚒ 사용 기술
 ```md
 * SpringBoot
 * JPA
@@ -34,7 +34,7 @@
 3. 나만의 운동 루틴 만들기
 4. 기타 등등...👍🏼
 
-## 실제 서비스 VIEW
+## 💻 실제 서비스 VIEW
 <img width="650px" height="500px" alt="ServiceView1" src="https://user-images.githubusercontent.com/33858991/144638774-7bc35002-8774-4792-bc12-9d2d53b3e2de.jpeg">
 <br>
 <img width="650px" height="500px" alt="ServiceView2" src="https://user-images.githubusercontent.com/33858991/144638795-e7e18bb8-4839-4fb4-b0da-d1e15202590b.jpeg">
