@@ -4,7 +4,7 @@
 |이름|<h3>오승재</h3>|<h3>박지수</h3>|
 |:--:|:--:|:--:|
 | |<img style="border-radius: 10%" width="250px" height="250px" alt="Image" src="https://user-images.githubusercontent.com/33858991/144629519-d6df6690-f692-4d62-aa9e-d547a0685685.jpeg">|<img style="border-radius: 10%" width="250px" height="250px" alt="Image" src="https://user-images.githubusercontent.com/33858991/144629224-9446bdae-1e7e-4ab5-b910-351c507e9edf.jpeg">| 
-|역할|리드 서버 개발자|서버 개발자|
+|역할|서버 개발자|서버 개발자|
 |Github|<a href="https://github.com/oh980225">Seungjae</a>|<a href="https://github.com/JisooPark27">JisooPark27</a>|
 
 ## 🔗 ER Diagram
